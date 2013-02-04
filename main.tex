@@ -8,7 +8,9 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \newtheorem{noisychannel}{Theorem}
-
+\newcommand*{\fancyrefthmlabelprefix}{thm}
+\frefformat{plain}{\fancyrefthmlabelprefix}{theorem~#1}
+\Frefformat{plain}{\fancyrefthmlabelprefix}{Theorem~#1}
 \title{Optimal Population Coding of Dynamic Stimuli}
 \author{Alex Kunze Susemihl}
 %\date{}							% Activate to display a given date or no date
