@@ -1,0 +1,12 @@
+*.dvi
+*.toc
+*.bbl
+*.blg
+*.swp
+*.aux
+*.idx
+*.lof
+*.log
+*.out
+*~
+*.backup
