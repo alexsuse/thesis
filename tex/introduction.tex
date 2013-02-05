@@ -56,19 +56,22 @@ which is maximized when all output levels are equally probable. The transformati
 $$
 P(o) do = P(c) dc, \textrm{ and therefore } o(c) = o_{max} \int_{-1}^c P(c') dc',
 $$
-as is shown in \fref{fig:laughlin}. This can be generalized to a number of cases, and Atick\cite{Atick1992} provided a thorough review of the framework. This approach is not, however, without its flaws.
+as is shown in \fref{fig:laughlin}. This can be generalized to a number of cases, and Atick\cite{Atick1992} provided a thorough review of the framework.\par
 
 \begin{marginfigure}
 \includegraphics[width=\columnwidth]{figures/laughlin_81.eps}
 \label{fig:laughlin}
-\caption{The response function of the blowfly LMC closely resembles the cumulative distribution of visual contrasts in its natural environment. Figure taken from Laughlin, 1981}
+\caption{The response function of the blowfly LMC closely resembles the cumulative distribution of visual contrasts in its natural environment. Figure taken from Laughlin, S. (1981)}
 \end{marginfigure}
 
-Assuming that the transmission is noiseless we can then decompose the redundancy into two terms\cite{Atick1992}
+This framework can also be generalized to a population of neurons. Writing $O_i$ for the random variable associated with the output activity of each neuron and $O$ for the population activity, we can decompose the redundancy into two terms, yielding
 $$
-\mathcal{R} = \frac{1}{C} \left(C - \sum_i H(X_i) \right) + \frac{1}{C}\left(\sum_i H(X_i) -H(X)\right).
+\mathcal{R} = \frac{1}{C} \left(C - \sum_i H(O_i) \right) + \frac{1}{C}\left(\sum_i H(O_i) -H(O)\right).
 $$
-The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from correlations between the symbols $X_i$. This can provide different approaches towards optimizing the coding mechanisms in the nervous system. 
+The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from correlations between the activities $O_i$. In the example above we have only had to deal with the left term, since we had only one activity and therefore no correlations between them. A lot of the efficient coding literature, however, has dealt with the second term, and a number of different approaches have looked towards independent components of natural stimuli, assuming that whitening or gain control could account for the maximization of the first term.\par
+Michael Lewicki\cite{Lewicki2002}, for example, demonstrated that using independent component analysis on a set of natural sounds, comprised of human vocalizations 
+
+ This can provide different approaches towards optimizing the coding mechanisms in the nervous system. 
 
 \section{Dynamic Population Coding}
 
