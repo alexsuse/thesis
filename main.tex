@@ -3,14 +3,17 @@
 %\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{appendix}
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
 \usepackage[plain]{fancyref}								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
 \usepackage{amsthm}
-\newtheorem{noisychannel}{Theorem}
 \newcommand*{\fancyrefthmlabelprefix}{thm}
 \frefformat{plain}{\fancyrefthmlabelprefix}{theorem~#1}
 \Frefformat{plain}{\fancyrefthmlabelprefix}{Theorem~#1}
+\newcommand*{\fancyrefapplabelprefix}{app}
+\frefformat{plain}{\fancyrefapplabelprefix}{appendix~#1}
+\Frefformat{plain}{\fancyrefapplabelprefix}{Appendix~#1}
 \title{Optimal Population Coding of Dynamic Stimuli}
 \author{Alex Kunze Susemihl}
 %\date{}							% Activate to display a given date or no date
@@ -66,9 +69,14 @@
 
 \chapter{Discussion}
 
-
 \section{References}
 \bibliography{library}{}
 \bibliographystyle{apalike}
 
+\begin{appendices}
+
+\chapter{Proofs}
+\section{The entropy is maximized by a uniform distribution}
+\label{app:entropy}
+\end{appendices}
 \end{document}  

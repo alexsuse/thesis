@@ -10,24 +10,29 @@ One particular aspect of the brain which has received increasing attention recen
 
 \section{Efficient Coding Hypothesis}
 
-\newthought{The information} associated with a random event is defined as the logarithm of its inverse probability. This is at first nonintuitive, but with this definition, Shannon \cite{Shannon1948} has stated a number of interesting results regarding the coding and transmission of messages. We can further define the entropy of a distribution over a set of events as the average information conveyed by these events. So if we have a random variable $X$ taking values $x \in \mathcal{A}$ and a probability distribution $P : \mathcal{A} \to [0,1]$, we will have
+\newthought{The information} associated with a random event is defined as the logarithm of its inverse probability. We can further define the entropy of a distribution over a set of events as the average information conveyed by these events. So if we have a random variable $X$ taking values $x \in \mathcal{A}_X$ and a probability distribution $P : \mathcal{A}_X \to [0,1]$, we will have
 $$
 H(X)= \sum_x P_X(x) \log\left(\frac{1}{P_X(x)}\right).
 $$
-Furthermore, let us define the conditional entropy of two random variables as
+The entropy measures how much information is gained from a random observation of $X$ on average, and is usually thought of as a measure of the uncertainty or disorder in the distribution $P_X$. Its unit is usually defined as the {\em bit}, derived from binary digit, when the logarithm is taken in base 2. So, a distribution where we have $P_X(x^*) = 1$ for some $x^*$ and $P_X(x) = 0$ for all other $x\neq x^*$ would have an entropy of $0$, since our measurement gives us an average information of $0$. The outcome $x^*$ is completely non-informative, and all other outcomes, while infinitely informative have a zero probability of happening.\par
+It can also easily be seen that in the absence of other constraints, if the set of outcomes $\mathcal{A}_X$ is finite, the entropy is maximized by the uniform distribution over outcomes $x$, which would give us the maximal average information per observation of the variable $X$\footnote{We provide a short demonstration in \fref{app:entropy}}. In information theory, the entropy provides the number of bits it takes, on average, to specify an outcome of the random variable $X$.\par
+We can now define the conditional entropy of two random variables $X$ and $Y$ as
 $$
 H(Y|X) = \sum_x P_X(x) \sum_y P_Y(y|x) \log\left(\frac{1}{P_Y(y|x)}\right),
 $$
-i.e. the conditional entropy is the average entropy of $Y$ given $X$, averaged over $X$. Let us also define the mutual information between $Y$ and $X$ as
+i.e. the conditional entropy is the average entropy of $Y$ given $X$, averaged over $X$. This gives us the remaining uncertainty in $Y$ after $X$ has been observed averaged over all outcomes of $X$, or alternatively, the number of bits required to code for an outcome of $Y$ given an outcome of $X$, on average. Let us also define the mutual information between $Y$ and $X$ as
 $$
-I(X;Y) = H(Y) - H(Y|X).
+I(X;Y) = H(Y) - H(Y|X) = H(X) - H(X|Y) = I(Y;X).
 $$
-Shannon regarded a noisy communication channel as a set of two random variables, one representing the message to be transmitted ($X$) and another representing the message received ($Y$). The noise in the channel would then be given by the conditional distribution of received messages given the transmitted messages ($P_Y(Y|X)$). The capacity of this channel is then given by
+In line with our interpretation of the conditional entropy, this would give us the average reduction of uncertainty in $Y$ given the observation of $X$ or vice-versa. Note that, if we fix the distribution of $X$ (or $Y$), the mutual information is always maximized if the conditional entropy $H(X|Y)$ (or $H(Y|X)$, respectively) is minimized. It is easy to see that if $P_X(x|y)$ ($P_Y(y|x)$) is given by a one-to-one mapping between $X$ and $Y$, the conditional entropy is zero, as no uncertainty is left in $X$ after the observation of $Y$ (no uncertainty in $Y$ is left after the observation of $X$).\par
+Shannon regarded a noisy communication channel as a set of two random variables, one representing the codeword to be transmitted ($X$) and another representing the message received ($Y$). The noise in the channel would then be given by the conditional distribution of received messages given the transmitted codewords ($P_Y(y|x)$). The capacity of this channel is then given by
 $$
 C = \max_{P_X} I(X;Y).
 $$
+This is the maximum amount of information we can transmit through a noisy channel given by the distribution $P_Y(Y|X)$.
 The rate of a given code is given by the number of bits needed to represent $X$ divided by the number of bits needed to represent $Y$, so if to send a one-bit message $x$ we must transmit a three-bit codeword $y$, our code would have a rate of $1/3$.
 The noisy-channel coding theorem\cite{mackay2003information} then states
+\newtheorem{noisychannel}{Theorem}
 \begin{noisychannel}
 \label{thm:noisychannel}
 For every discrete memoryless channel with capacity $C$, for any $\epsilon>0$, any rate $R<C$, and for large enough $N$, there exists a code of length $N$ and rate $\leq R$ and a decoding algorithm such that the maximal probability of block error is $\epsilon$.
@@ -41,18 +46,13 @@ and it quantifies how {\em efficiently} a given code encodes codewords $x$ into 
 $$
 \mathcal{R} = 1 - \frac{H(X)}{C}= 1 - \frac{H(Y)}{C}.
 $$
-The limit given by \fref{thm:noisychannel} then gives us the perfect redundancy-free channel. The {\em efficient coding hypothesis}, first proposed by Barlow\cite{Barlow1961} states that sensory relays in the nervous system recode the	messages to reduce the redundancy in them. Assuming that the transmission is noiseless we can then decompose the redundancy into two terms\cite{Atick1992}
-$$
-\mathcal{R} = \frac{1}{C} \left(C - \sum_i H(X_i) \right) + \frac{1}{C}\left(\sum_i H(X_i) -H(X)\right).
-$$
-The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from correlations between the symbols $X_i$. This can provide different approaches towards optimizing the coding mechanisms in the nervous system. In one popular example, Simon Laughlin related the distribution of contrasts in the natural environment of the blowfly to the tuning function of the large monopolar cells (LMC's) in the blowfly's visual system\cite{Laughlin1981}.
-
-
-Since we are considering only one neuron, the analysis is somewhat simplified. Let us write the activity of the neuron as a function of the contrast $c$ as $o = g(c)$. We will then have that the redundancy of the firing is given by
+The limit given by \fref{thm:noisychannel} then gives us the perfect redundancy-free channel. The {\em efficient coding hypothesis}, first proposed by Barlow\cite{Barlow1961} states that sensory relays in the nervous system recode the	messages to reduce the redundancy in them. This allows us to relate the distribution of the codewords in nature, given by the stimulus statistics, to the firing statistics of the nervous system.\par
+In one popular example, Simon Laughlin related the distribution of contrasts in the natural environment of the blowfly to the tuning function of the large monopolar cells (LMC's) in the blowfly's visual system\cite{Laughlin1981}. These cells respond to the contrast level in a specific area of the visual field.
+Since we are considering only one neuron, the analysis is somewhat simplified. Let us also assume that the activity of the neuron $o$ can be restricted between no firing ($0$ Hz) and a maximal firing rate $o_max$. We can then write the activity of the neuron as a function of the contrast $c$ as $o = g(c)$. We will then have that the redundancy of the firing is given by
 $$
 \mathcal{R} = \frac{1}{C} \left(C - H(O) \right),
 $$
-which is maximized when all output levels are equally probable. Further, we can say that
+which is maximized when all output levels are equally probable. The transformation from contrasts to firing rates can be written as a simple change of variables and we have
 $$
 P(o) do = P(c) dc, \textrm{ and therefore } o(c) = o_{max} \int_{-1}^c P(c') dc',
 $$
@@ -63,6 +63,12 @@ as is shown in \fref{fig:laughlin}. This can be generalized to a number of cases
 \label{fig:laughlin}
 \caption{The response function of the blowfly LMC closely resembles the cumulative distribution of visual contrasts in its natural environment. Figure taken from Laughlin, 1981}
 \end{marginfigure}
+
+Assuming that the transmission is noiseless we can then decompose the redundancy into two terms\cite{Atick1992}
+$$
+\mathcal{R} = \frac{1}{C} \left(C - \sum_i H(X_i) \right) + \frac{1}{C}\left(\sum_i H(X_i) -H(X)\right).
+$$
+The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from correlations between the symbols $X_i$. This can provide different approaches towards optimizing the coding mechanisms in the nervous system. 
 
 \section{Dynamic Population Coding}
 
