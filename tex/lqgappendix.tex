@@ -1,0 +1,36 @@
+If we extend the LQG problem to the multidimensional case we will have the system dynamics
+$$
+dX_t = (A X_t + B u_t) dt + H dW_t,
+$$
+where $X_t \in \mathcal{R}^n$, $u_t \in \mathcal{R}^m$, $dW_t \in \mathcal{R}^n$, $A \in \mathcal{R}^{n^2}$, $B \in \mathcal{R}^{nm}$ and $H\in \mathcal{R}^{n^2}$ and positive-definite. We can then write the path cost function as
+$$
+c(X,u,t) = \frac{1}{2} u^\top R(t) u + \frac{1}{2} X^\top Q(t) X,
+$$
+and final cost
+$$
+h(X) = \frac{1}{2} X^\top Q_T X,
+$$
+where $R: \mathcal{R} \to \mathcal{R}^{m^2}$ and $Q : \mathcal{R}\to \mathcal{R}^{n^2}$ are positive-definite for all $t$.
+The HJB equation then becomes
+$$
+-\frac{\partial V}{\partial t} = \min_{u_t} \left[\frac{1}{2} u_t^\top R(t) u_t + \frac{1}{2} X^\top Q(t) X_t + \frac{\partial V}{\partial X}^\top \left(AX_t  + Bu_t\right) + tr\left(\frac{\partial^2 V}{\partial X^2} H H^\top\right)\right].
+$$
+Minimization then yields
+$$
+u^*_t = - R^{-1} B^\top \frac{\partial V}{\partial X}.
+$$
+Inserting it back we obtain
+$$
+-\frac{\partial V}{\partial t} =-\frac{1}{2} \frac{\partial V}{\partial X}^\top B R^{-1} B^\top \frac{\partial V}{\partial X}+ \frac{1}{2} X^\top Q(t) X_t + \frac{\partial V}{\partial X}^\top AX_t +  tr\left(\frac{\partial^2 V}{\partial X^2} H H^\top\right).
+$$
+Then, again assuming that $V(X,t) = X^\top S(t) X + \alpha(t)^\top X + \beta(t)$, we obtain
+$$
+-\dot{S} = \frac{1}{2} Q(t) - S(t) B R(t)^{-1} B^\top S(t) + S(t) A + A^\top S(t),
+$$
+$$
+-\dot{\alpha} = A^\top \alpha(t) - S(t) BR(t)^{-1} B^\top \alpha(t)
+$$
+$$
+-\dot{\beta} =  tr\left(S H^\top H\right),
+$$
+where the equation for $S(t)$ is the differential matrix Riccati equation. These must be solved backwards under the boundary conditions $S(T) = Q_T$, $\alpha(T)=0$, $\beta(t) = 0$.

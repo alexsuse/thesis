@@ -1,0 +1,27 @@
+\documentclass[11pt, oneside]{tufte-handout}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+\usepackage[plain]{fancyref}								% TeX will automatically convert eps --> pdf in pdflate
+\usepackage{amsmath}
+\usepackage{mathtools}	
+\usepackage{amssymb}
+\usepackage{amsthm}				% TeX will automatically convert eps --> pdf in pdflatex
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\usepackage{amssymb}
+
+\title{Control with Poisson Observations}
+\author{Alex Susemihl}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\input{tex/control.tex}
+%\section{}
+%\subsection{}
+
+
+%\section{References}
+\bibliography{library}{}
+\bibliographystyle{apalike}
+\end{document}  

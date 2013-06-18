@@ -1,0 +1,259 @@
+\newthought{Clearly the nervous system is not solely interested in estimating the state of the world.} Furthermore, if that estimate is not useful for making decisions and taking actions in a dynamic environment, there is little use for it. In the previous chapter I have discussed findings for spiking codes in an estimation context. In this chapter I will extend this approach to the framework of stochastic optimal control, and discuss how to reframe the findings in this context.\par
+
+The field of control theory is concerned with the steering and controlling of systems, always with the minimization of a cost (or maximization of a reward) in mind. Speaking mathematically, given a system $X$, with dynamics given by
+$$
+\dot{X}_t = f(X_t,u_t),
+$$
+we would like to select the control variables $u_t$ in such a way as to minimize an integrated cost function over time
+$$
+C(X,u,t) = \int_{t}^T c(X_s,u_s,s) ds.
+$$
+The solution of a control problem is frequently given as a policy $\pi$, a function of the state space to the space of controls. One would have\marginnote{The minimum of the future cost over the space of controls is called the value function $V(X,t)$.}
+$$
+\min_u C(X,u,t) = C(X,\pi(X),t) \equiv V(X,t).
+$$
+Clearly this formulation is too broad to allow for any useful development. One general remark to be made, though, is one first made by Richard Bellman. Bellman\cite{Bellman1952} proposed an optimality principle\marginnote{Bellman's principle of optimality}, which stated that if a given policy is an optimal solution to a control problem, than the policy resulting after a number of steps of that policy must still be optimal for the remaining control problem as well. This can be formulated as a mathematical equation, the so-called Bellman equation or dynamic programming equation, which states that the minimal future cost in state $X_t$ at time $t$ is given by the minimum over $u_t$ of the instantaneous cost plus the minimal future cost at the resulting future state $X_{t+dt}$. Mathematically, we have
+$$
+V(X_t,t) = \min_{u_t} \left[ c(X_t,u_t,t) dt +V(X_{t+dt},t+dt)\right].
+$$
+Note that in general, $X_{t+dt}$ will depend on $u_t$, making the solution of the Bellman equation difficult.\par
+In continuous time, one can assume differentiability of the value function $V$ in both its arguments to obtain the Hamilton-Jacobi-Bellman equation\marginnote{We will abbreviate the Hamilton-Jacobi-Bellman equation as HJB equation.}. We have
+$$
+V(X_t,t) = \min_{u_t} \left[c(X_t,u_t,t) dt + V(X,t) + \frac{\partial V}{\partial t} dt + \frac{\partial V}{\partial X} dX_t \right],
+$$
+which gives us then
+$$
+-\frac{\partial V}{\partial t} = \min_{u_t} \left[c(X_t,u_t,t) + \frac{\partial V}{\partial X} f(X_t,u_t) \right].
+$$
+This is often more convenient to solve, as it sometimes allows for explicit minimization over the control.
+
+\section{Stochastic Optimal Control}
+
+The world is a noisy place, and if we want to control real-world systems, we must be able to account for noise in the systems as well. One simple way to include noise is to generalize the system dynamics to a stochastic differential equation. We would then have
+$$
+dX_t = f(X_t,u_t) dt + \sigma dW_t,
+$$
+where $dW_t$ is a zero mean, unit variance Wiener process.
+The HJB equation can then be calculated through It\=o's lemma, yielding
+$$
+-\frac{\partial V}{\partial t} = \min_{u_t} \left[c(X_t,u_t,t) + \frac{\partial V}{\partial X} f(X_t,u_t) + \sigma \frac{\partial^2 V}{\partial X^2} \right].
+$$
+Note that we could also have a Poisson process as a noise source. If we take, for example, a Poisson counting process $N_t$, with time-dependent rate $\lambda(t)$, and take the system dynamics to be
+$$
+dX_t = f(X_t,u_t) dt + \sigma dW_t + h(X,t) dN_t,
+$$
+we would have then, similarly
+$$
+-\frac{\partial V}{\partial t} = \min_{u_t} \left[c(X,u_t,t) + \frac{\partial V}{\partial X} f(X_t,u_t) + \frac{\sigma}{2} \frac{\partial^2 V}{\partial X^2} + \lambda(t) \left(V(X+h(X,t),t)-V(X,t)\right)\right],
+$$
+now including the terms regarding the jump process.\cite{Theodorou2012,Sennewald2006} I will use this formalism to treat a simple control problem where the observations are taken from a spike train of Gaussian-tuned Poisson neurons.
+
+\section{Linear-Quadratic-Gaussian Control}
+
+The simplest stochastic control problem, is the case of a linear stochastic differential equation with linear steering and quadratic costs both in the control as in the state variables. This would mean that the evolution of the state is given by the SDE
+\begin{equation}
+\label{eq:ctl_diff_dyn}
+dX_t = \left(a X_t + b u_t\right) dt + \sigma dW_t,
+\end{equation}
+where $W_t$ is a Wiener process. Taking a path cost given by $c(X,u,t) = \frac{1}{2} r(t) u^2 + \frac{1}{2} q(t) X^2$, and a final cost given by $h(X) = \frac{1}{2} Q_T X^2$, we can solve the problem explicitly, using the HJB equation. The HJB equation will be given by
+$$
+-\frac{\partial V}{\partial t} = \min_{u_t} \left[\frac{1}{2} r(t) u_t^2 + \frac{1}{2} q(t) X_t^2 + \frac{\partial V}{\partial X} \left(aX_t  + bu_t\right) + \frac{1}{2}\sigma^2 \frac{\partial^2 V}{\partial X^2} \right].
+$$
+We can minimize the right hand side explicitly and eliminate $u_t$ from the equation. We obtain that the optimal value of the control is given by
+$$
+u^*_t = -\frac{b}{r(t)} \frac{\partial V}{\partial X}.
+$$
+Inserting into the HJB equation once more, we obtain
+$$
+-\frac{\partial V}{\partial t} = \frac{1}{2} q(t) X^2 +\frac{\partial V}{\partial X} a X - \frac{b^2}{2 r(t)} \left(\frac{\partial V}{\partial X}\right)^2 + \frac{1}{2}\sigma^2 \frac{\partial^2 V}{\partial X^2}.
+$$
+We note that $V$ can only have a quadratic dependence in $X$, and we therefore assume it is of the form $V(X,t) = S(t) X^2/2 + \alpha(t) X + k(t)$. We then obtain\marginnote{These equations generalize directly to the multidimensional case, see \ref{app:lqg}}
+$$
+-\dot{S} = \frac{1}{2} q(t) + a S(t) - \frac{b^2}{2 r(t) } S(t)^2,
+$$
+$$
+-\dot{\alpha} = a \alpha(t)-\frac{b^2}{r(t)} S(t)\alpha(t),
+$$
+$$
+-\dot{k} = \sigma^2 S(t)-\frac{b^2}{2 r(t)} \alpha^2(t),
+$$
+with the terminal conditions $S(T) = Q_T$, $\alpha(T) = 0$ and $k(T)=0$. Note that the $X$ independent term $k(t)$ accounts for the future uncertainty of $X$, decreasing to $0$ over time as we approach the final time $T$. Furthermore, the differential equation for $S(t)$ is a special case of the Riccati equation.\footnote{See \ref{app:lqg} for a full account of the Riccati equation} These results can also be extended to the case of control- and state-dependent diffusion noise, affine dynamics and some other issues. For a more complete review, we refer to the work of Kappen\cite{Kappen2011}.
+
+\section{Partially Observable Processes}
+
+In general, one does not have access to the exact state of the system, and it is useful to consider cases where we are only given noisy observations of the state, as we have considered in the previous chapters. The most commonly considered case of partially observable control problem is a LQG problem observed through a second diffusion process. Suppose we have as above a system $X_t$ evolving according to equation \fref{eq:ctl_diff_dyn}, but instead of observing $X_t$ directly, we observe the process $Y_t$, which I shall call the observation process, which evolves according to
+\begin{equation}
+\label{eqn:ctl_obs_dyn}
+dY_t = c X_t dt + \eta^{1/2} dV_t.
+\end{equation}
+Given a control trajectory ${u_s, s\in [0,t]}$, the problem of estimating $X_t$ given observations ${Y_s, s \in [0,t]}$, is a simple filtering problem, and is solved exactly by the Kalman-Bucy filter. We will have a Gaussian estimate of $X_t$ with mean $\mu(t)$ and variance $\Sigma(t)$, where $\mu$ and $\Sigma$ evolve according to
+\begin{subequations}
+\begin{equation}
+d\mu = (a \mu + b u)dt + \Sigma(t) c^t \eta^{-1} \left(dY_t - c\mu dt\right),
+\label{eq:ctl_kalman_bucy_mean}
+\end{equation}
+and
+\begin{equation}
+\label{eq:ctl_kalman_bucy_var}
+\frac{d\Sigma}{dt} = a \Sigma + \Sigma a^\top + \sigma^\top \sigma - \Sigma c^\top \eta^{-1} c \Sigma.
+\end{equation}
+\end{subequations}
+Since in this case we do not have perfect information on the process to be controlled, we have to settle for the goal of minimizing the expected cost given our observation. Therefore, we have the cost to be minimized
+$$
+C(u_{t_0:T};\mu_0,\Sigma_0) = E\left(\int_{t_0}^T c(X_t,u_t,t)dt +h(X_T)\right).
+$$
+There is no analogous to the HJB equation for the incomplete information case, but we can reformulate the problem as a control problem over the belief states, that is the state of the world as we are led to believe it is distributed given the previous observations\marginnote{The belief state is a description of an system with incomplete information which eschews describing the actual state of the system, instead describing the distribution over states. A general formulation is described in \citep{bertsekas2012}.}. In the case I am discussing, the belief state is the distribution over the state variable, given by the Gaussian distribution $\mathcal{N}(\mu(t),\Sigma(t))$. The dynamics of the belief state is then given by equations \fref{eq:ctl_kalman_bucy_mean} and \fref{eq:ctl_kalman_bucy_var}. Note that when we choose to describe the system in terms of the mean and variance of the posterior distribution, the noise process $dW_t$ does not enter into the analysis anymore, and the observation process $dY_t$ takes the role of the noise process. We need, however, to redefine the cost function $c(X_t,u_t,t)$ to fully specify the problem. We have that
+$$
+\left<c(X_t,u_t,t)\right>_{\mu(t),\Sigma(t)} = \frac{1}{2} u_t^\top R(t) u_t + \frac{1}{2}\left(\mu(t)^\top Q(t) \mu(t) + tr\left(Q(t)\Sigma(t)\right)\right).
+$$
+We can now write the HJB equation for this system. We have
+$$
+-\frac{\partial V(\mu(t),\Sigma(t),t)}{\partial t} = \min_{u_t} \left[\frac{1}{2} u_t^\top R(t) u_t+\frac{1}{2}\left(\mu(t)^\top Q(t) \mu(t) + tr\left(Q(t)\Sigma(t)\right)\right)+V(\mu(t+dt),\Sigma(t+dt),t+dt)\right].
+$$
+Taking now the variation of $V$ with infinitesimal time increments via It\=o's lemma and minimizing over $u_t$, we have
+$$
+dV = \frac{\partial V}{\partial t} dt + \frac{\partial V}{\partial \mu}d\mu + \frac{\partial V}{\partial \Sigma}d\Sigma + (\Sigma^{1/2}c^{\top}c\Sigma^{1/2}+\eta)_{i,j} \frac{\partial^2 V}{\partial \mu_i \partial \mu_j}
+$$
+
+\section{Partially Observable Processes with Poisson Observations}
+
+Similarly to the case just discussed, we can consider the case of a stochastic system observed through a population of densely tuned Poisson processes with Gaussian tuning functions. The dynamics of the system would be the same as \fref{eq:ctl_diff_dyn}, but the observation processes would be given by a set of $M$ Poisson processes $N^m$ with rates given by
+\begin{equation}
+\label{eq:ctl_poisson_rate}
+\lambda^m(X_t) = \lambda \exp\left[-\frac{1}{2}(\theta^m-X_t)^\top A^{-1} (\theta^m-X_t)\right].
+\end{equation}
+As we have shown in \fref{chap:filtering}, the estimation problem is solved by the point-process analog of the Kalman-Bucy filter, first derived by Donald Snyder and used extensively since\cite{Snyder1972,Yaeli2010}. In our case, with Gaussian tuning functions, we would have the filtering equations given by
+\begin{subequations}
+\begin{equation}
+\label{eq:ctl_poisson_mean}
+d\mu_t = (a\mu_t + b u_t) dt + \sum_m dN^m_t \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \left(\theta_m - \mu_t\right) 
+\end{equation}
+and
+\begin{equation}
+\label{eq:ctl_poisson_var}
+d\Sigma_t =\left(a \Sigma_t + \Sigma_t a^\top + \sigma^\top\sigma\right)dt - dN_t \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \Sigma_t,
+\end{equation}
+\end{subequations}
+
+where $dN_t = \sum_m dN^m_t$. We will define 
+$$\delta \mu_t \equiv (a\mu_t + b u_t) dt$$ as the continuous part of $d\mu_t$ and 
+$$\Delta^m \mu_t \equiv \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \left(\theta_m - \mu_t\right)$$ as the jump part of $d\mu_t$. Likewise we define
+$$\delta\Sigma_t \equiv (a\Sigma_t + \Sigma_t a^\top + \sigma^\top \sigma)dt$$ and $$\Delta\Sigma_t \equiv \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \Sigma_t.$$\par
+These give us the evolution of the optimal Bayesian filter, provided the total rate of all the processes $\lambda (t) = \sum_m \lambda^m(X_t)$, is independent of $X_t$. The posterior distribution over $X_t$ given $\{N^m_s, m\in [1,\ldots,M], s\in[t_0,t]\}$, is then the normal distribution $\mathcal{N}(X_t;\mu_t,\Sigma_t)$. Assuming we are trying to minimize a cost given by the same cost rate $c(X_t,u_t,t)$ as before, we can write out the infinitesimal Bellman equation for this case as well. Since the dynamics of system and observations is Markov, we can use the posterior distribution as a sufficient statistic for our knowledge of the system. We will therefore take our belief state to be the mean and variance of our posterior distribution as before.\footnote{see \citep{bertsekas2012} for a more detailed discussion}
+Similarly to the previous sections, we will consider the processes $N^m_t$ as noise to be averaged over in the future. We will then have
+$$
+V(\mu_t,\Sigma_t,t)= \min_{u_t} \left[E\left(c(X_t,u_t,t)\right)_{\mu_t,\Sigma_t} + E\left(V(\mu_{t+dt},\Sigma_{t+dt},t+dt)\right)_{N^m_t}\right]
+$$
+We can write out, according to It\=o's lemma
+\begin{eqnarray*}
+V(\mu_{t+dt},\Sigma_{t+dt},t+dt) =& V(\mu_t,\Sigma_t,t) + \frac{\partial V}{\partial t}dt + \frac{\partial V}{\partial \mu} \delta\mu_t +\frac{\partial V}{\partial \Sigma} \delta \Sigma_t\\ &+ \sum_m dN^m_t\left[V\left(\mu_t +\Delta^m\mu_t , \Sigma_t+\Delta\Sigma_t,t\right)-V(\mu_t,\Sigma_t,t)\right].
+\end{eqnarray*}
+The expectation over the noise process $N^m_t$ in the Bellman can then be written as
+\begin{eqnarray*}
+E(V_{t+dt})_{N^m_t} =&V_t + \frac{\partial V}{\partial t}dt + \frac{\partial V}{\partial \mu} \delta\mu_t +\frac{\partial V}{\partial \Sigma} \delta \Sigma_t\\ &+ \sum_m E\left(dN^m_t\left[V\left(\mu_t +\Delta^m\mu_t , \Sigma_t+\Delta\Sigma_t,t\right)-V(\mu_t,\Sigma_t,t)\right]\right)_{N^m_t} 
+\end{eqnarray*}
+\begin{eqnarray*}
+ =&V_t + \frac{\partial V}{\partial t}dt + \frac{\partial V}{\partial \mu} \delta\mu_t +\frac{\partial V}{\partial \Sigma} \delta \Sigma_t\\ &+ \sum_m E(\lambda^m(X_t))_{\mu_t,\Sigma_n} \left[V\left(\mu_t +\Delta^m\mu_t , \Sigma_t+\Delta\Sigma_t,t\right)-V(\mu_t,\Sigma_t,t)\right],
+\end{eqnarray*}
+leading to the HJB equation
+\begin{eqnarray}
+-\frac{\partial V}{\partial t} &=\frac{1}{2}\mu^\top Q(t)\mu + tr\left(Q(t) \Sigma\right) +\frac{1}{2} (u_t^*)^\top R(t) u_t^*  + \frac{\partial V}{\partial \mu} \delta\mu +\frac{\partial V}{\partial \Sigma} \delta \Sigma \\
+&+\sum_m E(\lambda^m(X_t))_{\mu_t,\Sigma_n} \left[V\left(\mu_t +\Delta^m\mu_t , \Sigma_t+\Delta\Sigma_t,t\right)-V(\mu_t,\Sigma_t,t)\right]\nonumber,
+\end{eqnarray}
+where
+\[
+u_t^* = -R(t)^{-1} b^\top \frac{\partial V}{\partial \mu}\bigg|_{\mu=\mu_t,\Sigma=\Sigma_t}.
+\]
+This then leads to
+\begin{eqnarray}
+-\frac{\partial V}{\partial t} =&\frac{1}{2}\mu^\top Q(t)\mu + tr\left(Q(t) \Sigma\right) -\frac{1}{2} \frac{\partial V}{\partial \mu}^\top b R(t)^{-1} b^\top \frac{\partial V}{\partial \mu}  + \frac{\partial V}{\partial \mu} a \mu  \\
+&+\frac{\partial V}{\partial \Sigma} \delta \Sigma+\sum_m E(\lambda^m(X_t))_{\mu_t,\Sigma_n} \left[V\left(\mu_t +\Delta^m\mu_t , \Sigma_t+\Delta\Sigma_t,t\right)-V(\mu_t,\Sigma_t,t)\right]\nonumber.
+\end{eqnarray}
+Note that it can be shown by induction that the cost function is of form $V(\mu,\Sigma,t) =\frac{1}{2} \mu^\top S(t) \mu + f(\Sigma,t)$, given that it is of this form at the final time $T$. We can then obtain equations for $S(t)$ and $f$. We will have
+\begin{equation}
+\label{eq:riccatti}
+-\dot{S}(t) = Q(t) - S(t) b R(t)^{-1} b^\top S(t) + S(t) a + a^\top S(t)
+\end{equation}
+and
+\begin{equation}
+-\frac{\partial f}{\partial t} = \frac{1}{2} tr\left(Q(t) \Sigma\right) + \frac{\partial f}{\partial \Sigma} \left(a\Sigma + \Sigma a^\top + \sigma^\top\sigma\right) + \bar{\lambda} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) +\frac{1}{2} tr\left((\Sigma^{-1}+A^{-1})^{-1}A^{-1}\Sigma S(t)\right)\right].
+\label{eq:f_variance}
+\end{equation}
+Note that \fref{eq:riccatti} is a matrix Riccatti equation, as is found in the usual LQG problem. \Fref{eq:f_variance} gives the contribution of the uncertainty of the estimate to the future costs.
+\subsection{A Feynman-Kac formulation for the Uncertainty cost}
+
+Note that the PDE for $f$ can be solved via the Feynman-Kac formula. We define the jump process
+\[
+d\rho_s = (a\rho_s + \rho_s a^\top  + \sigma^\top \sigma) dt + \Delta \rho_s dN_t.
+\]
+Defining then
+\[
+Y_t = f(\rho_t,t) + \frac{1}{2} \int_t^T \left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left((\rho_s^{-1}+A^{-1})^{-1}A^{-1}\rho_s S(s)\right)\right]ds,
+\]
+we have
+\[
+dY_t = df + \frac{1}{2}\left[tr\left(Q(t)\rho_t\right)+ \bar{\lambda} tr \left((\rho_s^{-1}+A^{-1})^{-1}A^{-1}\rho_s S(t)\right)\right]dt.
+\]
+Via the It\=o Lemma, we have
+\[
+df =\left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top) + \hat{\lambda} \Delta f \right) dt+ d J(f)_s,
+\]
+where 
+\[
+\Delta f_s = f(\rho_s + \Delta \rho_s,s) - f(\rho_,s),
+\]
+is the jump incurred in $f$ when there is a jump in $\rho_s$ and $dJ(f)_s$ is the compensated process
+\[
+dJ(f)_s = dN_t \Delta f_s - \hat{\lambda} \Delta f_s dt.
+\]
+We will then have
+\[
+dY_t = \left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top) + \hat{\lambda} \Delta f + \frac{1}{2}tr\left(Q(t)\rho_t\right)+ \frac{\bar{\lambda}}{2} tr \left((\rho_t^{-1}+A^{-1})^{-1}A^{-1}\rho_t S(t)\right)\right)dt + dJ(f)_t.
+\]
+Note that the term in parentheses is zero, as $f$ is a solution to \fref{eq:f_variance}. Therefore, we can integrate $Y_t$ from $t$ to $T$, obtaining
+\[
+Y_T = Y_t + \int_t^T dJ(f)_s.
+\]
+Taking the average with respect to the paths of process $\rho_s$ we obtain
+\[
+E\left[Y_T|\rho_t=\Sigma\right]=E\left[Y_t|\rho_t=\Sigma\right] + E\left[\int_t^T dJ(f)_s|\rho_t=\Sigma\right],
+\]
+where the second term on the rhs vanishes, since $dJ(f)_s$ is a compensated process. We then obtain the Feynman-Kac formula for $f$
+\begin{equation}
+f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + E\left[\int_t^T\left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left((\rho_s+A)^{-1}\rho_s^2 S(s) \right)\right]ds \middle| \rho_t=\Sigma\right].
+\end{equation}
+Note now, that the evolution of $\left<\Sigma_t\right>$ is given by
+\[
+\pd{\left<\Sigma_t\right>}{t} = a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top- \bar{\lambda}\left< (\Sigma_t + A)^{-1} \Sigma_t^2\right>,
+\]
+therefore, we can use this expression to directly estimate the trace average in the equation for $f$. We have therefore
+\[
+\bar{\lambda} tr\left(\left< (\Sigma_t + A)^{-1} \Sigma_t^2\right>S(t)\right) = tr\left[\left(-\pd{\left<\Sigma_t\right>}{t} + a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top\right)S(t)\right]. 
+\]
+This prevents us from having to calculate expensive matrix inversions and allows us to write
+\[
+f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + \int_t^T\left[ tr\left((Q(s)+S(s)a + a^\top S(s))E^t_{\Sigma}(\rho_s)\right)-tr\left( \pd{E^t_\Sigma(\rho_s)}{s} S(s)\right)\right]ds,
+\]
+where we have written
+\[
+E^t_\Sigma(X) = E[X|\rho_t=\Sigma].
+\]
+Note that we can apply integration by parts to the last term to obtain
+\[
+\int_t^T tr\left( \pd{E^t_\Sigma(\rho_s)}{s} S(t)\right) = tr(E^t_\Sigma(\rho_s) S(s)\big|_t^T) - \int_t^T E^t_\Sigma(\rho_s) \dot{S}(s)ds.
+\]
+$\dot{S}$ in turn is given by the Riccatti equation, and results in
+\[
+\int_t^T tr\left( \pd{E^t_\Sigma(\rho_s)}{s} S(t)\right) =  tr(E^t_\Sigma(\rho_s) S(s)\big|_t^T) + \int_t^T E^t_\Sigma(\rho_s) (Q(s) + S(s) a + a^\top S(s) -S(s) b^\top R(s)^{-1} b S(s)ds.
+\]
+We then obtain
+\[
+f(\Sigma,t)  = tr\left(\Sigma_t S(t)\right) + \int_t^T tr \left(S(s) b^\top R(s)^{-1}b S(s) E^t_\Sigma(\rho_s)\right) ds
+\]
+
+For the one-dimensional problem this becomes
+\[
+f(\Sigma,t) = S(t) \Sigma + \int_t^T \frac{b^2 S(s)^2 E^t_\Sigma(\rho_s)}{R(s)}ds 
+\]
+%\section{The Point Process Controller}
+

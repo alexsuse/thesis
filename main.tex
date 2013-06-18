@@ -1,13 +1,18 @@
-\documentclass[justified,notitlepage]{tufte-book}   	% use "amsart" instead of "article" for AMSLaTeX format
+\documentclass[justified,notitlepage]{tufte-book}   	
+% use "amsart" instead of "article" for AMSLaTeX format
 %\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
 %\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{appendix}
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
-\usepackage[plain]{fancyref}								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage[plain]{fancyref}								% TeX will automatically convert eps --> pdf in pdflate
+\usepackage{amsmath}
+\usepackage{mathtools}	
 \usepackage{amssymb}
 \usepackage{amsthm}
+
+%\newcommand*{\fancyrefthmlabelprefix}{eq}
 \newcommand*{\fancyrefthmlabelprefix}{thm}
 \frefformat{plain}{\fancyrefthmlabelprefix}{theorem~#1}
 \Frefformat{plain}{\fancyrefthmlabelprefix}{Theorem~#1}
@@ -47,11 +52,7 @@
 
 \label{chap:control}
 
-\section{Stochastic Optimal Control}
-
-\section{Linear-Quadratic-Gaussian Control}
-
-\section{The Point Process Controller}
+\input{tex/control.tex}
 
 \chapter{Optimal Population Coding Revisited}
 
@@ -78,5 +79,8 @@
 \chapter{Proofs}
 \section{The entropy is maximized by a uniform distribution}
 \label{app:entropy}
+\section{LQG Control: The Multidimensional Case}
+\label{app:lqg}
+\input{tex/lqgappendix.tex}
 \end{appendices}
 \end{document}  
