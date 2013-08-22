@@ -12,6 +12,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 
+
 %\newcommand*{\fancyrefthmlabelprefix}{eq}
 \newcommand*{\fancyrefthmlabelprefix}{thm}
 \frefformat{plain}{\fancyrefthmlabelprefix}{theorem~#1}
@@ -19,6 +20,8 @@
 \newcommand*{\fancyrefapplabelprefix}{app}
 \frefformat{plain}{\fancyrefapplabelprefix}{appendix~#1}
 \Frefformat{plain}{\fancyrefapplabelprefix}{Appendix~#1}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+
 \title{Optimal Population Coding of Dynamic Stimuli}
 \author{Alex Kunze Susemihl}
 %\date{}							% Activate to display a given date or no date
@@ -34,6 +37,8 @@
 \chapter{Filtering and Prediction with Point Process Observations}
 
 \label{chap:filtering}
+
+\input{tex/filtering.tex}
 
 \section{Fast Population Coding}
 
