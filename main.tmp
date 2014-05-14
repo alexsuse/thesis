@@ -4,7 +4,7 @@
 \setupsystem[\c!n=1,\c!m=1]
 \setupsystem[\c!method=2]
 \setupsystem[\c!type=macosx]
-\setupsystem[\c!random=467]
+\setupsystem[\c!random=304]
 \setupsystem[inputfile=main.tex]
 \startsetups *runtime:options
 \setupoutput[pdftex]

@@ -14,6 +14,22 @@ url = {http://www.ncbi.nlm.nih.gov/pubmed/9950724},
 volume = {11},
 year = {1999}
 }
+@article{Zakai1969,
+year={1969},
+issn={0044-3719},
+journal={Zeitschrift f\"ur Wahrscheinlichkeitstheorie und Verwandte Gebiete},
+volume={11},
+number={3},
+doi={10.1007/BF00536382},
+title={On the optimal filtering of diffusion processes},
+url={http://dx.doi.org/10.1007/BF00536382},
+publisher={Springer-Verlag},
+author={Zakai, Moshe},
+pages={230-243},
+language={English}
+}
+
+
 @article{Ahmadian2011,
 abstract = {Stimulus reconstruction or decoding methods provide an important tool for understanding how sensory and motor information is represented in neural activity. We discuss Bayesian decoding methods based on an encoding generalized linear model (GLM) that accurately describes how stimuli are transformed into the spike trains of a group of neurons. The form of the GLM likelihood ensures that the posterior distribution over the stimuli that caused an observed set of spike trains is log concave so long as the prior is. This allows the maximum a posteriori (MAP) stimulus estimate to be obtained using efficient optimization algorithms. Unfortunately, the MAP estimate can have a relatively large average error when the posterior is highly nongaussian. Here we compare several Markov chain Monte Carlo (MCMC) algorithms that allow for the calculation of general Bayesian estimators involving posterior expectations (conditional on model parameters). An efficient version of the hybrid Monte Carlo (HMC) algorithm was significantly superior to other MCMC methods for gaussian priors. When the prior distribution has sharp edges and corners, on the other hand, the "hit-and-run" algorithm performed better than other MCMC methods. Using these algorithms, we show that for this latter class of priors, the posterior mean estimate can have a considerably lower average error than MAP, whereas for gaussian priors, the two estimators have roughly equal efficiency. We also address the application of MCMC methods for extracting nonmarginal properties of the posterior distribution. For example, by using MCMC to calculate the mutual information between the stimulus and response, we verify the validity of a computationally efficient Laplace approximation to this quantity for gaussian priors in a wide range of model parameters; this makes direct model-based computation of the mutual information tractable even in the case of large observed neural populations, where methods based on binning the spike train fail. Finally, we consider the effect of uncertainty in the GLM parameters on the posterior estimators.},
 author = {Ahmadian, Yashar and Pillow, Jonathan W and Paninski, Liam},
@@ -2124,12 +2140,17 @@ title = {{Dynamic Stimulus Reconstruction from Noisy Spike Trains}},
 year = {2012}
 }
 @article{Susemihl2012a,
-author = {Susemihl, Alex and Meir, Ron and Opper, Manfred},
-file = {:Users/alex/Documents/Mendeley Desktop/Susemihl, Meir, Opper - 2012 - Dynamic State Estimation Based on Poisson Spike Trains - Towards a Theory of Optimal Encoding (submitted for rewiew).pdf:pdf},
-journal = {Journal of Statistical Mechanics: Theory and Experiment},
-title = {{Dynamic State Estimation Based on Poisson Spike Trains - Towards a Theory of Optimal Encoding (submitted for rewiew)}},
-year = {2012}
+  author={Alex Susemihl and Ron Meir and Manfred Opper},
+  title={Dynamic state estimation based on Poisson spike trains: towards a theory of optimal encoding},
+  journal={Journal of Statistical Mechanics: Theory and Experiment},
+  volume={2013},
+  number={03},
+  pages={P03009},
+  url={http://stacks.iop.org/1742-5468/2013/i=03/a=P03009},
+  year={2013},
+  abstract={Neurons in the nervous system convey information to higher brain regions by the generation of spike trains. An important question in the field of computational neuroscience is how these sensory neurons encode environmental information in a way which may be simply analyzed by subsequent systems. Many aspects of the form and function of the nervous system have been understood using the concepts of optimal population coding. Most studies, however, have neglected the aspect of temporal coding. Here we address this shortcoming through a filtering theory of inhomogeneous Poisson processes. We derive exact relations for the minimal mean squared error of the optimal Bayesian filter and, by optimizing the encoder, obtain optimal codes for populations of neurons. We also show that a class of non-Markovian, smooth stimuli are amenable to the same treatment, and provide results for the filtering and prediction error which hold for a general class of stochastic processes. This sets a sound mathematical framework for a population coding theory that takes temporal aspects into account. It also formalizes a number of studies which discussed temporal aspects of coding using time-window paradigms, by stating them in terms of correlation times and firing rates. We propose that this kind of analysis allows for a systematic study of temporal coding and will bring further insights into the nature of the neural code.}
 }
+	
 @inproceedings{Susemihl2012,
 address = {M\"{u}nchen},
 author = {Susemihl, Alex and Meir, Ron and Opper, Manfred},

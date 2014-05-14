@@ -1,5 +1,11 @@
 \newthought{Clearly the nervous system is not solely interested in estimating the state of the world.} Furthermore, if that estimate is not useful for making decisions and taking actions in a dynamic environment, there is little use for it. In the previous chapter I have discussed findings for spiking codes in an estimation context. In this chapter I will extend this approach to the framework of stochastic optimal control, and discuss how to reframe the findings in this context.\par
 
+\section{Estimation and the Separation Principle}
+
+In the previous two chapters, I have considered the filtering problem based on spike trains. More specifically, given a signal, we were looking for the optimal set of parameters for a population of neurons $\boldsymbol{\theta}^*$ that minimize the MSE of the filtering problem. If we are interested in controlling a system, say a limb performing a movement, the picture changes somewhat. It is very usual for control problem to use the separation principle\cite{Bar-Shalom1974} to develop approximate solutions to control problem. The separation principle considers a control problem with incomplete information as a sequence of two independent problems. The first one is to estimate the state from the observed processes. The second one is to solve some complete information control problem associated to the incomplete information problem we are considering. Then the separation approach to control would be to apply the complete information optimal control on the mean estimate of our state. This approach, and a stronger version of it, the Certainty Equivalence Principle, hold in a number of situations, making the separation principle one of the most important tools in control theory. However, even if one can separate both steps in the control setting, one can not expect optimal encoders for the filtering problem to yield optimal encoders for the control problem.\par
+I will in this chapter consider control problems where the system is observed through noisy spike trains. The optimal encoding strategies will in this case be the ones that minimize the control cost, not the MSE. Though these quantities turn out to be related when the state cost is quadratic, I will show a couple of simple examples where the MSE-optimal encoder is drastically different from the control-optimal encoder. Although these results are quite intuitive, as one expects sensory systems to devote more energy to coding for aspects of the environment which are important for their well-being or survival, this approach has been completely overlooked in the optimal population coding literature.
+
+\section{Optimal Control}
 The field of control theory is concerned with the steering and controlling of systems, always with the minimization of a cost (or maximization of a reward) in mind. Speaking mathematically, given a system $X$, with dynamics given by
 $$
 \dot{X}_t = f(X_t,u_t),
@@ -27,7 +33,7 @@ $$
 $$
 This is often more convenient to solve, as it sometimes allows for explicit minimization over the control.
 
-\section{Stochastic Optimal Control}
+\subsection{Stochastic Optimal Control}
 
 The world is a noisy place, and if we want to control real-world systems, we must be able to account for noise in the systems as well. One simple way to include noise is to generalize the system dynamics to a stochastic differential equation. We would then have
 $$
@@ -48,7 +54,7 @@ $$
 $$
 now including the terms regarding the jump process.\cite{Theodorou2012,Sennewald2006} I will use this formalism to treat a simple control problem where the observations are taken from a spike train of Gaussian-tuned Poisson neurons.
 
-\section{Linear-Quadratic-Gaussian Control}
+\subsection{Linear-Quadratic-Gaussian Control}
 
 The simplest stochastic control problem, is the case of a linear stochastic differential equation with linear steering and quadratic costs both in the control as in the state variables. This would mean that the evolution of the state is given by the SDE
 \begin{equation}
@@ -108,37 +114,45 @@ $$
 $$
 We can now write the HJB equation for this system. We have
 $$
--\frac{\partial V(\mu(t),\Sigma(t),t)}{\partial t} = \min_{u_t} \left[\frac{1}{2} u_t^\top R(t) u_t+\frac{1}{2}\left(\mu(t)^\top Q(t) \mu(t) + tr\left(Q(t)\Sigma(t)\right)\right)+V(\mu(t+dt),\Sigma(t+dt),t+dt)\right].
+V(\mu(t),\Sigma(t),t) = \min_{u_t} E\left[\frac{1}{2} u_t^\top R(t) u_t+\frac{1}{2}\left(\mu(t)^\top Q(t) \mu(t) + tr\left(Q(t)\Sigma(t)\right)\right)+V(\mu(t+dt),\Sigma(t+dt),t+dt)\right],
 $$
+where the expectation is now with respect to the observation process $Y(t)$.
 Taking now the variation of $V$ with infinitesimal time increments via It\=o's lemma and minimizing over $u_t$, we have
 $$
-dV = \frac{\partial V}{\partial t} dt + \frac{\partial V}{\partial \mu}d\mu + \frac{\partial V}{\partial \Sigma}d\Sigma + (\Sigma^{1/2}c^{\top}c\Sigma^{1/2}+\eta)_{i,j} \frac{\partial^2 V}{\partial \mu_i \partial \mu_j}
+dV = \frac{\partial V}{\partial t} dt + \frac{\partial V}{\partial \mu}^\top d\mu + Tr\left[\frac{\partial V}{\partial \Sigma}d\Sigma\right] + Tr\left[(\Sigma c^\top \eta c \Sigma)_{i,j} \frac{\partial^2 V}{\partial \mu^2}\right].
 $$
-
+Which leads to the HJB equation
+\[
+-\pd{V}{t} = \min_{u_t} E\left[\frac{1}{2} u_t^\top R(t) u_t+\frac{1}{2}\left(\mu(t)^\top Q(t) \mu(t) + tr\left(Q(t)\Sigma(t)\right)\right) +\frac{\partial V}{\partial \mu}d\mu^\top + Tr\left[\frac{\partial V}{\partial \Sigma}d\Sigma\right] + Tr\left[(\Sigma c^\top \eta c \Sigma)_{i,j} \frac{\partial^2 V}{\partial \mu^2}\right] \right].
+\]
+Minimization with respect to $u_t$ leads to $u^*_t = -R(t)^{-1} b^\top \pd{V}{\mu}$. We will then have
+\[
+-\pd{V}{t} = \mu^\top Q(t)\mu + \pd{V}{\mu}^\top b R(t) b^\top \pd{V}{\mu} + tr\left(Q(t)\Sigma(t)\right)\right) +\frac{\partial V}{\partial \mu}d\mu^\top + Tr\left[\frac{\partial V}{\partial \Sigma}d\Sigma\right] + Tr\left[(\Sigma c^\top \eta c \Sigma)_{i,j} \frac{\partial^2 V}{\partial \mu^2}\right] \right].
+\]
 \section{Partially Observable Processes with Poisson Observations}
 
 Similarly to the case just discussed, we can consider the case of a stochastic system observed through a population of densely tuned Poisson processes with Gaussian tuning functions. The dynamics of the system would be the same as \fref{eq:ctl_diff_dyn}, but the observation processes would be given by a set of $M$ Poisson processes $N^m$ with rates given by
 \begin{equation}
 \label{eq:ctl_poisson_rate}
-\lambda^m(X_t) = \lambda \exp\left[-\frac{1}{2}(\theta^m-X_t)^\top A^{-1} (\theta^m-X_t)\right].
+\lambda^m(X_t) = \lambda \exp\left[-\frac{1}{2}(\theta^m-X_t)^\top A^\dagger (\theta^m-X_t)\right].
 \end{equation}
 As we have shown in \fref{chap:filtering}, the estimation problem is solved by the point-process analog of the Kalman-Bucy filter, first derived by Donald Snyder and used extensively since\cite{Snyder1972,Yaeli2010}. In our case, with Gaussian tuning functions, we would have the filtering equations given by
 \begin{subequations}
 \begin{equation}
 \label{eq:ctl_poisson_mean}
-d\mu_t = (a\mu_t + b u_t) dt + \sum_m dN^m_t \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \left(\theta_m - \mu_t\right) 
+d\mu_t = (a\mu_t + b u_t) dt + \sum_m dN^m_t \Sigma_t \left(\Sigma_t + A\right)^{-1} \left(\theta_m - \mu_t\right) 
 \end{equation}
 and
 \begin{equation}
 \label{eq:ctl_poisson_var}
-d\Sigma_t =\left(a \Sigma_t + \Sigma_t a^\top + \sigma^\top\sigma\right)dt - dN_t \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \Sigma_t,
+d\Sigma_t =\left(a \Sigma_t + \Sigma_t a^\top + \sigma^\top\sigma\right)dt - dN_t \Sigma_t \left(\Sigma_t + A\right)^{-1} \Sigma_t,
 \end{equation}
 \end{subequations}
 
 where $dN_t = \sum_m dN^m_t$. We will define 
 $$\delta \mu_t \equiv (a\mu_t + b u_t) dt$$ as the continuous part of $d\mu_t$ and 
-$$\Delta^m \mu_t \equiv \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \left(\theta_m - \mu_t\right)$$ as the jump part of $d\mu_t$. Likewise we define
-$$\delta\Sigma_t \equiv (a\Sigma_t + \Sigma_t a^\top + \sigma^\top \sigma)dt$$ and $$\Delta\Sigma_t \equiv \left(\Sigma_t^{-1} + A^{-1}\right)^{-1} A^{-1} \Sigma_t.$$\par
+$$\Delta^m \mu_t \equiv \Sigma_t \left(\Sigma_t + A\right)^{-1} \left(\theta_m - \mu_t\right) $$ as the jump part of $d\mu_t$. Likewise we define
+$$\delta\Sigma_t \equiv (a\Sigma_t + \Sigma_t a^\top + \sigma^\top \sigma)dt$$ and $$\Delta\Sigma_t \equiv \Sigma_t \left(\Sigma_t + A\right)^{-1} \Sigma_t.$$\par
 These give us the evolution of the optimal Bayesian filter, provided the total rate of all the processes $\lambda (t) = \sum_m \lambda^m(X_t)$, is independent of $X_t$. The posterior distribution over $X_t$ given $\{N^m_s, m\in [1,\ldots,M], s\in[t_0,t]\}$, is then the normal distribution $\mathcal{N}(X_t;\mu_t,\Sigma_t)$. Assuming we are trying to minimize a cost given by the same cost rate $c(X_t,u_t,t)$ as before, we can write out the infinitesimal Bellman equation for this case as well. Since the dynamics of system and observations is Markov, we can use the posterior distribution as a sufficient statistic for our knowledge of the system. We will therefore take our belief state to be the mean and variance of our posterior distribution as before.\footnote{see \citep{bertsekas2012} for a more detailed discussion}
 Similarly to the previous sections, we will consider the processes $N^m_t$ as noise to be averaged over in the future. We will then have
 $$
@@ -176,7 +190,7 @@ Note that it can be shown by induction that the cost function is of form $V(\mu,
 \end{equation}
 and
 \begin{equation}
--\frac{\partial f}{\partial t} = \frac{1}{2} tr\left(Q(t) \Sigma\right) + \frac{\partial f}{\partial \Sigma} \left(a\Sigma + \Sigma a^\top + \sigma^\top\sigma\right) + \bar{\lambda} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) +\frac{1}{2} tr\left((\Sigma^{-1}+A^{-1})^{-1}A^{-1}\Sigma S(t)\right)\right].
+-\frac{\partial f}{\partial t} = \frac{1}{2} tr\left(Q(t) \Sigma\right) + \frac{\partial f}{\partial \Sigma} \left(a\Sigma + \Sigma a^\top + \sigma^\top\sigma\right) + \bar{\lambda} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) +\frac{1}{2} tr\left(\Sigma (\Sigma+A)^{-1}\Sigma\, S(t)\right)\right].
 \label{eq:f_variance}
 \end{equation}
 Note that \fref{eq:riccatti} is a matrix Riccatti equation, as is found in the usual LQG problem. \Fref{eq:f_variance} gives the contribution of the uncertainty of the estimate to the future costs.
@@ -188,11 +202,11 @@ d\rho_s = (a\rho_s + \rho_s a^\top  + \sigma^\top \sigma) dt + \Delta \rho_s dN_
 \]
 Defining then
 \[
-Y_t = f(\rho_t,t) + \frac{1}{2} \int_t^T \left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left((\rho_s^{-1}+A^{-1})^{-1}A^{-1}\rho_s S(s)\right)\right]ds,
+Y_t = f(\rho_t,t) + \frac{1}{2} \int_t^T \left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left(\rho_s(\rho_s+A)^{-1}\rho_s S(s)\right)\right]ds,
 \]
 we have
 \[
-dY_t = df + \frac{1}{2}\left[tr\left(Q(t)\rho_t\right)+ \bar{\lambda} tr \left((\rho_s^{-1}+A^{-1})^{-1}A^{-1}\rho_s S(t)\right)\right]dt.
+dY_t = df + \frac{1}{2}\left[tr\left(Q(t)\rho_t\right)+ \bar{\lambda} tr \left(\rho_s(\rho_s+A)^{-1}\rho_s S(t)\right)\right]dt.
 \]
 Via the It\=o Lemma, we have
 \[
@@ -208,7 +222,7 @@ dJ(f)_s = dN_t \Delta f_s - \hat{\lambda} \Delta f_s dt.
 \]
 We will then have
 \[
-dY_t = \left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top) + \hat{\lambda} \Delta f + \frac{1}{2}tr\left(Q(t)\rho_t\right)+ \frac{\bar{\lambda}}{2} tr \left((\rho_t^{-1}+A^{-1})^{-1}A^{-1}\rho_t S(t)\right)\right)dt + dJ(f)_t.
+dY_t = \left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top) + \hat{\lambda} \Delta f + \frac{1}{2}tr\left(Q(t)\rho_t\right)+ \frac{\bar{\lambda}}{2} tr \left(\rho_t(\rho_t+A)^{-1}\rho_t S(t)\right)\right)dt + dJ(f)_t.
 \]
 Note that the term in parentheses is zero, as $f$ is a solution to \fref{eq:f_variance}. Therefore, we can integrate $Y_t$ from $t$ to $T$, obtaining
 \[
@@ -220,15 +234,15 @@ E\left[Y_T|\rho_t=\Sigma\right]=E\left[Y_t|\rho_t=\Sigma\right] + E\left[\int_t^
 \]
 where the second term on the rhs vanishes, since $dJ(f)_s$ is a compensated process. We then obtain the Feynman-Kac formula for $f$
 \begin{equation}
-f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + E\left[\int_t^T\left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left((\rho_s+A)^{-1}\rho_s^2 S(s) \right)\right]ds \middle| \rho_t=\Sigma\right].
+f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + E\left[\int_t^T\left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left(\rho_s(\rho_s+A)^{-1}\rho_s S(s) \right)\right]ds \middle| \rho_t=\Sigma\right].
 \end{equation}
 Note now, that the evolution of $\left<\Sigma_t\right>$ is given by
 \[
-\pd{\left<\Sigma_t\right>}{t} = a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top- \bar{\lambda}\left< (\Sigma_t + A)^{-1} \Sigma_t^2\right>,
+\pd{\left<\Sigma_t\right>}{t} = a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top- \bar{\lambda}\left< \Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>,
 \]
 therefore, we can use this expression to directly estimate the trace average in the equation for $f$. We have therefore
 \[
-\bar{\lambda} tr\left(\left< (\Sigma_t + A)^{-1} \Sigma_t^2\right>S(t)\right) = tr\left[\left(-\pd{\left<\Sigma_t\right>}{t} + a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top\right)S(t)\right]. 
+\bar{\lambda} tr\left(\left<\Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>S(t)\right) = tr\left[\left(-\pd{\left<\Sigma_t\right>}{t} + a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top\right)S(t)\right]. 
 \]
 This prevents us from having to calculate expensive matrix inversions and allows us to write
 \[

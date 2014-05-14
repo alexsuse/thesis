@@ -1,0 +1,29 @@
+Let us assume we have a a finite set of outcomes $\mathcal{A}_x = \{x_i\}$, and we wish to find the distribution over $A$ which maximizes the entropy 
+\[
+H[P_X] = \sum_{x_i} P_X(x_i) \log \left(\frac{1}{P_X(x_i)}\right).
+\]
+We can use a Lagrange multiplier to enforce the normalization of $P_X(x)$ and then take a derivative with respect to $P_X$. We will have
+\[
+\mathcal{L}[P_X,\beta] = H[P_X] - \beta \left(\sum_{x_i} P_X(x_i) -1\right).
+\]
+The derivative of $\mathcal{L}$ with respect to $P_X$ will then give
+\[
+\frac{\delta \mathcal{L}}{\delta P_X(x_i)} = -\log(P_X(x_i)) + 1 - \beta.
+\]
+Setting that to zero we will obtain
+\[
+P_X(x_i) = \exp\left(-1+\beta \right).
+\]
+This is a uniform distribution, as $\beta$ is a normalization constant and does not depend on $x$. Likewise, if we have any other information about the distribution, such as the expected value of some function of $X$, we can include this as a Lagrange multiplier as well. Generally, if we have a number of functions $f_j(x)$ whose expected value is known to be $e_j$, we can obtain a maximum entropy distribution similarly by writing
+\[
+\mathcal{L}[P_X,\boldsymbol{\beta}] = H[P_X] - \beta_0 \left(\sum_{x_i} P_X(x_i) -1\right) +  \sum_j \beta_j \left(\sum_{x_i} f_j(x_i) P_X(x_i) -e_j\right).
+\]
+The derivative will then be given by
+\[
+\frac{\delta \mathcal{L}}{\delta P_X(x_i)} = -\log(P_X(x_i)) + 1 - \beta_0 - \sum_j \beta_j f_j(x_i).
+\]
+Which will lead to
+\[
+P_X(x_i) = \exp\left(-1+\beta_0+\sum_j \beta_j f_j(x_i)\right).
+\]
+Note that the values of every constant $\beta_j$ has to be determined so that the expected values of $f_j(x)$ match the known values. The Boltzmann distribution is given by this derivation if we require the expected value of the energy of the system to be equal to some expected value, and its associated multiplier will be the inverse temperature $\beta = 1/k_B T$.
