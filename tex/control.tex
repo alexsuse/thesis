@@ -202,7 +202,7 @@ d\rho_s = (a\rho_s + \rho_s a^\top  + \sigma^\top \sigma) dt + \Delta \rho_s dN_
 \]
 Defining then
 \[
-Y_t = f(\rho_t,t) + \frac{1}{2} \int_t^T \left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left(\rho_s(\rho_s+A)^{-1}\rho_s S(s)\right)\right]ds,
+Y_t = f(\rho_t,t) - \frac{1}{2} \int_t^T \left[tr\left(Q(t)\rho_s\right)+ \bar{\lambda} tr \left(\rho_s(\rho_s+A)^{-1}\rho_s S(s)\right)\right]ds,
 \]
 we have
 \[
@@ -222,7 +222,7 @@ dJ(f)_s = dN_t \Delta f_s - \hat{\lambda} \Delta f_s dt.
 \]
 We will then have
 \[
-dY_t = \left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top) + \hat{\lambda} \Delta f + \frac{1}{2}tr\left(Q(t)\rho_t\right)+ \frac{\bar{\lambda}}{2} tr \left(\rho_t(\rho_t+A)^{-1}\rho_t S(t)\right)\right)dt + dJ(f)_t.
+dY_t = \left(\frac{\partial f}{\partial t} + \frac{\partial f}{\partial \Sigma} (a \rho_s + \rho_s a^\top+\sigma^\top \sigma) + \hat{\lambda} \Delta f + \frac{1}{2}tr\left(Q(t)\rho_t\right)+ \frac{\bar{\lambda}}{2} tr \left(\rho_t(\rho_t+A)^{-1}\rho_t S(t)\right)\right)dt + dJ(f)_t.
 \]
 Note that the term in parentheses is zero, as $f$ is a solution to \fref{eq:f_variance}. Therefore, we can integrate $Y_t$ from $t$ to $T$, obtaining
 \[
@@ -238,15 +238,15 @@ f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + E\left[\int_t^T\left[tr\left(Q(t)\rh
 \end{equation}
 Note now, that the evolution of $\left<\Sigma_t\right>$ is given by
 \[
-\pd{\left<\Sigma_t\right>}{t} = a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top- \bar{\lambda}\left< \Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>,
+\pd{\left<\Sigma_t\right>}{t} = a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma^\top\sigma- \bar{\lambda}\left< \Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>,
 \]
 therefore, we can use this expression to directly estimate the trace average in the equation for $f$. We have therefore
 \[
-\bar{\lambda} tr\left(\left<\Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>S(t)\right) = tr\left[\left(-\pd{\left<\Sigma_t\right>}{t} + a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma\sigma^\top\right)S(t)\right]. 
+\bar{\lambda} tr\left(\left<\Sigma_t(\Sigma_t + A)^{-1} \Sigma_t\right>S(t)\right) = tr\left[\left(-\pd{\left<\Sigma_t\right>}{t} + a \left<\Sigma_t\right> + \left<\Sigma_t\right> a^\top + \sigma^\top\sigma\right)S(t)\right]. 
 \]
 This prevents us from having to calculate expensive matrix inversions and allows us to write
 \[
-f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + \int_t^T\left[ tr\left((Q(s)+S(s)a + a^\top S(s))E^t_{\Sigma}(\rho_s)\right)-tr\left( \pd{E^t_\Sigma(\rho_s)}{s} S(s)\right)\right]ds,
+f(\Sigma,t) =E[f(\rho_T,T)|\rho_t=\Sigma] + \int_t^T\left[ tr\left((Q(s)+S(s)a + a^\top S(s))E^t_{\Sigma}(\rho_s)\right) +tr\left(\sigma^\top \sigma S(s)\right)-tr\left( \pd{E^t_\Sigma(\rho_s)}{s} S(s)\right)\right]ds,
 \]
 where we have written
 \[
@@ -262,12 +262,12 @@ $\dot{S}$ in turn is given by the Riccatti equation, and results in
 \]
 We then obtain
 \[
-f(\Sigma,t)  = tr\left(\Sigma_t S(t)\right) + \int_t^T tr \left(S(s) b^\top R(s)^{-1}b S(s) E^t_\Sigma(\rho_s)\right) ds
+f(\Sigma,t)  = tr\left(\Sigma_t S(t)\right) \int_t^T tr\left(\sigma^\top\sigma S(s)\right)ds+ \int_t^T tr \left(S(s) b^\top R(s)^{-1}b S(s) E^t_\Sigma(\rho_s)\right) ds
 \]
 
 For the one-dimensional problem this becomes
 \[
-f(\Sigma,t) = S(t) \Sigma + \int_t^T \frac{b^2 S(s)^2 E^t_\Sigma(\rho_s)}{R(s)}ds 
+f(\Sigma,t) = S(t) \Sigma + \int_t^T \sigma^2 S(s) ds +\int_t^T \frac{b^2 S(s)^2 E^t_\Sigma(\rho_s)}{R(s)}ds 
 \]
 %\section{The Point Process Controller}
 
