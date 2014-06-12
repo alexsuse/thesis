@@ -1,21 +1,81 @@
-\newthought{Neuroscience as a whole} is concerned with the function of the nervous system. More precisely, it asks a very simple question: {\em What is the brain doing?}\footnote{ Or alternatively: {\em What is the nervous system doing?}} The simplicity with which humans and animals perform in their environment makes it almost unnatural to ask how their brains enable these behaviors. It is often hard to explain to laymen the complexity involved in preparing even the simplest actions, such as saccades or walking, such is the ease with which these are normally performed. Although one can not realistically expect to answer that question in any general fashion, I will try to touch upon a number of points which shed light on some aspects of the nervous system and provide us with a {\em guiding principle} to understand what the brain is doing and why and possibly how.\par
-Neuroscience was born as a branch of biology, and although it is now often thought of as  an interdisciplinary science in itself, its objects of study are still to a large extent biological systems. Theodosius Dobzhansky published an influential essay in 1973, entitled {\em Nothing in biology makes sense except in the light of evolution},\cite{Dobzhansky1973} which defends exactly that point. Though it has been reviewed and revisited constantly since its proposal, the theory of evolution through natural selection remains the central pillar of biological sciences. As such, neuroscience must also view its objects of study through the lenses of evolution. More specifically, we can then ask ourselves {\em What evolutionary advantage would this brain bring to an individual?} instead of {\em Why is the brain this way?} That being said,  there are caveats in the case of neuroscience. For one, the brain is capable of plasticity and adaptation unthinkable for other organs, and so we can not expect to understand the functionality of the brain in the same way in which the shape of bird beaks can be understood as a function of their preferred fruits and seeds. Furthermore, the brain controls all of the motor and perceptual apparatus, having a multitude of uses and purposes, unlike simpler organs.\par
-One particular aspect of the brain which has received increasing attention recently is its ability to deal with uncertainty. In a very productive line of research, a number of experiments have demonstrated that humans and animals integrate uncertain information in a near-optimal way. The so-called {\em Bayesian Brain},\cite{Knill2004} would explicitly represent the distribution over world states and perform inference in a manner consistent with Bayesian inference, obtaining optimal integration of sensory cues from different modalities, for example. It is still a matter of debate how these Bayesian computations would be implemented in the brain. One possibility is that the activity of neurons is sampling from a representation of the distribution of world states,\cite{Berkes2011} which is frequently called the {\em sampling hypothesis}. Another is that the activity of the neurons itself represents the likelihood over world states,\cite{Ma2006} and the population as a whole codes for the distribution, hence the term {\em population coding}.\par
+\newthought{Neuroscience as a whole} is concerned with the function of the nervous system. More precisely, it asks a very simple question: {\em What is the brain 
+doing?}\footnote{ Or alternatively: {\em What is the nervous system doing?}} The simplicity with which humans and animals perform in their environment makes it 
+almost unnatural to ask how their brains enable these behaviors. It is often hard to explain to laymen the complexity involved in preparing even the simplest actions, 
+such as saccades or walking, such is the ease with which these are normally performed. Although one can not realistically expect to answer that question in any 
+general fashion, I will try to touch upon a number of points which shed light on some aspects of the nervous system and provide us with a {\em guiding principle} to 
+understand what the brain is doing, why and possibly how.\par
+
+Neuroscience was born as a branch of biology, and although it is now often thought of as  an interdisciplinary science in itself, its objects of study are still to the 
+largest extent biological systems. Theodosius Dobzhansky published an influential essay in 1973, entitled {\em Nothing in biology makes sense except in the light of 
+evolution},\cite{Dobzhansky1973} which defends exactly that point. Though it has been reviewed and revisited constantly since its proposal, the theory of evolution 
+through natural selection remains the central pillar of biological sciences. As such, neuroscience must also view its objects of study through the lenses of evolution. 
+More specifically, we can then ask ourselves {\em What evolutionary advantage would this brain bring to an individual?} instead of {\em Why is the brain this way?} 
+That being said,  there are caveats in the case of neuroscience. For one, the brain is capable of plasticity and adaptation unthinkable for other organs, and so we can 
+not expect to understand the functionality of the brain in the same way in which the shape of bird beaks can be understood as a function of their preferred fruits and 
+seeds. Furthermore, the brain controls all of the motor and perceptual apparatus, having a multitude of uses and purposes, unlike simpler organs.\par
+
+One particular aspect of the brain which has received increasing attention recently is its ability to deal with uncertainty. In a very fruitful line of research, a number 
+of experiments have demonstrated that humans and animals integrate uncertain information in a near-optimal way. The so-called {\em Bayesian Brain},\cite{Knill2004} 
+would explicitly represent the distribution over world states and perform inference in a manner consistent with Bayesian inference, obtaining optimal integration of 
+sensory cues from different modalities, for example. It is still a matter of debate how these Bayesian computations would be implemented in the brain. One possibility 
+is that the activity of neurons is sampling from a representation of the distribution of world states,\cite{Berkes2011} which is frequently called the {\em sampling 
+hypothesis}. Another is that the activity of the neurons itself represents the likelihood over world states,\cite{Ma2006} and the population as a whole codes for the 
+distribution, hence the term {\em population coding}.\par
 
 \subsection*{Structure}
-\newthought{The main goal of this thesis} is to develop a conceptual framework for studying optimal population coding in a dynamic framework. Furthermore, I would like to establish a link between optimal dynamic encoders and the efficient coding hypothesis, first proposed by Horace Barlow.\cite{Barlow1961} I believe that the inclusion of time into the coding framework raises a number of questions, which have not been addressed in the scientific literature properly. In the remainder of this chapter, I will discuss the efficient coding hypothesis and its more recent developments, and I will touch upon its relationship to Shannon's information theory.\cite{Shannon1948} I will finish by discussing the issue of dynamic population coding, highlighting the issues which I believe are of importance in considering the temporal aspect of coding. I will make the case for a study of optimal filtering of partially observed stimuli as a model of stimulus inference based on spike trains. Following, in \fref{chap:filtering}  I will introduce the general theory of filtering of stochastic stimuli. After that, in \fref{chap:MSE} I will discuss results regarding the Mean-Squared-Error (MSE) of optimal filters of point process data, presenting a number of new analytical results. In \fref{chap:control}, I will generalize the filtering framework to control problems, showing results for optimal control theory of point process-observed processes. In \fref{chap:optimal} I will then provide the connection to neuroscience, by considering the optimal encoding strategy for a population of neurons coding for a stochastic stimulus. I will then finalize by discussing the impact of the work presented and suggesting future research directions.\par
+
+\newthought{The main goal of this thesis} is to develop a conceptual framework for studying optimal population coding in a dynamic framework. Furthermore, I will
+establish a link between optimal dynamic encoders and the efficient coding hypothesis, first proposed by Horace Barlow.\cite{Barlow1961} I believe that the 
+inclusion of time into the coding framework raises a number of questions, which have not been addressed in the scientific literature properly. In the remainder of this 
+chapter, I will discuss the efficient coding hypothesis and its more recent developments, and I will touch upon its relationship to Shannon's information theory.\cite{Shannon1948} I will finish by discussing the issue of dynamic population coding, highlighting the issues which I believe are of importance in considering the 
+temporal aspect of coding. I will make the case for a study of optimal filtering of partially observed stimuli as a model of stimulus inference based on spike trains. 
+Following, in \fref{chap:filtering}  I will introduce the general theory of filtering of stochastic stimuli. After that, in \fref{chap:MSE} I will discuss results regarding the 
+Mean-Squared-Error (MSE) of optimal filters of point process data, presenting a number of new analytical results. In \fref{chap:control}, I will generalize the filtering 
+framework to control problems, showing results for optimal control theory of point process-observed processes. In \fref{chap:optimal} I will then provide the connection 
+to neuroscience, by considering the optimal encoding strategy for a population of neurons coding for a stochastic stimulus. I will then finalize by discussing the impact 
+of the work presented and suggesting future research directions.\par
 
 \subsection*{Contribution}
-\newthought{The main contribution of this thesis} is in providing a conceptual toolbox to study optimal coding problems in a dynamic environment. I propose that the study of the average performance of an optimal Bayesian filter reconstructing the relevant stimulus provides a good measure of the quality of a dynamic code. Using this framework, I derive analytical results for the fast population code for dense populations of Gaussian neurons proposed by Quentin Huys.\cite{Huys2007} These are to my best knowledge the first results of this kind obtained for temporal coding of dynamic stimuli.
+
+\newthought{The main contribution of this thesis} is in providing a conceptual toolbox to study optimal coding problems in a dynamic environment. I propose that the 
+study of the average performance of an optimal Bayesian filter reconstructing the relevant stimulus provides a good measure of the quality of a dynamic code. Using 
+this framework, I derive analytical results for the fast population code for dense populations of Gaussian neurons proposed by Quentin Huys.\cite{Huys2007} These are 
+to my best knowledge the first results of this kind obtained for temporal coding of dynamic stimuli.\par
+
+The results presented in this thesis have been published and presented throughout the duration of my doctoral studies. The findings in \fref{chap:MSE} were first
+published at the \emph{Neural Information Processing Systems} conference, where it was presented as a poster in addition to the publication in the conference 
+proceedings \citep{Susemihl2011a}. These results were then further developed and put in the greater context of computational neuroscience and published in a special
+edition of the \emph{Journal of Statistical Mechanics: Theory and Experiment} title \emph{Statistical Physics and Neuroscience}, focusing on the challenges 
+neuroscience presented to statistical physics \citep{Susemihl2012a}. The results presented \fref{chap:control} have been submitted to the \emph{NIPS} conference
+proceedings as well, and are currently under review.\par
+
+Parallelly to the topics presented here I have also contributed to other ongoing research projects during my doctoral studies. In a research project headed by 
+fellow doctoral student Chris H\"ausler and myself, we have proposed a novel way of training temporal Boltzmann machines, which improves their performance as
+generative models of temporal data greatly. This was presented in a workshop on Deep Learning at the \emph{NIPS} conference as well \citep{hausler2012b}. This was
+then used as a model for temporal sparsity in visual cortex and results on sequences of natural images were published in the journal \emph{Brain Research} in a
+special issue on neural coding \citep{Hausler2013a}. The advantages of the training procedure for generative models of temporal data as well as for forecasting were
+further extended on and submitted for publication in the journal \emph{Neurocomputing} \citep{Hausler2013b}.\par
+
+In addition to these projects, I have also worked on the publication of a manuscript originating from my Masters thesis, which was since published in the journal 
+\emph{Physica A}. There we investigated the effect of different learning strategies on the emergence of moral opinions in a model of social learning  
+\citep{Vicente2014}.
 
 \section{Efficient Coding Hypothesis}
 
-\newthought{The information} associated with a random event is defined as the logarithm of its inverse probability. We can further define the entropy of a distribution over a set of events as the average information conveyed by these events. So if we have a random variable $X$ taking values $x \in \mathcal{A}_X$ and a probability distribution $P : \mathcal{A}_X \to [0,1]$, we will have
+\newthought{In information theory, the information} associated with a random event is defined as the logarithm of its inverse probability. We can further define the 
+entropy of a distribution 
+over a set of events as the average information conveyed by these events. So if we have a random variable $X$ taking values $x \in \mathcal{A}_X$ and a probability 
+distribution $P : \mathcal{A}_X \to [0,1]$, we will have\footnote{Abusing the notation to allow for $0\log(0) = 0$.}
 $$
 H(X)= \sum_x P_X(x) \log\left(\frac{1}{P_X(x)}\right).
 $$
-The entropy measures how much information is gained from a random observation of $X$ on average, and is usually thought of as a measure of the uncertainty or disorder in the distribution $P_X$. Its unit is usually defined as the {\em bit}, derived from binary digit, when the logarithm is taken in base 2. So, a distribution where we have $P_X(x^*) = 1$ for some $x^*$ and $P_X(x) = 0$ for all other $x\neq x^*$ would have an entropy of $0$, since our measurement gives us an average information of $0$. The outcome $x^*$ is completely non-informative, and all other outcomes, while infinitely informative have a zero probability of happening.\par
-It can also easily be seen that in the absence of other constraints, if the set of outcomes $\mathcal{A}_X$ is finite, the entropy is maximized by the uniform distribution over outcomes $x$, which would give us the maximal average information per observation of the variable $X$.\footnote{We provide a short demonstration in \fref{app:entropy}} In information theory, the entropy provides the number of bits it takes, on average, to specify an outcome of the random variable $X$.\par
+The entropy measures how much information is gained from a random observation of $X$ on average, and is usually thought of as a measure of the uncertainty or 
+disorder in the distribution $P_X$. Its unit is usually defined as the {\em bit}, derived from binary digit, when the logarithm is taken in base 2. So, a distribution where 
+we have $P_X(x^*) = 1$ for some $x^*$ and $P_X(x) = 0$ for all other $x\neq x^*$ would have an entropy of $0$, since our measurement gives us an average 
+information of $0$. The outcome $x^*$ is completely non-informative, and all other outcomes, while infinitely informative have a zero probability of happening.\par
+It can also easily be seen that in the absence of other constraints, if the set of outcomes $\mathcal{A}_X$ is finite, the entropy is maximized by the uniform 
+distribution over outcomes $x$, which would give us the maximal average information per observation of the variable $X$.\footnote{We provide a short demonstration in 
+\fref{app:entropy}} In information theory, the entropy provides the number of bits it takes, on average, to specify an outcome of the random variable $X$.\par
 We can now define the conditional entropy of two random variables $X$ and $Y$ as
 $$
 H(Y|X) = \sum_x P_X(x) \sum_y P_Y(y|x) \log\left(\frac{1}{P_Y(y|x)}\right),
@@ -44,7 +104,7 @@ $$
 $$
 and it quantifies how {\em efficiently} a given code encodes codewords $x$ into messages $y$. Note that in the case of a noiseless channel, this reduces to 
 $$
-\mathcal{R} = 1 - \frac{H(X)}{C}= 1 - \frac{H(Y)}{C}.
+\mathcal{R} = 1 - \frac{H(X)}{C}= 1 - \frac{H(Y)}{C} = 0.
 $$
 The limit given by \fref{thm:noisychannel} then gives us the perfect redundancy-free channel. The {\em efficient coding hypothesis}, first proposed by Barlow\cite{Barlow1961} states that sensory relays in the nervous system recode the	messages to reduce the redundancy in them. This allows us to relate the distribution of the codewords in nature, given by the stimulus statistics, to the firing statistics of the nervous system.\par
 In one popular example, Simon Laughlin related the distribution of contrasts in the natural environment of the blowfly to the tuning function of the large monopolar cells (LMC's) in the blowfly's visual system.\cite{Laughlin1981} These cells respond to the contrast level in a specific area of the visual field.
@@ -94,7 +154,14 @@ The rate function $f_i(s)$ is often called the tuning function of the neuron. Gi
 \[
 P(width|{r_1,\ldots}) \propto P(width) \prod_i P(r_i|width),
 \]
-and likewise obtain the mean and standard deviation of our estimate. Note that given a distribution over visual stimuli or a distribution over stream widths, one could seek a set of tuning functions $f_i(s)$ such that the standard deviation of our estimate is minimal. This is clearly a very broad formulation of the problem, but it will be the central question studied in this thesis.
+and likewise obtain the mean and standard deviation of our estimate. More simply we can look for the maximum a posteriori estimator, the value of $s$ that maximises
+the probability $P(width|{r_1,\ldots})$. It is often more convenient to maximise the log-probability $\log P(width|{r_1,\ldots})$. Often an additional assumption of a flat
+prior is made, yielding the Maximum likelihood estimator.
+\par
+Note that given a distribution over visual stimuli or a distribution over stream widths, one could seek a set of tuning functions $f_i(s)$ such that the standard deviation 
+of our estimate is minimal. This is clearly a very broad formulation of the problem, but it will be the central question studied in this thesis. Alternatively, one could look
+directly at the (expected) cost associated with a decision (to jump or not to jump) and choose the set of functions $f_i(s)$ which minimises the future expected cost.
+We will investigate the difference between these approaches as well.
 
 \section{Dynamic Population Coding}
 
@@ -108,16 +175,53 @@ P(N_i(t+dt) - N_i(t) = 0|s(t)) = (1-f_i\left(s(t)\right)) dt.
 \]
 Denoting the limit with $dt\to 0$ of the difference as $dN_i(t)$, we can write the probability of a spike train given by $N_i = \{N_i(\tau), \tau \in [0,T]\}$ conditioned on the stimulus history $s = \{s(\tau), \tau \in [0,T]\}$ as
 \[
-P(N_i|s) = \exp\left(-\int_0^T f_i(s(\tau)) d\tau + \int_0^T \log\left[f_i(s(\tau))\right] dN_i(\tau) \right)/N_i(T)!
+P(N_i|s) = \exp\left(-\int_0^T f_i(s(\tau)) d\tau + \int_0^T \log\left[f_i(s(\tau))\right] dN_i(\tau) \right)/N_i(T)!.
 \]
+We are using the notation of stochastic calculus, where the stochastic integral over a jump process is given by
+\[
+\int f(t) dN(t) = \sum_{t_i} f(t_i) (N(t_i) - N(t_i^-)),
+\]
+where $N(t_i^-) = \lim_{t\uparrow t_i} N(t)$. This can be made rigorous in the language of Martingales but we will keep the discussion simple, as most of the processes
+considered are well behaved Poisson or Wiener processes.
 In that sense we can estimate the probability of the entire stimulus history given a spiking history of a population of neurons as
 \[
 P(s|\{N_1,\ldots,N_n\}) = P(s) \prod_i P(N_i|s),
 \]
 furthermore we can marginalize out all but the present value of $s$ to obtain the filtering probability
+\begin{equation}
+\label{eq:filtering_eq_path}
+P(s(T)|\{N_1,\ldots,N_n\}) = \int d\mu(s\setminus T) P(s) \prod_i P(N_i|s),
+\end{equation}
+where $d\mu(s\setminus T)$ denotes the measure over all paths of the stimulus $s$ ending at the given value of $s(T)$. In all but a few exceptions, we will focus in
+this thesis on the Gaussian measure over paths defined by a Gaussian process. A Gaussian process is a random variable $g$ such that for any set of points in its
+domain $\{t_1, t_2, \ldots , t_N\}$, the distribution of $\{g(t_1), g(t_2), \ldots, g(t_N)\}$ is Gaussian with mean $\{\mu(t_1),\mu(t_2),\ldots,\mu(t_N)\}$ and covariance
+matrix $\left<\left(g(t_i) - \mu(t_i)\right)\left(g(t_j)-\mu(t_j)\right)\right> = K(t_i,t_j)$. $K(u,v)$ is commonly called the Kernel of the Gaussian process. Gaussian 
+Processes, or GP's have been extensively used for numerical regression, smoothing, classification and other uses in machine learning and signal 
+processing \cite{Rasmussen2005}. Simple examples of Gaussian processes are the Wiener process, the Ornstein-Uhlenbeck process and the Radial-Basis-Function
+processes. Gaussian Processes allow for a number of simplifications in practice, and in the case we consider, the posterior distribution can be computed exactly.\par
+In practice, we now need to compute averages of the Poisson likelihood over paths of a Gaussian process. This is general very complicated, and approximations are
+usually employed to decode the stimulus from the spike train.\cite{Ahmadian2011,Ergun2007} Looking at \fref{eq:filtering_eq_path} for the Poisson case we can write
+\begin{align*}
+P(s(T)|\{N_1,\ldots,N_n\}) \propto& \int d\mu(s\setminus T) P(s)\\
+& \exp\left(-\sum_i \int_0^T f_i(s(\tau)) d\tau + \sum_i \sum{t_i} \log\left[f_i(s(t_i))\right]  \right).
+\end{align*}
+There are two terms in the exponent, one referent to the actual occurrence of spikes at the spike times, and one accounting for the absence of spikes in all other 
+instants. If we only had to deal with the actual spike times, the task of inferring the posterior is substantially simpler, as we could perform approximate inference
+over a finite set of points, instead of evaluating averages over all possible paths. This would be the case if the sum of the rates over all neurons was constant, or
+at least independent of the value of the stimulus $s(t)$. This is the dense coding regime, as a dense packing of the tuning curves over the space of the stimulus
+$s$ will lead to a population firing rate which is insensitive to $s$. In that case we would have $\sum_i f_i(s(t)) = C$, and the posterior can be further simplified to
 \[
-P(s(T)|\{N_1,\ldots,N_n\}) = \int d\mu(s\setminus T) P(s) \prod_i P(N_i|s)
+P(s(T)|\{N_1,\ldots,N_n\}) \propto \int d\mu(s\setminus T) P(s) \prod_i \prod_{t_i} f_i(t_i).
 \]
+This is often also used as an approximate inference procedure, as accounting for the absence of spikes throughout the duration of the experiments often makes the
+inference problem much harder. We will further simplify the problem by assuming that the tuning functions $f_i$ are unnormalised Gaussians, turning the problem of
+evaluating the posterior into a Gaussian Process Regression problem. This will allow us to treat the evolution of the MSE of the optimal Bayesian estimate for a
+given population of neurons using the language of statistical physics. This had been done similarly for the case of Gaussian Process regression in the smoothing
+case,\cite{malzahn2005statistical} but to the author's best knowledge it had not been studied for the filtering case before. This has allowed us to obtain a number of
+analytic results. The general case, however, must be dealt with numerically, and we review a few techniques for the filtering of stochastic processes under
+general conditions.\par
+
+
 
 %The main goal of neuroscience is to answer a simple yet puzzling question: {\em What is the brain doing?} One might argue that we know a lot about what the brain is doing, at least on the phenomenological side, yet the more conceptual levels of what problem the brain is solving, or what it is good at doing, are far from answered. The main analogy we see in use in the field of neuroscience is that of the brain as a computer, hence the frequent use of concepts from Shannon's mathematical theory of communication. Namely, it is frequently hypothesized that the brain is optimally representing interesting aspects of the world it perceives. This thesis seeks to discuss the concept of optimal coding in neural systems. In it, I will discuss mainly findings in filtering of stochastic processes from point process observations and its relation to optimal population coding.\par
 %Filtering is of general interest because of its relation to optimal control. More precisely, when considering a linear quadratic control problem under Gaussian noise conditions, the {\em separation principle} holds, and we can design an optimal controller by first predicting the state of the system, and then choosing the optimal control for the noiseless case on that state. The prediction step is solved by the Kalman filter. This framework is frequently used in the study of motor control, and a number of recent experiments and developments have relied on optimal control theory to model the properties of animal subjects under specific noise conditions. Here I will argue that the same approach should also be considered in the sensory areas of the brain.\par

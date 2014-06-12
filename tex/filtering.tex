@@ -48,7 +48,7 @@ where
 \Sigma_{t+1} = \left(\left(A\Sigma_tA^\top+H\right)^{-1} + C^\top D^{-1}C \right)^{-1}
 \]
 \[
-\mu_{t+1} = A\mu_t + \Sigma_{t+1} C^\top D^{-1} C ( C^\dagger Y_t - A\mu_t).\footnotemark
+\mu_{t+1} = A\mu_t + \Sigma_{t+1} C^\top D^{-1}  (Y_t -C A\mu_t).\footnotemark
 \]
 \footnotetext{$C^\dagger$ denotes the Moore-Penrose pseudoinverse of $C$.}
 This formulation leads to somewhat cluttered recurrence relations. In the theory of Kalman filtering these are usually broken down into subsequent prediction and correction steps. The notation usually employed in filtering theory is to write $\mu_{t|t-1}$ and $\Sigma_{t|t-1}$ for the mean and covariance of the distribution $P(X_t|\mu_{t-1},\Sigma_{t-1})$,\footnote{the prediction step} and $\mu_{t|t}$ and $\Sigma_{t|t}$ for the mean and covariance of the updated distribution $P(X_t|Y_t)$.\footnote{the correction step} One can then write simply
@@ -75,68 +75,72 @@ The Kalman filter is probably one of the most important mathematical tools in en
 \subsection{Continuous Time: The Kalman-Bucy Filter}
 
 The Kalman filter deals with discrete time systems and can be easily extended to continuous time systems. Though it can be rigorously proved that the derived filter equations are exact in the sense of stochastic calculus, I will only provide an informal derivation of this. Let us consider a linear, Gaussian stochastic differential equation, say
-\[
-dX(t) = G X(t) dt + \sigma^{1/2} dW(t),
-\]
-where $W(t)$ is a Wiener process. Note that the correspondence with the discrete time case can be simply made by taking $A=I - G dt$ and $H^{1/2} = \sqrt{dt} \sigma^{1/2}$. The correspondence with the continuous time observation process is somewhat more complicated though. We can take the observed process to be given by the SDE\marginnote{SDE: Stochastic Differential Equation}
 \begin{equation}
-dY(t) = F X(t) dt + \eta^{1/2} dV(t),
+\label{eq:OU_sde}
+dX(t) = A X(t) dt + H^{1/2} dW(t),
+\end{equation}
+where $W(t)$ is a Wiener process. Note that the correspondence with the discrete time case can be simply made by taking $A'=I - A dt$ and $H'^{1/2} = \sqrt{dt} H^{1/2}$. The correspondence with the continuous time observation process is somewhat more complicated though. We can take the observed process to be given by the SDE\marginnote{SDE: Stochastic Differential Equation}
+\begin{equation}
+dY(t) = C X(t) dt + D^{1/2} dV(t),
 \end{equation}
 where $V(t)$ is a second Wiener process independent of $W(t)$. Note that, unlike its discrete time counterpart, here $Y(t)$ does not only depend on $X(t)$ but also on $Y(t-dt)$. That does not make our analysis much more complicated though, as we can write the inference in terms of $dY(t)$ just as well.\par
 We can proceed as in the case of discrete time with a small time increment $dt$ and then pass to the limit of $dt\to 0$. We will then have
 \[
-\mu_{t+dt|t} = (I+G dt)\mu_{t|t},
+\mu_{t+dt|t} = (I+A dt)\mu_{t|t},
 \]
 and
 \[
-\Sigma_{t+dt|t} = \Sigma_{t|t}  + \left(G\Sigma_{t|t} + \Sigma_{t|t} G^\top + \sigma\right) dt.
+\Sigma_{t+dt|t} = \Sigma_{t|t}  + \left(A\Sigma_{t|t} + \Sigma_{t|t} A^\top + H\right) dt.
 \]
 The distribution of $Y(t+dt)$ in turn is given by
 \[
-P(Y(t+dt)|Y(t),X(t+dt)) = \mathcal{N}\left(Y(t) + F\,X(t+dt)\, dt, \eta\, dt\right),
+P(Y(t+dt)|Y(t),X(t+dt)) = \mathcal{N}\left(Y(t) + C\,X(t+dt)\, dt, D\, dt\right),
 \]
 or more simply we can directly write down the distribution of $dY(t)$,
 \[
-P(dY(t+dt)|X(t+dt)) = \mathcal{N}\left(F\,X(t+dt)\,dt,\eta\,dt\right).
+P(dY(t+dt)|X(t+dt)) = \mathcal{N}\left(C\,X(t+dt)\,dt,D\,dt\right).
 \]
 Writing down Bayes' rule and collecting the terms we will obtain for the variance
 \[
-\Sigma_{t+dt|t+dt} = \left(\Sigma_{t+dt|t}^{-1} + F^\top \eta^{-1} F dt \right)^{-1},
+\Sigma_{t+dt|t+dt} = \left(\Sigma_{t+dt|t}^{-1} + C^\top D^{-1} C dt \right)^{-1},
 \]
 which can be Taylor expanded to
 \[
-\Sigma_{t+dt|t+dt} = \Sigma_{t+dt|t} - dt \Sigma_{t+dt|t} F^\top \eta^{-1} F \Sigma_{t+dt|t} + o(dt^2).
+\Sigma_{t+dt|t+dt} = \Sigma_{t+dt|t} - dt \Sigma_{t+dt|t} C^\top D^{-1} C \Sigma_{t+dt|t} + o(dt^2).
 \]
 Because of the prefactor $dt$ in the right hand term, all higher order terms drop out and we are left with the ODE for the posterior variance
 \begin{subequations}
 \label{eq:kalman_bucy}
 \begin{equation}
-\frac{d \Sigma}{dt} = G\Sigma(t) + \Sigma(t) G^\top + \sigma - \Sigma(t) F^\top \eta^{-1} F\Sigma(t).
+\frac{d \Sigma}{dt} = A\Sigma(t) + \Sigma(t) A^\top + H - \Sigma(t) C^\top D^{-1} C\Sigma(t).
 \end{equation}
 The posterior mean, however, is still a stochastic variable, as it is dependent on the diffusion process $Y(t)$. We write down the SDE for the mean
 \begin{equation}
-d\mu(t) = G\mu(t) + \Sigma_t F^\top \eta^{-1} \left( dY(t) - F\mu(t) dt \right).
+d\mu(t) = A\mu(t) + \Sigma_t C^\top D^{-1} \left( dY(t) - C\mu(t) dt \right).
 \end{equation}
 \end{subequations}
 Note that the structure of the equations is very similar, as the dynamics of the mean only incorporates the observations through an innovation process.\par
 
 \subsection{Kushner-Stratonovich Equation}
 
-Note that in the case above we could restrict ourselves to study the mean and covariance because of the linear structure of both the system dynamics and the observation dynamics. In the general case, however, we can not restrict ourselves to these moments. In the worst-case scenario we can not escape from estimating the full posterior distribution $P(X(t)|Y_{t_0:t})$ at every time step. If we have a Markov system whose probability density when not observed evolves according to
+Note that in the case above we could restrict ourselves to study the mean and covariance because of the linear structure of both the system dynamics and the observation dynamics. In the general case, however, we can not restrict ourselves to these moments. In the worst-case scenario we can not escape from estimating the full posterior distribution $P(x,t) = P(X(t) = x|Y_{t_0:t},X(t_0) = x_0)$\marginnote{$Y_{t_0:t}\equiv \{Y(s), t_0\le s \le t\}$}  at every time step. If we have a Markov system whose probability density when not observed evolves according to
 \begin{equation}
 \label{eq:kolmogorov_fw}
-\frac{\partial P(X(t)| X(t_0) = x_0)}{\partial t} = \mathcal{A} P(X(t)|X({t_0})=x_0),
+\frac{\partial P(x,t)}{\partial t} = \mathcal{A} P(x,t),
 \end{equation}
 and the observation process $Y(t)$ evolves according to
 \[
-dY(t) = h(X(t)) dt + \eta^{1/2} dV(t),
+dY(t) = c(X(t)) dt + D^{1/2} dV(t),
 \]
-then, by writing the posterior as $P_t(x) = P(X(t)=x|Y_{t_0:t},X({t_0})=x_0)$\marginnote{$Y_{t_0:t}\equiv \{Y(s), t_0\le s \le t\}$} and $\hat{h}_t = \int dx\, h(x) P_t(x)$, the posterior distribution will evolve according to the stochastic partial differential equation
+then, by writing $\hat{c}_t = \int dx\, c(x) P(x,t)$, the posterior distribution will evolve according to the stochastic partial differential equation
 \begin{equation}
 \label{eq:kushner}
-dP_t(x) = \mathcal{A} P_t(x) dt + (h(x) - \hat{h}_t)^\top \eta^{-1} (dY(t) - \hat{h}_t dt) P_t(x).
+dP(x,t) = \mathcal{A} P(x,t) dt + (c(x) - \hat{c}_t)^\top D^{-1} (dY(t) - \hat{c}_t dt) P(x,t).
 \end{equation}
-\Fref{eq:kushner} is usually called the Kushner equation or the Kushner-Stratonovich equation in honor of Harold J. Kushner and Ruslan Stratonovich, the statisticians who first derived it. It is not hard to demonstrate, that by taking $h(X(t)) = F X(t)$ leads to \fref{eq:kalman_bucy} above.\cite{Bucy1965} These equations, as one can imagine, are very hard to solve exactly, and approximate solutions are usually employed. The techniques collectively called particle filters approximate the posterior distribution by a finite sample of paths of $X_t$ and samples from them sequentially reweighting them according to the incoming observations.
+\Fref{eq:kushner} is usually called the Kushner equation or the Kushner-Stratonovich equation in honor of Harold J. Kushner and Ruslan Stratonovich, the statisticians 
+who first derived it. It is not hard to demonstrate, that by taking $c(X(t)) = C X(t)$ leads to \fref{eq:kalman_bucy} above.\cite{Bucy1965} These equations, as one can 
+imagine, are very hard to solve exactly, and approximate solutions are usually employed. The techniques collectively called particle filters approximate the posterior 
+distribution by a finite sample of paths of $X_t$ and samples from them sequentially reweighting them according to the incoming observations.
  
 \section{Filtering of Poisson Process Observations}
  
@@ -186,17 +190,17 @@ We could now discretize $X_{t_0:t}$ and use any tool from statistical inference 
 \par
 What if we want to estimate the value of $X(t)$ given $N_{t_0:t}$ in an online fashion? We can derive the results of Snyder informally as follows. Let us use the same notation as in the Kalman case. We can write
 \[
-P_{t+dt}(x) =\frac{ P(X(t+dt)=x|N_{t_0:t})P(N(t+dt)|X(t+dt)=x)}{P(N(t+dt))}.
+P(x,t+dt) =\frac{ P\left(X(t+dt)=x\middle|N_{t_0:t}\right)P\left(N(t+dt)\middle|X(t+dt)=x\right)}{P(N(t+dt))}.
 \]
 We know that when unobserved the distribution of $X$ evolves according to \fref{eq:kolmogorov_fw}. So for infinitesimal $dt$ we can write 
 \[
-P(X(t+dt)=x|N_{t_0:t}) = P_t(x) + \mathcal{A}P_t(x) dt.
+P(X(t+dt)=x|N_{t_0:t}) = P(x,t) + \mathcal{A}P(x,t) dt.
 \]
 Furthermore, we can write the quotient of terms dependent on $N(t+dt)$ out as a function of $dN(t+dt)$, we have
 \[
 \frac{P(N(t+dt)|X(t+dt))}{P(N(t+dt))} = (1-dN(t+dt))\frac{1-\lambda(X(t+dt))dt}{1-\hat{\lambda}dt} + dN(t+dt)\frac{\lambda(X(t+dt))}{\hat{\lambda}},
 \]
-where $\hat{\lambda} = \int dx P_t(x) \lambda(x)$. Expanding and discarding terms of order $dt^2$, we obtain
+where $\hat{\lambda} = \int dx P(x,t) \lambda(x)$. Expanding and discarding terms of order $dt^2$, we obtain
 \[
 \frac{P(N(t+dt)|X(t+dt))}{P(N(t+dt))} = 1-dN(t+dt) -\lambda(X(t+dt))dt +\hat{\lambda}dt +dN(t+dt)\frac{\lambda(X(t+dt))}{\hat{\lambda}},
 \]
@@ -206,28 +210,28 @@ which rearranging terms, can be written as
 \]
 Inserting this into the relation above we obtain
 \[
-P_{t+dt}(x) = P_t(x) +\mathcal{A} P_t(x) dt + P_t(x)\left(\lambda(x)-\hat{\lambda}\right)\hat{\lambda}^{-1}\left(dN(t+dt)-\hat{\lambda} dt\right),
+P(x,t+dt) = P(x,t) +\mathcal{A} P(x,t) dt + P(x,t)\left(\lambda(x)-\hat{\lambda}\right)\hat{\lambda}^{-1}\left(dN(t+dt)-\hat{\lambda} dt\right),
 \]
 or, writing it as a stochastic PDE:
 \begin{equation}
 \label{eq:snyder_uni}
-dP_t(x) = \mathcal{A}P_t(x) dt + P_t(x)\left(\lambda(x)-\hat{\lambda}\right)\hat{\lambda}^{-1}\left(dN(t)-\hat{\lambda} dt\right).
+dP(x,t) = \mathcal{A}P(x,t) dt + P(x,t)\left(\lambda(x)-\hat{\lambda}\right)\hat{\lambda}^{-1}\left(dN(t)-\hat{\lambda} dt\right).
 \end{equation}
 Note the striking similarity with \fref{eq:kushner}, namely the observations only influence the posterior through an innovation process, here given by $dN(t)-\hat{\lambda}dt$. Furthermore, the inverse rate is equivalent to the inverse variance, if we note that the variance of a Poisson process is precisely its rate $\lambda(x)$. This equation was first derived by Donald Snyder in 1972.\cite{Snyder1972}
 \par
-Clearly the derivation above is not mathematically sound. More care is needed when taking limits with $dt\to 0$, namely we have used that $dN(t+dt) \to dN(t)$ when $dt\to 0$ which is not trivially true and must be estabilished with some extra care. The full derivation by Snyder works by first finding an expression for the characteristic function of the posterior distribution and deriving a stochastic PDE for the characteristic function. This is then Fourier-transformed to yield \fref{eq:snyder_uni}.
+Clearly the derivation above is not mathematically sound. More care is needed when taking limits with $dt\to 0$, namely we have used that $dN(t+dt) \to dN(t)$ when $dt\to 0$ which is not technically true and must be treated with some extra care. The full derivation by Snyder works by first finding an expression for the characteristic function of the posterior distribution and deriving a stochastic PDE for the characteristic function. This is then Fourier-transformed to yield \fref{eq:snyder_uni}.
 
 \subsection{Multiple Spike Trains}
 
 Note that \fref{eq:snyder_uni} is readily extended to multiple point processes, as long as they are independent. Given a population of point processes $N^i(t)$, $i\in [1,M]$, we will simply have, following the same derivation
 \begin{equation}
 \label{eq:snyder_multi}
-dP_t(x) = \mathcal{A}P_t(x) dt + P_t(x)\sum_i\left(\lambda_i(x)-\hat{\lambda}_i\right)\hat{\lambda}_i^{-1}\left(dN^i(t)-\hat{\lambda}_i dt\right).
+dP(x,t) = \mathcal{A}P(x,t) dt + P(x,t)\sum_i\left(\lambda_i(x)-\hat{\lambda}_i\right)\hat{\lambda}_i^{-1}\left(dN^i(t)-\hat{\lambda}_i dt\right).
 \end{equation}
 Again, this can be readily be associated with a multidimensional observation process in the Kalman case by noting that we can rewrite it as
 \begin{equation}
 \nonumber
-dP_t(x) = \mathcal{A}P_t(x) dt + P_t(x)\left(\boldsymbol{\lambda}(x)-\hat{\boldsymbol{\lambda}}\right)^\top Diag(\hat{\boldsymbol{\lambda}})^{-1}\left(d\boldsymbol{N}(t)-\hat{\boldsymbol{\lambda}} dt\right).
+dP(x,t) = \mathcal{A}P(x,t) dt + P(x,t)\left(\boldsymbol{\lambda}(x)-\hat{\boldsymbol{\lambda}}\right)^\top Diag(\hat{\boldsymbol{\lambda}})^{-1}\left(d\boldsymbol{N}(t)-\hat{\boldsymbol{\lambda}} dt\right).
 \end{equation}
 I have used the notation $\boldsymbol{\lambda}(x) = (\lambda_1(x),\lambda_2(x),\ldots)^\top, d\boldsymbol{N}(t) = (dN^1(t), dN^2(t),\ldots)^\top$ and so forth. Note that if we take the vector counting process $\boldsymbol{N}(t)$, its expected covariance is indeed given by $Diag(\hat{\boldsymbol{\lambda}})$, and the equation corresponds precisely to \fref{eq:kushner}.
 
@@ -249,33 +253,33 @@ P(\{N^i_{t_0:t}\}|X_{t_0:t}) \propto \prod_{\boldsymbol{S(t)}} \lambda_{n_s}(X(t
 \end{equation}
 Furthermore let us assume that the the tuning functions $\lambda_i$ are unnormalized Gaussians of the form
 \[
-\lambda_i(x) = \phi \exp\left[-\frac{1}{2} (x-\theta_i)^\top A^\dagger (x-\theta_i)\right],
+\lambda_i(x) = \phi \exp\left[-\frac{1}{2} (x-\theta_i)^\top \covar^\dagger (x-\theta_i)\right],
 \]
-Note that I have used the pseudoinverse $A^\dagger$ to allow for the tuning functions to be degenerate Gaussian distributions. Note that this will not be a problem, as the prior over $X_t$ is always Gaussian, leading to a Gaussian posterior when multiplied by $\lambda_i$. Furthermore the marginal probability of a spike being fired is also defined. One must note that $\lambda_i$ does not define a distribution over the stimulus space but over the distribution space. The Gaussian updates are, however the same.\par
+Note that I have used the pseudoinverse $\covar^\dagger$ to allow for the tuning functions to be degenerate Gaussian distributions. Note that this will not be a problem, as the prior over $X_t$ is always Gaussian, leading to a Gaussian posterior when multiplied by $\lambda_i$. Furthermore the marginal probability of a spike being fired is also defined. One must note that $\lambda_i$ does not define a distribution over the stimulus space but over the distribution space. The Gaussian updates are, however the same.\par
 We can then treat the problem similarly to the Kalman filter problem, but we need to take into account the fact that instead of arriving continuously, observations are coming in at random times. Let us then consider the same process as before given by the SDE
 \[
-dX(t) = GX(t) dt + \sigma^{1/2} dW(t).
+dX(t) = AX(t) dt + H^{1/2} dW(t).
 \]
 Note that without observations the Gaussian distribution will evolve as
 \begin{subequations}
 \label{eq:free_ou_moments}
 \begin{equation}
-\frac{d\mu}{dt} = G \mu
+\frac{d\mu}{dt} = A \mu
 \end{equation}
 and
 \begin{equation}
-\frac{d\Sigma}{dt} = G\Sigma + \Sigma G^\top + \sigma.
+\frac{d\Sigma}{dt} = A\Sigma + \Sigma A^\top + H.
 \end{equation}
 \end{subequations}
-The updates are simply given by Gaussian updates with the mean $\theta_i$ and covariance $A$ of the tuning function of the spiking neuron $i$.These will yield
+The updates are simply given by Gaussian updates with the mean $\theta_i$ and covariance $E$ of the tuning function of the spiking neuron $i$.These will yield
 \begin{subequations}
 \label{eq:gaussian_updates}
 \begin{equation}
-\mu(t) = \mu(t^-) + \Sigma(t^-)\left(\Sigma(t^-)+A\right)^{-1}\left(\theta_i - \mu(t^-)\right)
+\mu(t) = \mu(t^-) + \Sigma(t^-)\left(I+\covar^\dagger \Sigma(t^-)\right)^{-1} \covar^\dagger\left(\theta_i - \mu(t^-)\right)
 \end{equation}
 \begin{equation}
-\Sigma(t) = \Sigma(t^-) - \Sigma(t^-)\left(\Sigma(t^-)+A\right)^{-1} \Sigma(t^-).
-\end{equation}
+\Sigma(t) = \Sigma(t^-) - \Sigma(t^-) \covar^\dagger \Sigma(t^-) \left(I+\covar^\dagger \Sigma(t^-)\right)^{-1}.
+\end{equation}\marginnote{These updates can be simplified if the tuning matrix $E$ is invertible.}
 \end{subequations}
 Here we have used the notation
 \[
@@ -285,33 +289,188 @@ for the limit of a function $f$ at $t$ from the left. These can then be condense
 \begin{subequations}
 \label{eq:filtering_sdes}
 \begin{equation}
-d\mu(t) = G\mu(t) dt + \sum_i dN^i(t) \left[\Sigma(t)\left(\Sigma(t)]+A\right)^{-1}\left(\theta_i - \mu(t)\right)\right]
+d\mu(t) = A\mu(t) dt + \sum_i dN^i(t) \left[\Sigma(t^-)\left(I+\covar^\dagger \Sigma(t^-)\right)^{-1} \covar^\dagger\left(\theta_i - \mu(t^-)\right)\right]
 \end{equation}
 and
 \begin{equation}
 \label{eq:filtering_sde_sigma}
-d\Sigma(t) = (G\Sigma(t) + \Sigma(t) G^\top+\sigma)dt + dN(t) \left[\Sigma(t)\left(\Sigma(t)+A\right)^{-1} \Sigma(t)\right].
+d\Sigma(t) = (A\Sigma(t) + \Sigma(t) A^\top+H)dt + dN(t) \left[\Sigma(t^-) \covar^\dagger \Sigma(t^-) \left(I+\covar^\dagger \Sigma(t^-)\right)^{-1}\right].
 \end{equation}
 \end{subequations}
-These SDE's define processes that are continuous from the right and have a limit from the left. They are often called C\`adl\`ag processes in the stochastic literature, from the french phrase \emph{continue \`a droite, limite \`a gauche}. Note that the evolution of the posterior variance only depends on the total spike count process $N(t)$, which will be fundamental for our future analysis. \par
-As we noted before, the covariance of the tuning functions does not need to be invertible. Note that as long as $\Sigma(t) + A$ is invertible, the filtering equations are always well-defined. This can be ensured by requiring that $A$ be symmetric positive semidefinite. Since $\Sigma(t)$ is symmetric positive definite, as it is a covariance matrix, $\Sigma(t)+A$ will also be symmetric positive definite. Note that we can still express the tuning functions as Gaussians spanning the row space of $A$.\par
-Most of the analytical work in this thesis is done on the filtering problem given by \fref{eq:filtering_sdes}. The fact that the frequency of observations is independent of the system's state along with the homogeneous nature of the population of processes leads to a number of simplifications when evaluating the Mean-Squared-Error\marginnote{Mean-Squared-Error $\equiv$ MSE} of the estimator $\mu(t)$. More specifically, since $\mu(t)$ is the Bayesian a posteriori estimator, it is unbiased and its MSE is simply given by the variance of the estimator. This must then be averaged over the observation process. We will discuss these issues further in \fref{chap:MSE}. The filtering scheme described in this section and some of the results of \fref{chap:MSE} are illustrated in \fref{fig:matern_coding}.
+These SDE's define processes that are continuous from the right and have a limit from the left. They are often called C\`adl\`ag processes in the stochastic literature, 
+from the french phrase \emph{continue \`a droite, limite \`a gauche}. Note that the evolution of the posterior variance only depends on the total spike count process 
+$N(t)$, which will be fundamental for our future analysis. \par
+As we noted before, the covariance of the tuning functions does not need to be invertible. Note that as long as $\Sigma(t)^{-1} + \covar^\dagger$ is invertible, the filtering 
+equations are always well-defined. This can be ensured by requiring that $E$ be symmetric positive semidefinite. Since $\Sigma(t)$ is symmetric positive definite, as it 
+is a covariance matrix, $\Sigma(t)^{-1}+\covar^\dagger$ will also be symmetric positive definite. Note that we can still express the tuning functions as Gaussians spanning 
+the row space of $E$.\par
+Most of the analytical work in this thesis is done on the filtering problem given by \fref{eq:filtering_sdes}. The fact that the frequency of observations is independent of 
+the system's state along with the homogeneous nature of the population of processes leads to a number of simplifications when evaluating the Mean-Squared-Error
+\marginnote{Mean-Squared-Error $\equiv$ MSE} of the estimator $\mu(t)$. More specifically, since $\mu(t)$ is the Bayesian a posteriori estimator, it is unbiased and 
+its MSE is simply given by the variance of the estimator. This must then be averaged over the observation process. We will discuss these issues further in 
+\fref{chap:MSE}. The filtering scheme described in this section and some of the results of \fref{chap:MSE} are illustrated in \fref{fig:matern_coding}.
 \begin{figure}
 \label{fig:matern_coding}
 \includegraphics[width=\columnwidth]{figures/matern_coding.png}
-\caption{THIS CAPTION MUST BE DONE!}
+\caption{The general filtering framework: the unobserved process we are trying to estimate is shown as the solid red line, while the observed spikes are
+shown as red dots, aligned by the preferred stimulus of the firing neurons. The posterior mean estimate is given by the dotted blue line, while the light red shading
+gives the confidence interval of one standard deviation. Note the discontinuous jumps in the mean and covariance at the times of spikes. The lower figure shows the
+average posterior variance over all possible spike trains given a stimulus distribution. Note that the mean-field approximation provides a very good account of the
+evolution of the average. These results will be further discussed in \fref{chap:MSE}.}
 \end{figure}
 
 We will now turn to filtering from Point processes when the dense coding assumption does not hold.
 
 \section{Methods for General Filtering of Point Processes}
 
-If nothing else is known about the process at hand, we are forced to work directly with \fref{eq:snyder_multi}. In principle one could discretize the state space and try to solve the Partial Differential Equation\marginnote{Partial Differential Equation $\equiv$ PDE} recursively as the observations come in. Note, however, that in truth the right hand side \fref{eq:snyder_multi} also contains averages over $P_t(x)$, leading to additional complications on every integration step. One way to circumvent this particular problem is to work with unnormalized probabilities. The Zakai equation\cite{Zakai1969} is a modified version of the Kushner equation which propagates unnormalized probabilities. Let us define $\rho_t(x)$, such that $P_t(x) = \rho_t(x)/\int dx \rho_t(x)$. Taking the same diffusion process notation as used in \fref{sec:kalman}, the evolution of $\rho_t(x)$ will be given by
+If nothing else is known about the process at hand, we are forced to work directly with \fref{eq:snyder_multi}. In principle one could discretize the state space and try to solve the Partial Differential Equation\marginnote{Partial Differential Equation $\equiv$ PDE} recursively as the observations come in. Note, however, that in truth the right hand side \fref{eq:snyder_multi} also contains averages over $P(x,t)$, leading to additional complications on every integration step. One way to circumvent this particular problem is to work with unnormalized probabilities. The Zakai equation\cite{Zakai1969} is a modified version of the Kushner equation which propagates unnormalized probabilities. Let us define $\rho_t(x)$, such that $P(x,t) = \rho(x,t)/\int dx \rho(x,t)$. Taking the same diffusion process notation as used in \fref{sec:kalman}, the evolution of $\rho_t(x)$ will be given by
 \begin{equation}
 \label{eq:zakai}
-d\rho_t(x) = \mathcal{A} \rho_t(x) + \rho_t(x) x^\top c^\top \eta \eta^\top dz.
+d\rho(x,t) = \mathcal{A} \rho(x,t) dt+ \rho(x,t) x^\top C^\top D dz.
 \end{equation}
-Note that while the Kushner equation was a stochastic partial integro-differential equation, since the left hand side involved averages over $P_t(x)$, the Zakai equation is a simpler stochastic partial differential equation and given a realization of the observation process can be solved by standard methods. Furthermore, the Zakai equation allows for a closed form solution in terms of path integrals
+Note that while the Kushner equation was a stochastic partial integro-differential equation, since the left hand side involved averages over $P(x,t)$, the Zakai equation is a simpler stochastic partial differential equation and given a realization of the observation process can be solved by standard methods. Furthermore, the Zakai equation allows for a closed form solution in terms of path integrals.\par
+We can derive a similar framework for the Snyder equation (\fref{eq:snyder_uni}). Again taking the notation $P(x,t) = \rho(x,t) / \int dx \rho(x,t)$ we find that the 
+unnormalised posterio distribution $\rho(x,t)$ stochastic process with generator $\mathcal{A}$ observed through a doubly stochastic Poisson process with rate 
+$\lambda(x)$ will obey the stochastic PDE
+\begin{equation}
+\label{eq:zakai_snyder}
+d\rho(x,t) = \mathcal{A} \rho(x,t) dt -\lambda(x) \rho(x,t) + \left(\lambda(x) -1 \right)dN(t).
+\end{equation}
+Note that any term independent of $x$ can be trivially discarded as it only constitutes a temporal renormalisation of $\rho$. For example, if $\rho^*(x,t)$ is a solution to
+\fref{eq:zakai_snyder} with initial condition $\rho(x,0) = g(x)$, then $r(x,t) = \exp(-\int_0^t k(s) ds ) \rho^*(x,t)$ is a solution to the stochastic PDE
+\[
+d\rho(x,t) = \mathcal{A} \rho(x,t) dt -\lambda(x) \rho(x,t) + \left(\lambda(x) -1 \right)dN(t) -k(t) \rho(x,t) dt,
+\]
+with the same initial condition.
+This allows us to set a type of baseline to the expected firing rate in the unnormalised equation. This framework has been used by Bobrowski\cite{Bobrowski2009} in
+the study of finite state systems observed through doubly stochastic Poisson processes. This work was also extended to static continuous processes by 
+Yaeli and Meir.\cite{Yaeli2010}.
 
+\subsection{Assumed Density Filtering}
+
+In Assumed Density Filtering\marginnote{ADF: Assumed Density Filtering}, the distribution of a set of random variables $\{X_1,\ldots, X_N\}$ is approximated
+sequentially by finding the best distribution from a parametric family of distributions. For example, if we have a true, intractable distribution $P(X_1,\ldots,X_N)$ we
+could choose to approximate the distribution by a Gaussian distribution. In ADF one then starts out with a prior distribution $Q_0(x)$ and sequentially looks
+for the best Gaussian approximation to the posterior $Q_i(x) P(x|X_{i+1})$. This is usually termed filtering even when there is no temporal estimation
+involved because of the sequential updates to the posterior.\footnote{For examples of applications, see \citep{opper2000,boyen1998,minka2001}.} The best
+approximation to the posterior is usually defined as the one minimising the Kullback-Leibler divergence between the true and approximate posterior. In that sense
+we would have 
+\begin{align*}
+Q_{i+1} (x) =& \argmin_q KL[Q_i(x) P(x|X_{i+1})||q] \\=& \argmin_q \int dx Q_i(x) P(x|X_{i+1}) \log \frac{Q_i(x) P(x|X_{i+1})}{q(x)}.
+\end{align*}
+Note that the KL divergence taken here is the reverse of the usual KL divergence used in variational inference.\footnote{In variational inference one usually considers
+the KL divergence between the approximating and the true distribution given by $KL[q||p] = \int dx q(x) \log\frac{q(x)}{p(x)}$.} It can be shown that if we apply this 
+process using a family of exponential distributions as approximating distributions, it will lead
+to a moment matching procedure where the moments of the approximating distribution match the ones of the true posterior. If we took $Q(x)$ to be a Gaussian
+every step in the procedure would involve evaluating the mean and covariance of the posterior, then.
+\par
+
+Though our framework of DSPP's in dense Gauss-Poisson populations of neurons turns out to be exactly Gaussian, this does not hold in the general case.
+A simple example would be a population of neurons which do not cover the stimulus space densely, leading to a stimulus-dependent population firing rate. We would
+then have to deal with the full extent of \fref{eq:snyder_multi}. One way to deal with this is to project our posterior distribution to a Gaussian at every time step. To do
+so we need to determine the mean and covariance of the true posterior and can then match a Gaussian distribution to those moments. We will illustrate here a simple
+case of Gaussian ADF for a non-Gaussian system.\par
+
+Poisson processes are the simplest type of point process one can study and although they have been widely adopted as a model of neuronal firing, there is little doubt
+that they do not fully encompass the complexity of neural behaviour. To consider only the simplest of critics we can refer to the refractory period of action potentials. It
+is a general property of neurons that after firing an action potential they can not fire another one for a short period of time, regardless of the stimulation applied. This
+refractory period varies from cell type to cell type and between organisms, but is generally around 5 ms. A simple Poisson process can not account for this
+essential trait of neural firing. It is easy to modify the Poisson model to account for a refractory period or else to include a spike-frequency adaptation component
+as well.\par
+We can consider a simple history-dependent Poisson process given by a rate $\lambda(x,t) = \kappa(t) \lambda(x)$, where $\kappa$ itself depends on the
+spiking history of the process. Let me take $\kappa$ evolving according to the SDE
+\[
+d\kappa(t) = \frac{(\phi - \kappa(t))}{\tau} dt - h(\kappa(t)) dN(t), \quad h(\kappa) = \min(\Delta, \kappa).
+\]
+This will lead to a rate modulation which stabilises at $\phi$ when there are no spikes, and is shifted downwards by $\Delta$ whenever there is a spike, without
+venturing below 0. Note that, although the process is now history-dependent, the joint process $\kappa(t),N(t)$ is still Markov, since the dynamics of $\kappa$ itself
+is Markovian. The Bayesian updates leading to \fref{eq:snyder_uni} are not altered by the presence of the $\kappa(t)$ term, and the derivation still holds, with the 
+caveat that to determine the rate $\lambda(x,t)$ we now have to follow the dynamics of the modulation $\kappa(t)$ as well.\par
+To obtain the ADF equations for this simple model we need to evaluate the evolution of the mean and covariance of the filtering distribution. We will derive the
+necessary equations similarly to the derivation of the differential Chapman-Kolmogorov equation in \citep{Gardiner2004}. In the absence of spikes, the average of
+a function of $x$ over the posterior distribution evolves as
+\begin{align*}
+\frac{\partial \int dx f(x) P(x,t)}{\partial t} =& \int dx f(x) \left(\mathcal{A} P(x,t) + (\hat{\lambda}(t) - \lambda(x,t) ) P(x,t)\right) \\
+=&\int dx \mathcal{A}^\dagger f(x) P(x,t) + \left<f(x) (\hat{\lambda}(t) - \lambda(x,t) ) \right>,
+\end{align*}
+where $\mathcal{A}^\dagger$ is the adjoint operator of $\mathcal{A}$, that is,
+\[
+\int dx f(x) (\mathcal{A} g(x)) = \int dx (\mathcal{A}^\dagger f(x)) g(x).
+\]
+This can be readily cast into a form to allow for moment matching of Gaussian distributions. Taking the stochastic process $X_t$ defined in \fref{eq:OU_sde}, the
+generator and its adjoint will be given by
+\[
+\mathcal{A} f = -\frac{\partial \left(Ax f(x)\right)}{\partial x} + \frac{1}{2}\frac{\partial^2 \left(H f(x)\right)}{\partial x^2}, \textrm{ and } \mathcal{A}^\dagger f = A x\frac{\partial f(x)}{\partial x} + H \frac{1}{2}\frac{\partial^2  f(x)}{\partial x^2}.
+\]
+The evolution of the mean and covariance will then be simply given by
+\begin{subequations}
+\begin{equation}
+\frac{\partial \mu(t)}{\partial t } = A \mu(t) + \left<x \left(\hat{\lambda}(t) -\lambda(x,t)\right)\right>,
+\end{equation}
+\begin{equation}
+\frac{\partial \Sigma(t)}{\partial t} = A\Sigma(t) + \Sigma(t) A^\top + H +\left<(x-\mu(t)) (x-\mu(t))^\top \left(\hat{\lambda}(t) -\lambda(x,t)\right)\right>.
+\end{equation}
+\end{subequations}
+Note that these equations are exact, even if the posterior distribution is not Gaussian. The crucial step to perform ADF is to assume that the distribution at every
+instant is characterised by only its mean and covariance, and is therefore Gaussian. In that case, the averages in the equations can often be performed exactly and 
+we can provide an approximate filter to the problem. Note that the derivation is valid for the case of multiple spike trains as well, and we would simple have to replace 
+the averages with sums over all neurons of the same averages.\par
+
+In \fref{chap:optimal} we will apply the ADF approach to the general linear stochastic systems considered here and compare them to the particle filter approach. 
+Though the ADF has had considerable success and has spawned a number of new approaches, such as the expectation propagation (EP) algorithm,
+\cite{opper2000,minka2001} in the cases we considered the particle filtering approach yielded better results.
+
+
+\subsection{Particle Filtering}
+
+The central idea of particle filtering is relatively simple. If we are not given access to the system's state directly, we can just simulate a big number of hypotheses of 
+the  system's state and weight each copy according to its agreement with our observations. One can then compute averages over the posterior distribution from the 
+weighted samples. I will elaborate further. Say we have a system $X_t$ initially distributed according to $P_0(x)$, with some known transition probability $P(X(t+dt)|
+X(t))$ observed through some other process $Y(t)$, with likelihood $P(Y(t)|X(t))$. If all the probabilities are known we can implement the filtering steps numerically,
+by taking a sample of $M$ \emph{particles} $\{Z^i(0)\}, i \in [1,\ldots,M]$ from $P_0(x)$, and associating a weight to each of those 
+particles $w^i(0)= 1$. Then for each 
+particle $Z^i_0$ we sample the value of that particle at the following instant through the transition probability $P(Z^i(t+dt)|Z^i(t)$ and reweigh it through the likelihood
+of $Y(t)$, yielding $w^i(t+dt) = w^i(t) P(Y(t+dt) | Z^i(t+dt))$. The approximate density $Q(x,t) = \sum_i w^i(t)\delta(Z^i(t) - x)$, then gives us an approximation of the
+posterior density $P(x,t)$ and averages can be computed by simply aggregating over the particles. We have
+\[
+\int dx\, P(x,t) g(x)  \approx \sum_i w^i(t) g(Z^i(t)).
+\]
+These methods are often called Sequential Monte Carlo\marginnote{SMC: Sequential Monte Carlo} methods as well, since they consist of sequentially sampling the 
+state of the system in a way similar to a Monte Carlo Markov Chain.\par
+The description above barely scratched the surface of what is achievable and what are the problems of particle filters, and we will not dive too deep into the theory of
+them, but one point is important to be made. Though the sampling procedure described above in principle yields an estimate of the true posterior distribution, a lot can
+go wrong when implementing it with a finite number of particles. One issue that plagues many such filters is the issue of weight depletion. Weight depletion refers
+to the situation where all but a few particles have very low weights, representing state paths which are incompatible with the observations. This can lead the particle
+filter to waste resources estimating the density of regions which don't contribute to the posterior averages, and therefore yielding very poor estimates of the distribution
+in the interesting regions. This led researchers to propose resampling steps in the particle filter. Whenever a certain criterion is met (or after every step in the filter) we
+resample our particles from the set of existing particles according to their weights, i.e., we sample $M$ particles from the set $\{Z^i(t)\}$ with probabilities given by
+$p_i = w^i(t)/\sum_i w^i(t)$. After that, all weights are reset to 1 and the procedure continues. This forces
+the filter to allocate its particles according to its current estimate of the posterior distribution. This helps prevent weight depletion, but it is not a panacea for these 
+issues, and even properly resampled filters can often end up with very poor estimates of the posterior distribution.\par
+Another important thing to note, is that it is often not possible to efficiently sample from the transition probabilities of the system. In those cases one can still combine
+the particle filter with an importance sampling approach. In that sense, at every step one samples from a simpler distribution $Q(X(t+dt)|X(t))$ and reweighs the 
+particles according to 
+\[
+w^i(t+dt) = w^i(t) \frac{P(Y(t+dt) | Z^i(t+dt)) P(Z^i(t+dt)|Z^i(t))}{Q(Z^i(t+dt)|Z^i(t))}.
+\]
+This allows for efficient sampling, but it adds another source of
+weight depletion. Again, if the sampling transition probabilities do not match the system's transition probabilities, the weights will quickly fall to low values, leading to
+poor estimates of the posterior distribution.\par
+Let us consider again the case we treated with the ADF approach in the previous section. Note that in the absence of spikes the posterior evolves according to
+\begin{align*}
+\frac{\partial P(x,t)}{\partial t} =& \mathcal{A} P(x,t) + (\hat{\lambda}(t) - \lambda(x,t) ) P(x,t) \\
+=& -\frac{\partial \left(Ax P(x,t)\right)}{\partial x} + \frac{1}{2} H \frac{\partial^2 P(x,t)}{\partial x^2}+ (\hat{\lambda}(t) - \lambda(x,t) ) P(x,t).
+\end{align*}
+We can again formulate an unnormalised density $\rho(x,t)$, which will evolve according to
+\[
+\frac{\partial \rho(x,t)}{\partial } =-\frac{\partial \left(Ax \rho(x,t)\right)}{\partial x} + \frac{1}{2} H \frac{\partial^2 \rho(x,t)}{\partial x^2}dt -\lambda(x,t) \rho(x,t).
+\]
+It can be shown that the equation above describes the evolution of a drift diffusion process with a death rate of $\lambda(x,t)$. This means that our system evolves
+according to the \fref{eq:OU_sde} but there is a transition to a death state with a rate $\lambda(x,t)$.\cite{Oksendal2003} This allows us to formulate a simple particle 
+filter, by propagating the particles with the transition probability of the linear stochastic system and then killing it at a rate $\lambda(x,t)$. Furthermore, we can simply
+resample the particles every time a particle \emph{dies}.\par
+The particle filtering scheme presented here is very flexible, and is in principle applicable to any kind of stochastic process observed through Poisson spikes. This
+approach has also gained traction in the neuroscience community, where particle filters are often used to decode cortical signals from electrophysiological recordings.
+\cite{brockwell2004recursive,Ergun2007} Most BCI application require very low latency though, and often specialised types of Kalman filter are more practical to employ in such settings.\cite{wu2006bayesian}
 
 

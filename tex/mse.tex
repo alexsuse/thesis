@@ -26,11 +26,11 @@ The neural case poses an interesting exception though. If we consider the Poisso
 
 \section{The MSE for Dense Gaussian DSPP Observations}
 
-The case discussed in \fref{sec:fast_coding} allows for a number of simplifications. Since the posterior Bayesian estimator is optimal in the MSE sense, its MSE will be the minimal Mean-Squared-Error attainable by an estimator.\marginnote{Minimal Mean-Squared-Error$\equiv$MMSE. Jeez!} We will then have, using the same notation as in \fref{sec:fast_coding}
+The case discussed in \fref{sec:fast_coding} allows for a number of simplifications. Since the posterior Bayesian estimator is optimal in the MSE sense, its MSE will be the minimal Mean-Squared-Error attainable by an estimator.\marginnote{Minimal Mean-Squared-Error $\equiv$ MMSE. Jeez!} We will then have, using the same notation as in \fref{sec:fast_coding}
 \[
 MMSE(t;\{\theta_i\},A) = \boldsymbol{E}\left[\left(X(t) - \hat{X}(\boldsymbol{N}_{[t_0:t]})\right)\left(X(t) - \hat{X}(\boldsymbol{N}_{[t_0:t]})\right)^\top\middle| X, \boldsymbol{N}\right]\equiv \epsilon(t).
 \]
-Note that we are here interested in the ensemble average over all possible realizations of both the signal as the observation processes. It is already established that the estimator $\hat{X}(\boldsymbol{N}_{[t_0:t]} = \boldsymbol{E}\left(X(t)\middle|\boldsymbol{N}_{[t_0:t]}\right)$ is the optimal estimator, but we can still improve that estimator by adapting the parameters of our encoding processes $\boldsymbol{N}$, more specifically the tuning covariance $A$. Assuming that our knowledge of the system's parameters is correct, we can evaluate part of the average exactly. Let us break up the expectation over $X$ and $\boldsymbol{N}$ as
+Note that we are here interested in the ensemble average over all possible realizations of both the signal as the observation processes. It is already established that the estimator $\hat{X}(\boldsymbol{N}_{[t_0:t]}) = \boldsymbol{E}\left(X(t)\middle|\boldsymbol{N}_{[t_0:t]}\right)$ is the optimal estimator, but we can still improve that estimator by adapting the parameters of our encoding processes $\boldsymbol{N}$, more specifically the tuning covariance $\covar$. Assuming that our knowledge of the system's parameters is correct, we can evaluate part of the average exactly. Let us break up the expectation over $X$ and $\boldsymbol{N}$ as
 \[
 \epsilon(t) = \int d\mu(X) \int d\mu(\boldsymbol{N}_{[t_0:t]}) \left(X(t) - \hat{X}(\boldsymbol{N}_{[t_0:t]})\right)\left(X(t) - \hat{X}(\boldsymbol{N}_{[t_0:t]})\right)^\top P(X| \boldsymbol{N}_{[t_0:t]}) P(\boldsymbol{N}_{[t_0:t]}).
 \]
@@ -40,13 +40,13 @@ Note that the average over $P(X|\boldsymbol{N}_{[t_0:t]})$ will just yield the p
 \]
 where in the last step we have used that the posterior variance is only a function of the spike count $N_{[t_0:t]} = \sum_i N^i_{[t_0:t]}$ and not of the full spike train $\boldsymbol{N}_{[t_0:t]} = \left(N^1_{[t_0:t]}, N^2_{[t_0:t]}, \ldots\right)^\top$. This makes it much simpler to treat the averages, but they still remain intractable. To get a sense of the problem, for every possible spike count, we would have to average over all possible spike times for those spikes, considering the evolution of $\Sigma$ from its initial value according to the dynamics given in \fref{eq:filtering_sde_sigma}, and then average over all possible spike counts. This has been done for the case of static stimuli in \citet{Yaeli2010}. When the stimulus is static, the averages are simplified by the fact that the variance does not change between spikes. The posterior variance is then simply given by
 \[
-\Sigma(t) = \left(\Sigma(t_0)^{-1} + N(t) A^\dagger\right)^{-1}.
+\Sigma(t) = \left(\Sigma(t_0)^{-1} + N(t) \covar^\dagger\right)^{-1}.
 \]
 Averaging over the spike trains then amounts to averaging over all possible spike counts for the given time period. This will lead to
 \begin{equation}
-\epsilon_{static}(t) = \sum_{k=0}^\infty  \left(\Sigma(t_0)^{-1} + k A^\dagger\right)^{-1} \frac{ (\hat{\lambda}t)^k e^{-\hat{\lambda} t }}{k!}.
+\epsilon_{static}(t) = \sum_{k=0}^\infty  \left(\Sigma(t_0)^{-1} + k \covar^\dagger\right)^{-1} \frac{ (\hat{\lambda}t)^k e^{-\hat{\lambda} t }}{k!}.
 \end{equation}
-Note that this simplifies further when $A = \Sigma(t_0)$, that is, when the tuning is matched to the prior variance of the static process. We will then have
+Note that this simplifies further when $\covar = \Sigma(t_0)$, that is, when the tuning is matched to the prior variance of the static process. We will then have
 \begin{equation}
 \epsilon_{static}(t) =\Sigma(t_0)e^{-\hat{\lambda} t}  \sum_{k=0}^\infty  \frac{ (\hat{\lambda}t)^k }{(k+1)!} = \Sigma(t_0) \frac{1-e^{-\hat{\lambda} t }}{\hat{\lambda} t}.
 \end{equation}
@@ -54,11 +54,11 @@ In the general case, the infinite sum has to be evaluated numerically. This case
 When considering the general case, though the average can not be evaluated explicitly. One way to overcome this is to look at the evolution of $\epsilon(t)$ over time. Note that the posterior variance process is a simple drift-jump process with a constant jump rate. The evolution of the probability $P(\Sigma(t) = s | \Sigma(t_0) = s_0) \equiv P(s,t)$ is given by the differential Chapman-Kolmogorov equation\cite{Gardiner2004}
 \begin{equation}
 \label{eq:sigma_DCKE}
-\frac{\partial P(s,t)}{\partial t} = -\nabla \left[B(s) P(s,t)\right] + \hat{\lambda} C(s) P\left( (s^{-1} - A^+)^{-1},t\right) - \hat{\lambda} P(s,t),
+\frac{\partial P(s,t)}{\partial t} = -\nabla \left[B(s) P(s,t)\right] + \hat{\lambda} C(s) P\left( (s^{-1} - \covar^\dagger)^{-1},t\right) - \hat{\lambda} P(s,t),
 \end{equation}
-where $B(s) = G s + s G^\top + \sigma$, and  $C(s) = 1/|\det(J(s))|$, where $J(s)$ is the Jacobian matrix
+where $B(s) = A s + s A^\top + H$, and  $C(s) = 1/|\det(J(s))|$, where $J(s)$ is the Jacobian matrix
 \[
-J_{(i,j),(k,l)} = \frac{\partial (s^{-1}+A^+)^{-1}_{i,j}}{\partial s_{k,l}} = (I+A^+s)^{-1}_{k,i}(I+s A^+)^{-1}_{j,n}.
+J_{(i,j),(k,l)} = \frac{\partial (s^{-1}+\covar^\dagger)^{-1}_{i,j}}{\partial s_{k,l}} = (I+\covar^\dagger s)^{-1}_{k,i}(I+s \covar^\dagger)^{-1}_{j,n}.
 \]
 Note that the exact order in which we choose to write up the Jacobian matrix does not matter as it would only account for a change in sign of the determinant, which only enters into \fref{eq:sigma_DCKE} through its absolute value. The differential Chapman-Kolmogorov equation is a generalization of the Focker-Planck and Kolmogorov forward equation to systems with drift, diffusion and jumps. We can use it to easily to evaluate the evolution of averages over $s$ by noting that
 \[
@@ -66,16 +66,16 @@ Note that the exact order in which we choose to write up the Jacobian matrix doe
 \]
 and assuming that $\lim_{s_{i,j} \to \infty} P(s,t) f(s) = 0$ for any $(i,j)$, we have that
 \[
-\frac{\partial \left<f(s)\right>}{\partial t} = \int d\mu(s) \left[\nabla f(s) B(s) P(s,t) - \lambda C(s) f(s) \left(P((s^{-1} + A^\dagger)^{-1},t)  -P(s,t)\right)\right].
+\frac{\partial \left<f(s)\right>}{\partial t} = \int d\mu(s) \left[\nabla f(s) B(s) P(s,t) - \lambda C(s) f(s) \left(P((s^{-1} + \covar^\dagger)^{-1},t)  -P(s,t)\right)\right].
 \]
 We can then obtain the evolution of our MMSE by taking $f(s) = s$, yielding
 \begin{equation}
 \label{eq:epsilon_exact}
-\frac{d\epsilon(t)}{dt} = G\epsilon(t) + \epsilon(t) G^\top + \sigma -\hat{\lambda} \boldsymbol{E}\left[s (s+A)^{-1} s\right].
+\frac{d\epsilon(t)}{dt} = A\epsilon(t) + \epsilon(t) A^\top + H -\hat{\lambda} \boldsymbol{E}\left[s (s+\covar)^{-1} s\right].
 \end{equation}
 Note that we are still left with the far right hand term, which involves a nonlinear average over the distribution of variances. There are many ways to deal with that. One is to approximate the distribution $P(s,t)$ by some parametric distribution and obtain an approximation for the evolution of $\epsilon(t)$. Another possibility is to evaluate the average numerically by sampling from the paths of \fref{eq:filtering_sde_sigma}. Another popular alternative is to approximate the distribution $P(s,t)$ by a point mass at its mean. This is the so-called Mean-Field approach, where we simply disregard all fluctuations in $s$ and approximate all averages $\boldsymbol{E}[f(s)]$ by $f(\boldsymbol{E}[s])$. This would lead to the mean-field evolution of $\epsilon(t)$
 \begin{equation}
-\frac{d\epsilon(t)}{dt} = G\epsilon(t) + \epsilon(t) G^\top + \sigma -\hat{\lambda} \,\epsilon(t) \left(\epsilon(t)+A\right)^{-1} \epsilon(t).
+\frac{d\epsilon(t)}{dt} = A\epsilon(t) + \epsilon(t) A^\top + H -\hat{\lambda} \,\epsilon(t) \left(\epsilon(t)+\covar\right)^{-1} \epsilon(t).
 \end{equation}
 The mean-field and sampling approaches are compared in \fref{fig:matern_coding}. As we can see, the mean-field approximation yields extremely good results, for the equilibrium and relaxation behavior of $\epsilon(t)$.\par
 Although we can in principle evaluate the temporal evolution of the MSE, one must note that if we are seeking to optimize our encoder with respect to it, that will be of little use, as we seek a scalar measure of the quality of our encoder. We can however, still decide as to how we will measure the quality of our temporal estimator. The simplest idea is to simply take the long-time equilibrium value of the MSE as our measure. This would mean we are looking at the equilibrium MSE, give by
@@ -116,7 +116,7 @@ The mean-field approximation is then given by
 Although we are interested in finding the optimal encoder, which in turn is a function of the expected variance, we can gain a lot of insight into the nature of the encoder by studying the full distribution of variances. Solving for the full time-dependent distribution would be of little use, as this would again be dependent on the specific distribution of variances we choose to consider at the starting time. As above, I will therefore consider the distribution of variances after a long time, such that it is not changing anymore. Considering \fref{eq:sigma_DCKE}, we can write the equilibrium condition as
 \begin{equation}
 \label{eq:equilibrium_DCKE_sigma}
-\nabla \left[B(s) P(s)\right] = \hat{\lambda} C(s) P\left( (s^{-1} - A^+)^{-1}\right) -\hat{\lambda} P(s),
+\nabla \left[B(s) P(s)\right] = \hat{\lambda} C(s) P\left( (s^{-1} - \covar^\dagger)^{-1}\right) -\hat{\lambda} P(s),
 \end{equation}
 
 \subsection{Exact Solution for the One-Dimensional Case}
@@ -157,7 +157,7 @@ P(s)= C \left(\frac{\sigma}{2\gamma} - s\right)^{\frac{\hat{\lambda}}{2\gamma} -
 Given the result for $S_0$ we can subsequently treat the \fref{eq:eq_dist_sigma_1d} in $S_1$ as simple ordinary differential equation with a non-homogeneity given by the delayed term. And so recursively we can solve for all subsequent intervals. \Fref{fig:comparison_histograms} shows the numerical solution for the subsequent intervals along with an histogram of the variances and the van Kampen approximation to the distribution derived below.\par
 \begin{figure}
 \label{fig:comparison_histograms}
-\includegraphics[width=\columnwidth]{figures/solution_comparison_OU.eps}
+\includegraphics[width=\columnwidth]{figures/figure_3_1.eps}
 \caption{The two approaches to solving for the equilibrium distribution described, shown across a range of parameter values.}
 \end{figure}
 One particularly interesting characteristic of this solution is the exponent. Note that the sign of the exponent in \fref{eq:dist_1d_exact} depends on the specific value of $\hat{\lambda}$ and $2\gamma$. If $\hat{\lambda} > 2\gamma$, the exponent will be larger than 0, leading the distribution to tend to $0$ as $s$ tends to $s_0$. If, however, $\hat{\lambda} < 2\gamma$, the exponent will be negative, leading the distribution to diverge around $s_0$. Notice that $s_0$ is the worst possible performance our encoder can achieve, as it is the variance of the unobserved process. This tells us that whenever the firing rate of the population is below a certain value, the probability distribution of our MSE will be concentrated around its worst possible value. These results are nicely illustrated in \fref{fig:comparison_histograms} where we provide histograms of the exact solution, numerical simulations and a Gaussian approximation to the distribution. This is very interesting, as it relates two different time scales, one ($1/2\gamma$) defines how long information about the observed process stays relevant, while the other ($1/\hat{\lambda}$) given the average time between observations. This provides a rigorous interpretation of an intuitive property of temporal estimation schemes.
@@ -176,7 +176,7 @@ Clearly, if the spikes are sampled from a Poisson process, then the interspike i
 P(s) = P(\tau) \left|\frac{d\tau}{ds}\right| \propto e^{-\hat{\lambda} \tau + 2\gamma \tau}.
 \]
 Inserting the definition for $\tau$ we will recover \fref{eq:dist_1d_exact}. Note that this is an approximation for $P(s)$ throughout the range of $s$ for a particular parameter limit, whereas before we had derived an exact result for any parameters, but limited to a small range of values of $s$.\par
-We can derive a similar limit for the multidimensional case. Let us first assume $\hat{\lambda}$ is small enough for the covariance $s$ to have relaxed to its equilibrium value $s_0$. After a spike the covariance is then given by $s' = \left(s_0^{-1}+A^\dagger\right)^{-1}$. The evolution of $s(t)$ after a spike at $t_s$ is then given by
+We can derive a similar limit for the multidimensional case. Let us first assume $\hat{\lambda}$ is small enough for the covariance $s$ to have relaxed to its equilibrium value $s_0$. After a spike the covariance is then given by $s' = \left(s_0^{-1}+\covar^\dagger\right)^{-1}$. The evolution of $s(t)$ after a spike at $t_s$ is then given by
 \[
 s(\tau) = e^{\tau G} s' e^{\tau G^\top} + \int_0^\tau e^{\tau G}\sigma e^{\tau G^\top}.
 \]
@@ -184,12 +184,125 @@ We could in principle proceed as before, but the mapping from the matrix space t
 \[
 P(s_{11}) = \frac{P(\tau(s_{11}))}{\left|\frac{d s_{11}}{d\tau}\right|} \propto \frac{e^{-\hat{\lambda} \tau}}{\left|\frac{d s_{11}}{d\tau}\right|}.
 \]
-We can then evaluate the derivative numerically and obtain an estimate of the distribution of $s_{11}$. If $G$ introduces interactions between the entries of the covariance matrix, however, this result will not prove as powerful, though. As an example, we can consider the Matern processes considered in \citep{Susemihl2012a}, where we have $ds_{11}/dt = s_12$. But immediately after the jump, $s'_{12} = 0$, leading the distribution to diverge at $s'_{11}$ as well as in $s^0_{11}$. So, although the divergence around the equilibrium covariance remains, further divergences introduced by the matrix $G$ will reduce the impact of $\hat{\lambda}$ on the shape of the distribution. An example is shown in \fref{fig:matern_histograms}.
+We can then evaluate the derivative numerically and obtain an estimate of the distribution of $s_{11}$. If $G$ introduces interactions between the entries of the covariance matrix, however, this result will not prove as powerful, though. As an example, we can consider the Matern processes considered in \citep{Susemihl2012a}, where we have $ds_{11}/dt = s_{12}$. But immediately after the jump, $s'_{12} = 0$, leading the distribution to diverge at $s'_{11}$ as well as in $s^0_{11}$. So, although the divergence around the equilibrium covariance remains, further divergences introduced by the matrix $G$ will reduce the impact of $\hat{\lambda}$ on the shape of the distribution. An example is shown in \fref{fig:matern_histograms}.
 \begin{figure}
 \label{fig:matern_histograms}
 \includegraphics[width=\columnwidth]{figures/matern_histogram.eps}
 \caption{The small firing rate limit for the Matern process.}
 \end{figure}
+
 \subsection{Van Kampen Approximation}
 
+It is interesting to consider a different approach to gain insight into the behaviour of the distribution of $s$. The Van Kampen approximation consists in linearising
+a nonlinear drift function around the equilibrium value of the system and solving the dynamics of the resulting Focker-Planck equation. This is
+equivalent to a Gaussian approximation, since a Focker-Planck equation with linear drift always has a Gaussian distribution for a solution. It is simple to apply this
+to the OU problem by taking the inverse variance $z= \frac{1}{s}$ instead of the variance.
+Note that although the change in the variance when a spike 
+is observed is nonlinear, the change in the inverse variance is linear. We have the ODE and jump condition
+\[
+\frac{dz}{dt} = -\gamma z \left(2- \frac{\eta^2}{\gamma}z\right) \textrm{ and } z(t) = z(t^- ) + \frac{1}{\alpha^2}
+\]
+for all times $t$ when there is a spike observed. The differential Chapman-Kolmogorov equation for $P(z,t)$ is given by
+\begin{equation}
+\label{eq:DCKE_Z}
+\frac{\partial P(z,t)}{\partial t} = \frac{\partial \left( \gamma z \left(2- \frac{\eta^2}{\gamma}z\right) P(z,t)\right)}{\partial z} + 
+\hat{\lambda}\left[ P(z+\frac{1}{\alpha^2},t) - P(z,t)\right].
+\end{equation}
+The evolution of the average of $z$ is given by
+\[
+\frac{d\left<z\right>}{dt} = -\gamma\left< z \left(2- \frac{\eta^2}{\gamma}z\right)\right> + \frac{\hat{\lambda}}{\alpha^2},
+\]
+which gives us the mean-field equilibrium solution of $z^* = \frac{2\gamma}{\eta^2}\left(1+\sqrt{1+\frac{\hat{\lambda} \eta^2}{\gamma^2 \alpha^2}}\right)$. This 
+mean-field
+approach can be refined by expanding the nonlinear terms in \fref{eq:DCKE_z} around $z^*$ up to second order, which will yield a Focker-Planck equation, which can
+be readily solved. The solution to the Focker-Planck equation in the equilibrium will be given by a Gaussian distribution
+\[
+P_{eq}(z) = \mathcal{N}\left(\frac{2\gamma}{\eta^2}\left(1+\sqrt{1+\frac{\hat{\lambda} \eta^2}{\gamma^2 \alpha^2}}\right), 
+\frac{ \hat{\lambda} }{4\alpha^4\gamma \sqrt{1+\frac{\hat{\lambda}\eta^2}{\gamma^2 \alpha^2} }}\right).
+\]
+This approach is also shown in \fref{fig:comparison_histogram} along with the numerical solution of the delayed-differential equation and the numerical simulations. 
+Note that, again, \fref{eq:DCKE_Z} is still exact, and we can look at it to determine when the approximation is appropriate. I have Taylor expanded 
+$P(z+\frac{1}{\alpha^2})$ up to second order, and this will yield good approximations whenever $\alpha^2$ is very large. This is seen to be the case in 
+\fref{fig:comparison_histogram}, where the Gaussian approximation gives a great account for large values of $\alpha$.
+
+\subsection{Prediction Error}
+
+Note that it also possible to forecast the value of the system's state $X(t)$ into the future. It is relatively simple to do so for the linear stochastic systems described
+so far, where one needs simply to integrate the filtering equations further with the observation term set to 0. The MMSE for the prediction is the average covariance
+matrix 
+
+\section{A Functional Approach to the MMSE}
+
+Gaussian processes are usually defined in terms of their kernel functions, which give the covariance structure of the process. More precisely for a Gaussian process 
+$X(t)$, the kernel gives the covariance between two times $k(s,t) = \left<X(s)X(t)\right>$. I have been able to sidestep the discussion of kernels by considering only
+Markov GP's, but one can also develop a theory for the filtering error based on the kernel of the GP directly.\par
+In GP regression one is given a set of noisy observations $Y^i$ of $X$ at times $t_i$, with some likelihood function
+$P(Y^i|X(t_i))$. This must then be used to infer the distribution over $X(t)$. Generally, one also assumes that the likelihood functions are Gaussian, turning the
+inference of $P(X(t)|\{Y^i\})$ into a simple Gaussian marginalisation procedure. This will give us the distribution $P(X(t) | \{Y^i\}) = \mathcal{N}(\mu(t), \Xi(t))$, where
+\begin{subequations}
+\begin{equation}
+\mu(t) = \sum_i k(t,\{t_i\}) C(t_i,t_j) Y^j,
+\end{equation}
+\begin{equation}
+\Xi(t) = k(t,t) - \sum_{i,j}k(t,t_i) C_{ij} k(t_j,t),
+\end{equation}
+\end{subequations}
+where $C = (K+\alpha^2 I)^{-1}$, $K_{ij} = k(t_i,t_j)$ and $\alpha^2$ is the observation noise. Furthermore, note that the covariance of the posterior distribution at two
+points is given by
+\[
+\Xi(s,t) = k(s,t) - \sum_{i,j} k(s,t_i) C_{ij} k(t_j,t).
+\]
+I will denote the quantity $\Xi(s,t)$ as the posterior kernel, as it again defines a GP. Note that according to the formalism derived so far the MMSE for a filtering 
+problem is simply the expected value of the posterior kernel $\Xi(t)$ averaged over the distribution of all possible past observations. Like we have done for the 
+MMSE we can look into the dynamics of the posterior kernel $\Xi(s,t)$. Let us write simply $f_t(u,v) = \Xi(t+u,t+v)$, then we have
+\[
+\frac{\partial f_t(u,v)}{\partial t} = \left( \frac{\partial }{\partial u}+ \frac{\partial }{\partial v}\right) f_t(u,v).
+\]
+It is a simple exercise in matrix inversion lemmas to show that, if a observation is obtained at time $t$ the posterior kernel will change as
+\[
+f_t(u,v) = f_{t^-}(u,v) - \frac{f_{t^-}(u,0)f_{t^-}(0,v)}{\alpha^2+ f_{t^-}(0,0)}.
+\]
+Taking the average over all possible observation paths we obtain the evolution of the average posterior kernel
+\[
+\frac{\partial \left<f_t(u,v)\right>}{\partial t} = \left( \frac{\partial }{\partial u}+ \frac{\partial }{\partial v}\right) \left<f_t(u,v)\right> - \hat{\lambda} \left<\frac{f_{t}(u,0)f_{t}(0,v)}{\alpha^2+ f_{t}(0,0)}\right>.
+\]
+Again, we are most interested in the equilibrium case, so setting the derivative to zero we obtain
+\begin{equation}
+\label{eq:differential_kernel}
+\left( \frac{\partial }{\partial u}+ \frac{\partial }{\partial v}\right) \left<f(u,v)\right> = \hat{\lambda} \left<\frac{f(u,0)f(0,v)}{\alpha^2+ f(0,0)}\right>.
+\end{equation}
+We can now take the mean-field approximation and obtain an integral equation for the average, given by
+\begin{equation}
+\label{eq:integral_kernel}
+\left<f(u,v)\right> = k(u,v) - \frac{\hat{\lambda}}{\alpha^2+ \left<f(0,0)\right>} \int_0^\infty \left<f(s+u,0)\right>\left<f(0,s+v)\right> ds,
+\end{equation}
+which is easily seen to be a solution to
+\[
+\left( \frac{\partial }{\partial u}+ \frac{\partial }{\partial v}\right) \left<f(u,v)\right> = \hat{\lambda} \frac{\left<f(u,0)\right>\left<f(0,v)\right>}{\alpha^2+ \left<f(0,0)\right>},
+\]
+as long as the kernel $k(u,v)$ is stationary, which implies $\partial_u k(u,v) = - \partial_v k(u,v)$. \footnote{A stationary kernel is such that 
+$k(t,v) = k(\|t-v\|)$. If $t > v$ and $t> v+d$, then $k(t,v+d) = k(t-d,v)$. Differentiating with respect to $d$ we obtain the desired result.}\par
+\Fref{eq:integral_kernel} allows us to approximate the shape of the posterior kernel directly from the prior kernel, without having to resort to the Markovian structure of
+the process as had been done before. This is very practical as it allows us to treat non-Markovian GP's such as the one defined by the squared exponential or Radial
+Basis Function kernel.\footnote{The SE or RBF kernel is given by $k(t,v) = c \exp(-\|t-v\|^2/L^2)$.} This can still be done only for the Mean-field approximation, but it is
+still a very pleasing result, as it additionally allows us to estimate the shape of the entire posterior kernel, not only of the one-time variance. If we are only interested
+in the filtering error however, it suffices to take the function $g(u) = \left<f(u,0)\right>$. For that the equation simplifies to
+\begin{equation}
+\label{eq:integral_one_point}
+g(u) = k(u,0)  - \frac{\hat{\lambda}}{\alpha^2+ g(0)} \int_0^\infty g(s+u)g(s) ds
+\end{equation}
+One way to solve \fref{eq:integral_kernel} is to simply discretise the real line over some interval $[0,D]$ and iterate \fref{eq:integral_one_point} numerically. A reasonable
+initial condition would be to take $g^0(u) = k(u,0)$ and then simply take
+\[
+g^{i+1}(u) = k(u,0)- \frac{\hat{\lambda}}{\alpha^2+ g^i(0)} \int_0^\infty g^i(s+u)g^i(s) ds.
+\]
+This is shown in \fref{fig:integral_kernel} for the OU kernel $k_{OU}(s,t) = \exp(-k|s-t|)$, for the Matern kernel $k_{mat}(s,t) = (1+k|t-s|) \exp(-k|t-s|)$ and the 
+RBF kernel $k_{dbf} = \exp(-k|t-s|^2)$. Note that once we have have an approximation for $g(u)$ we can in principle approximate the posterior average of the kernel
+at all points by repeating the procedure. From \fref{eq:integral_kernel} we can see that $\left<f(u,v)\right>$ is only a function of $\left<f(t,0)\right>$ and 
+$\left<f(0,s)\right>$, both of which we can approximate with $g$.
+\begin{figure}
+\label{fig:}
+\includegraphics[width=\columnwidth]{figures/figure_3_3.eps}
+\caption{The prior and posterior kernels for the filtering problem for three classes of GP's.}
+\end{figure}
 

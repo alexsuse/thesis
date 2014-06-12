@@ -23,13 +23,17 @@
 \frefformat{plain}{\fancyrefapplabelprefix}{appendix~#1}
 \Frefformat{plain}{\fancyrefapplabelprefix}{Appendix~#1}
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\Tr}{Tr}
+\newcommand{\covar}{E}
 
 \title{Optimal Population Coding of Dynamic Stimuli}
 \author{Alex Kunze Susemihl}
-%\date{}							% Activate to display a given date or no date
+\date{}							% Activate to display a given date or no date
 
 \begin{document}
 \maketitle
+\setcounter{tocdepth}{1}
 \setcounter{secnumdepth}{1}
 \tableofcontents
 \chapter{Introduction}
@@ -58,15 +62,7 @@
 
 \label{chap:optimal}
 
-\section{Performance Measures}
-
-\section{Equilbrium Analysis}
-
-\section{Mean-Field Approach}
-
-\section{Analytic Approaches}
-
-\section{Performance Measures}
+\input{tex/optimal.tex}
 
 \chapter{Discussion}
 
@@ -77,7 +73,7 @@
 \begin{appendices}
 
 \chapter{Proofs}
-\section{The entropy is maximized by a uniform distribution}
+\section{Maximum Entropy Distributions}
 \label{app:entropy}
 \input{tex/entropyappendix.tex}
 \section{LQG Control: The Multidimensional Case}
