@@ -65,12 +65,12 @@ In addition to these projects, I have also worked on the publication of a manusc
 \newthought{In information theory, the information} associated with a random event is defined as the logarithm of its inverse probability. We can further define the 
 entropy of a distribution 
 over a set of events as the average information conveyed by these events. So if we have a random variable $X$ taking values $x \in \mathcal{A}_X$ and a probability 
-distribution $P : \mathcal{A}_X \to [0,1]$, we will have\footnote{Abusing the notation to allow for $0\log(0) = 0$.}
+distribution $P_X : \mathcal{A}_X \to [0,1]$, we will have\footnote{Abusing the notation to allow for $0\log(0) = 0$.}
 $$
-H(X)= \sum_x P_X(x) \log\left(\frac{1}{P_X(x)}\right).
+H(X)= \sum_x P_X(x) \log\left(\frac{1}{P_X(x)}\right) = - \sum_x P_X(x) \log\left({P_X(x)}\right).
 $$
 The entropy measures how much information is gained from a random observation of $X$ on average, and is usually thought of as a measure of the uncertainty or 
-disorder in the distribution $P_X$. Its unit is usually defined as the {\em bit}, derived from binary digit, when the logarithm is taken in base 2. So, a distribution where 
+disorder in the distribution $P_X$. Its unit is usually defined as the {\em bit} when the logarithm is taken in base 2, contracted from \emph{binary digit}. So, a distribution where 
 we have $P_X(x^*) = 1$ for some $x^*$ and $P_X(x) = 0$ for all other $x\neq x^*$ would have an entropy of $0$, since our measurement gives us an average 
 information of $0$. The outcome $x^*$ is completely non-informative, and all other outcomes, while infinitely informative have a zero probability of happening.\par
 It can also easily be seen that in the absence of other constraints, if the set of outcomes $\mathcal{A}_X$ is finite, the entropy is maximized by the uniform 
@@ -95,10 +95,16 @@ The noisy-channel coding theorem\cite{mackay2003information} then states
 \newtheorem{noisychannel}{Theorem}
 \begin{noisychannel}
 \label{thm:noisychannel}
-For every discrete memoryless channel with capacity $C$, for any $\epsilon>0$, any rate $R<C$, and for large enough $N$, there exists a code of length $N$ and rate $\leq R$ and a decoding algorithm such that the maximal probability of block error is $\epsilon$.
+For every discrete memoryless channel with capacity $C$, for any $\epsilon>0$, any rate $R<C$, and for large enough $N$, there exists a code of length $N$ and rate $\leq R$ and a decoding algorithm such that the maximal probability of %block 
+error is $\epsilon$.
 \end{noisychannel}
 Before Shannon's work, it was generally believed that to achieve a vanishingly small error one would need a code with vanishingly small rate. The theorem shows, however, that one can achieve any rate below the channel capacity asymptotically.\par
-Shannon's work had profound impacts throughout science and technology. Horace Barlow proposed to use the redundancy of a code as a measure of its inefficiency. The redundancy of a code is given by
+Shannon's work had profound impacts throughout science and technology. In the field of neuroscience, Fred Attneave was probably the first to propose the use
+of information-theoretical concepts in the study of vision.\cite{Attneave1954} His was a very informal approach though, mostly dedicated at showing how humans
+compress visual information in a way consistent with Shannon's ideas. Horace Barlow proposed an information-theoretical approach to the function of sensory
+relays. He consider three hypotheses, discarding the first two and concluding that one function of sensory relays must be to reduce the redundancy of the
+representation of sensory input. Furthermore, he introduced a notion of metabolic efficiency into Shannon's ideas, noting that instead of allocating fewer bits to
+frequent codewords as in general coding theory, a neural system would allocate fewer \emph{spikes} to frequent stimuli. The redundancy of a code is given by
 $$
 \mathcal{R} = 1 - \frac{I(X;Y)}{C},
 $$
@@ -106,8 +112,12 @@ and it quantifies how {\em efficiently} a given code encodes codewords $x$ into 
 $$
 \mathcal{R} = 1 - \frac{H(X)}{C}= 1 - \frac{H(Y)}{C} = 0.
 $$
-The limit given by \fref{thm:noisychannel} then gives us the perfect redundancy-free channel. The {\em efficient coding hypothesis}, first proposed by Barlow\cite{Barlow1961} states that sensory relays in the nervous system recode the	messages to reduce the redundancy in them. This allows us to relate the distribution of the codewords in nature, given by the stimulus statistics, to the firing statistics of the nervous system.\par
-In one popular example, Simon Laughlin related the distribution of contrasts in the natural environment of the blowfly to the tuning function of the large monopolar cells (LMC's) in the blowfly's visual system.\cite{Laughlin1981} These cells respond to the contrast level in a specific area of the visual field.
+The {\em efficient coding hypothesis}, first proposed by Barlow\cite{Barlow1961} states that sensory relays in the nervous system recode the	messages to reduce the redundancy in them. This allows us to relate the distribution of the codewords in nature, given by the stimulus statistics, to the firing statistics of the nervous system.\par
+In one popular example, Simon Laughlin related the distribution of contrasts in the natural environment of the blowfly to the tuning function of the large monopolar 
+cells (LMC's) in the blowfly's visual system.\cite{Laughlin1981} These cells respond to the contrast level in a specific area of the visual field with a graded change
+in their membrane potential, as opposed to spiking cells. Depending on the contrast of the visual stimulus they either hyperpolarize or depolarise (see the inlay in
+\fref{fig:laughlin}. The nature of these responses sets a limit on the range of responses available to the neuron, namely the reversal potential of its membrane
+channels, which lead to hyper- and depolarisation.
 Since we are considering only one neuron, the analysis is somewhat simplified. Let us also assume that the activity of the neuron $o$ can be restricted between no response and a maximal response $o_{max}$. We can then write the activity of the neuron as a function of the contrast $c$ as $o = g(c)$. We will then have that the redundancy of the firing is given by
 $$
 \mathcal{R} = \frac{1}{C} \left(C - H(O) \right),
@@ -129,10 +139,31 @@ This framework can also be generalized to a population of neurons. Writing $O_i$
 $$
 \mathcal{R} = \frac{1}{C} \left(C - \sum_i H(O_i) \right) + \frac{1}{C}\left(\sum_i H(O_i) -H(O)\right).
 $$
-The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from correlations between the activities $O_i$. In the example above we have only had to deal with the left term, since we had only one activity and therefore no correlations between them. A lot of the efficient coding literature, however, has dealt with the second term, and a number of different approaches have looked towards independent components of natural stimuli, assuming that whitening or gain control could account for the maximization of the first term.\par
-Michael Lewicki,\cite{Lewicki2002} for example, demonstrated that using independent component analysis\footnote{Indepedent Component Analysis, or ICA for short, tries to decompose a signal into a set of features which are statistically independent between them. This can be done by minimization of a number of different cost functions.} on a set of natural sounds, comprised of human speech, animal vocalizations and natural background sounds, one recovers receptive fields similar to the receptive fields of early auditory neurons. There have been a number of similar studies based on different efficiency measures. A particular popular alternative can be found in the sparse coding literature. Here it is argued that the best possible representation of the natural stimuli is such that only a few neurons are active at a time. Bruno Olshausen and David Field,\cite{Olshausen1996} for example, have shown that, applying the sparse coding approach to a set of natural images results in filters similar to receptive fields in primary visual cortex.\footnote{Sparsity is usually measured by the kurtosis of the distribution of activations.}\par
-These results and a number of other similar studies have lent considerable traction to the idea that the nervous system is adapted to encode the stimuli present in the animal's natural environment. This approach, however, is not without its issues. For one, the limit of Shannon's theorem, in which the redundancy of the code is very small, turns the code ever harder to decode. Another important point is that, although minimizing dependence between filters yields good estimates of receptive fields observed in the brain, neurons' activities in the brain are far from independent.\footnote{Insert citation about correlations in brain} Though the redundancy reduction approach has provided numerous insights as mentioned above, other ideas have emerged since.
+The first term accounts for redundancy arising from unequal frequency of use of different symbols and the second accounts for redundancy arising from 
+correlations between the activities $O_i$. In the example above we have only had to deal with the left term, since we had only one activity and therefore no 
+correlations between them. A lot of the efficient coding literature, however, has dealt with the second term, and a number of different approaches have looked 
+towards independent components of natural stimuli, assuming that whitening or gain control could account for the maximization of the first term.\par
+
+Michael Lewicki, for example, demonstrated that using independent component analysis\footnote{Indepedent Component Analysis, or ICA for short, tries to 
+decompose a signal into a set of features which are statistically independent between them. This can be done by minimization of a number of different cost 
+functions.} on a set of natural sounds, comprised of human speech, animal vocalizations and natural background sounds, one recovers receptive fields similar to 
+the receptive fields of early auditory neurons.\cite{Lewicki2002} There have been a number of similar studies based on different efficiency measures. 
+Another way to interpret Barlow's approach is to eschew information theory and to take the hypothesis that the response of sensory systems seek to represent
+in a way that allows for optimal reconstruction while minimising the number of spikes employed. This approach is often called \emph{sparse coding} since the
+resulting codes will show response with sparse activity in the neural population. Bruno Olshausen and David Field,\cite{Olshausen1996} for example, have shown 
+that, applying the sparse coding approach to a set of natural images results in filters similar to receptive fields in primary visual cortex.\footnote{Sparsity is in 
+principle given by the number of active neurons, or if the response is graded by the sum of the activities of the neurons. This leads to cumbersome mathematics
+and the kurtosis of the activity is usually employed as a surrogate for the sparsity.}\par
+
+These results and a number of other similar studies have lent considerable traction to the idea that the nervous system is adapted to encode the stimuli present in 
+the animal's natural environment. This approach, however, is not without its issues. For one, the limit of Shannon's theorem, in which the redundancy of the code is 
+very small, turns the code ever harder to decode. Another important point is that, although minimizing dependence between filters yields good estimates of 
+receptive fields observed in the brain, neurons' activities in the brain are far from independent.\footnote{Insert citation about correlations in brain} Though the 
+redundancy reduction approach has provided numerous insights as mentioned above, other ideas have emerged since.
 \par
+
+\section{The Bayesian Brain}
+
 The finding that humans perform near-optimally\marginnote{Optimality is used in the Bayesian sense, where we mean the subjects integrate uncertain information according to Bayes' rule} when integrating uncertain cues from different senses have led neuroscientists to theorize that the brain explicitly represents distributions over world states.\cite{Ernst2002,Ma2006} In these so-called probabilistic population codes, a spike would contribute to the computation of a posterior probability over world states with a likelihood depending on its conditional probability of firing given the stimulus. This leads to a Bayesian interpretation of the activity of the brain, where the reliability of different sensory cues can be taken in account when integrating them. It can also be argued that representing the uncertainty of events in the world has an important role in decision-making, and will therefore serve as an evolutionary advantage. To use a popular example,\footnote{This example is discussed in \citep{Ma2006}.} let us consider the case of a person deciding wether or not to jump over a stream filled with piranhas. The stream is 1.8 meters wide, and the person jumps an average distance of 2.1 meters. One will be inclined to suggest jumping.\marginnote{Should you jump over a stream filled with piranhas?} Yet both the width of the stream ($w$) as the jumping distance ($j$) are estimated based on uncertain information, and therefore could be imprecise estimates (in the case of the width) or subject to random variation (in the case of the jump distance). Suppose our best guess of the width of the stream is a normal distribution with mean 1.8 meters with a standard deviation of 0.1 meters. Furthermore suppose the standard deviation of the jump distance is 0.4 meters. That would give us a probability of approximately 0.23 of falling down the cliff. So one would definitely be less inclined to jump over the stream, or would at least take preventive actions to minimize the uncertainty in both your estimate of the width of the stream and your jump.\par
 From a neural perspective, we could then infer the stimulus distribution (distribution over stream widths) given the response of a neuron population and a model of its response variability. If we assume a given neuron responds according to a certain distribution $P(r|s)$\marginnote{Here we term $r$ the response and $s$ the stimulus}, the Bayesian posterior is given simply by
 \[
@@ -162,64 +193,86 @@ Note that given a distribution over visual stimuli or a distribution over stream
 of our estimate is minimal. This is clearly a very broad formulation of the problem, but it will be the central question studied in this thesis. Alternatively, one could look
 directly at the (expected) cost associated with a decision (to jump or not to jump) and choose the set of functions $f_i(s)$ which minimises the future expected cost.
 We will investigate the difference between these approaches as well.
+\par
 
-\section{Dynamic Population Coding}
+Why would an organism be interested in estimating the distribution of world states conditioned on the activity of its sensory systems, though? For one, there is
+the finding that the best estimator for the world's state is the mean of the posterior distribution (see \fref{chap:mse}). This means that regardless of the particulars
+of the response properties of the sensory system, the posterior mean gives us the world's estimate with the lowest expected quadratic error. A second important
+reason is multisensorial cue integration. Let us assume we have a visual and an auditory cue for the width of said stream.\footnote{A foggy view of the opposite 
+margin ($v$) and a faint voice talking from the opposite margin ($a$).} Both lead us to different estimates of the stream's width ($\hat{w}_v$ for the visual estimate 
+and $\hat{w}_a$ for the auditory estimate). There are countless ways of combining these two to obtain a final estimate of the width. But without further information
+on the posterior distributions $P(w|a)$ and $P(w|v)$ we have no way of knowing the best way to combine them. If we had knowledge of them, we could simply
+evaluate the full posterior mean\footnote{Assuming the auditory and visual stimuli are uncorrelated conditioned on the world's state.}
+\[
+\hat{w}_{a,v} = \int dw w P(w|a,v) = \int dw w \frac{P(a|w)P(v|w)P(w)}{P(a)P(v)}.
+\]
+In the case of Gaussian distributions, we would have $P(w|a) = \mathcal{N}(\hat{w}_a,\sigma_a)$, and $P(w|v) = \mathcal{N}(\hat{w}_v,\sigma_v)$, leading to the simple
+cue integration rule
+\[
+\hat{w}_{a,v} = \frac{\sigma_v \hat{w}_a + \sigma_a \hat{w}_v}{\sigma_a + \sigma_v},
+\]
+There is no simple formula like this in general, though, leading to the need to estimate the full distribution.
+\par
 
-We have had to assume that the stimulus did not change during the response of the neurons to evaluate the Poisson probability of a number of spikes being fired by a neuron. If we relax this assumption, and assume now that the stimulus evolves during time, being now a dynamic stimulus $s(t)$, we will have to reformulate the neural variability model. The probability for infinitesimal time intervals remains the same though. If we denote the number of spikes fired by neuron $i$ since the beginning of the experiment by $N_i(t)$, we can write then
-\[
-P(N_i(t+dt) - N_i(t) = 1|s(t)) = f_i\left(s(t)\right) dt,
-\]
-and 
-\[
-P(N_i(t+dt) - N_i(t) = 0|s(t)) = (1-f_i\left(s(t)\right)) dt.
-\]
-Denoting the limit with $dt\to 0$ of the difference as $dN_i(t)$, we can write the probability of a spike train given by $N_i = \{N_i(\tau), \tau \in [0,T]\}$ conditioned on the stimulus history $s = \{s(\tau), \tau \in [0,T]\}$ as
-\[
-P(N_i|s) = \exp\left(-\int_0^T f_i(s(\tau)) d\tau + \int_0^T \log\left[f_i(s(\tau))\right] dN_i(\tau) \right)/N_i(T)!.
-\]
-We are using the notation of stochastic calculus, where the stochastic integral over a jump process is given by
-\[
-\int f(t) dN(t) = \sum_{t_i} f(t_i) (N(t_i) - N(t_i^-)),
-\]
-where $N(t_i^-) = \lim_{t\uparrow t_i} N(t)$. This can be made rigorous in the language of Martingales but we will keep the discussion simple, as most of the processes
-considered are well behaved Poisson or Wiener processes.
-In that sense we can estimate the probability of the entire stimulus history given a spiking history of a population of neurons as
-\[
-P(s|\{N_1,\ldots,N_n\}) = P(s) \prod_i P(N_i|s),
-\]
-furthermore we can marginalize out all but the present value of $s$ to obtain the filtering probability
-\begin{equation}
-\label{eq:filtering_eq_path}
-P(s(T)|\{N_1,\ldots,N_n\}) = \int d\mu(s\setminus T) P(s) \prod_i P(N_i|s),
-\end{equation}
-where $d\mu(s\setminus T)$ denotes the measure over all paths of the stimulus $s$ ending at the given value of $s(T)$. In all but a few exceptions, we will focus in
-this thesis on the Gaussian measure over paths defined by a Gaussian process. A Gaussian process is a random variable $g$ such that for any set of points in its
-domain $\{t_1, t_2, \ldots , t_N\}$, the distribution of $\{g(t_1), g(t_2), \ldots, g(t_N)\}$ is Gaussian with mean $\{\mu(t_1),\mu(t_2),\ldots,\mu(t_N)\}$ and covariance
-matrix $\left<\left(g(t_i) - \mu(t_i)\right)\left(g(t_j)-\mu(t_j)\right)\right> = K(t_i,t_j)$. $K(u,v)$ is commonly called the Kernel of the Gaussian process. Gaussian 
-Processes, or GP's have been extensively used for numerical regression, smoothing, classification and other uses in machine learning and signal 
-processing \cite{Rasmussen2005}. Simple examples of Gaussian processes are the Wiener process, the Ornstein-Uhlenbeck process and the Radial-Basis-Function
-processes. Gaussian Processes allow for a number of simplifications in practice, and in the case we consider, the posterior distribution can be computed exactly.\par
-In practice, we now need to compute averages of the Poisson likelihood over paths of a Gaussian process. This is general very complicated, and approximations are
-usually employed to decode the stimulus from the spike train.\cite{Ahmadian2011,Ergun2007} Looking at \fref{eq:filtering_eq_path} for the Poisson case we can write
-\begin{align*}
-P(s(T)|\{N_1,\ldots,N_n\}) \propto& \int d\mu(s\setminus T) P(s)\\
-& \exp\left(-\sum_i \int_0^T f_i(s(\tau)) d\tau + \sum_i \sum{t_i} \log\left[f_i(s(t_i))\right]  \right).
-\end{align*}
-There are two terms in the exponent, one referent to the actual occurrence of spikes at the spike times, and one accounting for the absence of spikes in all other 
-instants. If we only had to deal with the actual spike times, the task of inferring the posterior is substantially simpler, as we could perform approximate inference
-over a finite set of points, instead of evaluating averages over all possible paths. This would be the case if the sum of the rates over all neurons was constant, or
-at least independent of the value of the stimulus $s(t)$. This is the dense coding regime, as a dense packing of the tuning curves over the space of the stimulus
-$s$ will lead to a population firing rate which is insensitive to $s$. In that case we would have $\sum_i f_i(s(t)) = C$, and the posterior can be further simplified to
-\[
-P(s(T)|\{N_1,\ldots,N_n\}) \propto \int d\mu(s\setminus T) P(s) \prod_i \prod_{t_i} f_i(t_i).
-\]
-This is often also used as an approximate inference procedure, as accounting for the absence of spikes throughout the duration of the experiments often makes the
-inference problem much harder. We will further simplify the problem by assuming that the tuning functions $f_i$ are unnormalised Gaussians, turning the problem of
-evaluating the posterior into a Gaussian Process Regression problem. This will allow us to treat the evolution of the MSE of the optimal Bayesian estimate for a
-given population of neurons using the language of statistical physics. This had been done similarly for the case of Gaussian Process regression in the smoothing
-case,\cite{malzahn2005statistical} but to the author's best knowledge it had not been studied for the filtering case before. This has allowed us to obtain a number of
-analytic results. The general case, however, must be dealt with numerically, and we review a few techniques for the filtering of stochastic processes under
-general conditions.\par
+
+%
+%\section{Dynamic Population Coding}
+%
+%We have had to assume that the stimulus did not change during the response of the neurons to evaluate the Poisson probability of a number of spikes being fired by a neuron. If we relax this assumption, and assume now that the stimulus evolves during time, being now a dynamic stimulus $s(t)$, we will have to reformulate the neural variability model. The probability for infinitesimal time intervals remains the same though. If we denote the number of spikes fired by neuron $i$ since the beginning of the experiment by $N_i(t)$, we can write then
+%\[
+%P(N_i(t+dt) - N_i(t) = 1|s(t)) = f_i\left(s(t)\right) dt,
+%\]
+%and 
+%\[
+%P(N_i(t+dt) - N_i(t) = 0|s(t)) = (1-f_i\left(s(t)\right)) dt.
+%\]
+%Denoting the limit with $dt\to 0$ of the difference as $dN_i(t)$, we can write the probability of a spike train given by $N_i = \{N_i(\tau), \tau \in [0,T]\}$ conditioned on the stimulus history $s = \{s(\tau), \tau \in [0,T]\}$ as
+%\[
+%P(N_i|s) = \exp\left(-\int_0^T f_i(s(\tau)) d\tau + \int_0^T \log\left[f_i(s(\tau))\right] dN_i(\tau) \right)/N_i(T)!.
+%\]
+%We are using the notation of stochastic calculus, where the stochastic integral over a jump process is given by
+%\[
+%\int f(t) dN(t) = \sum_{t_i} f(t_i) (N(t_i) - N(t_i^-)),
+%\]
+%where $N(t_i^-) = \lim_{t\uparrow t_i} N(t)$. This can be made rigorous in the language of Martingales but we will keep the discussion simple, as most of the processes
+%considered are well behaved Poisson or Wiener processes.
+%In that sense we can estimate the probability of the entire stimulus history given a spiking history of a population of neurons as
+%\[
+%P(s|\{N_1,\ldots,N_n\}) = P(s) \prod_i P(N_i|s),
+%\]
+%furthermore we can marginalize out all but the present value of $s$ to obtain the filtering probability
+%\begin{equation}
+%\label{eq:filtering_eq_path}
+%P(s(T)|\{N_1,\ldots,N_n\}) = \int d\mu(s\setminus T) P(s) \prod_i P(N_i|s),
+%\end{equation}
+%where $d\mu(s\setminus T)$ denotes the measure over all paths of the stimulus $s$ ending at the given value of $s(T)$. In all but a few exceptions, we will focus in
+%this thesis on the Gaussian measure over paths defined by a Gaussian process. A Gaussian process is a random variable $g$ such that for any set of points in its
+%domain $\{t_1, t_2, \ldots , t_N\}$, the distribution of $\{g(t_1), g(t_2), \ldots, g(t_N)\}$ is Gaussian with mean $\{\mu(t_1),\mu(t_2),\ldots,\mu(t_N)\}$ and covariance
+%matrix $\left<\left(g(t_i) - \mu(t_i)\right)\left(g(t_j)-\mu(t_j)\right)\right> = K(t_i,t_j)$. $K(u,v)$ is commonly called the Kernel of the Gaussian process. Gaussian 
+%Processes, or GP's have been extensively used for numerical regression, smoothing, classification and other uses in machine learning and signal 
+%processing \cite{Rasmussen2005}. Simple examples of Gaussian processes are the Wiener process, the Ornstein-Uhlenbeck process and the Radial-Basis-Function
+%processes. Gaussian Processes allow for a number of simplifications in practice, and in the case we consider, the posterior distribution can be computed exactly.\par
+%In practice, we now need to compute averages of the Poisson likelihood over paths of a Gaussian process. This is general very complicated, and approximations are
+%usually employed to decode the stimulus from the spike train.\cite{Ahmadian2011,Ergun2007} Looking at \fref{eq:filtering_eq_path} for the Poisson case we can write
+%\begin{align*}
+%P(s(T)|\{N_1,\ldots,N_n\}) \propto& \int d\mu(s\setminus T) P(s)\\
+%& \exp\left(-\sum_i \int_0^T f_i(s(\tau)) d\tau + \sum_i \sum{t_i} \log\left[f_i(s(t_i))\right]  \right).
+%\end{align*}
+%There are two terms in the exponent, one referent to the actual occurrence of spikes at the spike times, and one accounting for the absence of spikes in all other 
+%instants. If we only had to deal with the actual spike times, the task of inferring the posterior is substantially simpler, as we could perform approximate inference
+%over a finite set of points, instead of evaluating averages over all possible paths. This would be the case if the sum of the rates over all neurons was constant, or
+%at least independent of the value of the stimulus $s(t)$. This is the dense coding regime, as a dense packing of the tuning curves over the space of the stimulus
+%$s$ will lead to a population firing rate which is insensitive to $s$. In that case we would have $\sum_i f_i(s(t)) = C$, and the posterior can be further simplified to
+%\[
+%P(s(T)|\{N_1,\ldots,N_n\}) \propto \int d\mu(s\setminus T) P(s) \prod_i \prod_{t_i} f_i(t_i).
+%\]
+%This is often also used as an approximate inference procedure, as accounting for the absence of spikes throughout the duration of the experiments often makes the
+%inference problem much harder. We will further simplify the problem by assuming that the tuning functions $f_i$ are unnormalised Gaussians, turning the problem of
+%evaluating the posterior into a Gaussian Process Regression problem. This will allow us to treat the evolution of the MSE of the optimal Bayesian estimate for a
+%given population of neurons using the language of statistical physics. This had been done similarly for the case of Gaussian Process regression in the smoothing
+%case,\cite{malzahn2005statistical} but to the author's best knowledge it had not been studied for the filtering case before. This has allowed us to obtain a number of
+%analytic results. The general case, however, must be dealt with numerically, and we review a few techniques for the filtering of stochastic processes under
+%general conditions.\par
 
 
 

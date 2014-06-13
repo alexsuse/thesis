@@ -84,8 +84,32 @@ where the evolution of the MMSE is given by
 \[
 \frac{d\epsilon(t)}{dt} = -2\gamma \epsilon(t) + \sigma -\hat{\lambda} \boldsymbol{E}\left[\frac{s^2}{\alpha^2+s}\right].
 \]
-We can now consider the temporal evolution of the MMSE, as it has been shown in \fref{fig:matern_coding} for a Matern process. From a neural perspective, however,
-the adaptation processes 
+We can now consider the temporal evolution of the MMSE, as it has been shown in \fref{fig:matern_coding} for a Matern process. 
+We will focus on the equilibrium value of the MMSE, that is, we will focus on the long-term performance of the encoder in the filtering problem, rather than focusing
+on the transient, short-time behaviour. Below in \fref{fig:encoder_OU} we can see the equilibrium MMSE of a dense Gauss-Poisson population of neurons encoding
+an OU process. The dependence on both the maximal firing rate $\phi$ and the tuning width $\alpha$ is shown.
+
+\begin{figure}
+\label{fig:mmse_ou}
+\includegraphics[width=\columnwidth]{figures/figure_5_3.png}
+\caption{Comparing Encoders for Filtering: The left hand panel shows a heat map of the MMSE as a function of the maximal firing rate $\phi$ and the tuning
+width $\alpha$. There is a trade-off between the number of spikes and the precision of the spikes, manifesting itself in a finite tuning width that minimises the
+the MMSE. For any $\alpha$ increasing the firing rate $\phi$ simply decreases the MMSE. The right panel shows the dependence in $\alpha$ for a few values
+of $\phi$.}
+\end{figure}
+
+More interestingly, we can now ask ourselves how the optimal encoder depends on any of the parameters of the problem. Let us say the parameter $\gamma$
+which defines the time-scale of correlations in the OU process.\footnote{Remember that the prior kernel of the OU process is given by $k(s,t) = \frac{\eta^2}{2\gamma} \exp(-\frac{|s-t|}{2\gamma}$.} In \fref{fig:ecological_OU} I have plotted the optimal encoding width $\alpha^*$ as a function of $\gamma$, $\sigma$ and
+$\phi$. Though the results are not entirely unexpected, it is interesting to be able to provide an accurate account of the ecological dependence of the optimal 
+encoder. Shorter time-scales (larger values of $\gamma$) require a higher frequency of spikes, as the information conveyed by those spikes becomes irrelevant
+more quickly. Thus, holding the maximal firing rate $\phi$ fixed, the way to increase the frequency of spikes is to have broader tuning functions. So, as $\gamma$
+increases, so does $\alpha^*$.
+
+\begin{figure}
+\label{fig:mmse_ou}
+\includegraphics[width=\columnwidth]{figures/figure_5_4.eps}
+\caption{Ecological Dependence of the Optimal Encoder:}
+\end{figure}
 
 \section{Mean-Field Approach}
 
