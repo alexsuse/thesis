@@ -1,0 +1,75 @@
+====================================================================
+Macquarie University thesis LaTeX class file. 
+====================================================================
+
+VERSION 2.2
+
+This is a LaTeX class file (and associated style files provided with
+the package but falling under different copyright agreements) that
+can be used in the preparation of Honours and PhD theses at 
+Macquarie University, Sydney.
+
+The files are distributed as a simple .tar.gz or .zip file.  Uncompress with
+your favorite decompression utitlity, and you will be presented with
+a "mqthesis" directory.
+
+Within this directory you will find,
+
+ o thesis.tex: the main TeX file 
+ o abstract.tex, acknowledge.tex, listofpublications.tex, 
+   listofsymbols.tex: frontmatter files
+ o chap_intro.tex, chap_other.tex, chap_conclusion.tex, 
+   chap_appendix.tex: sample chapter files
+ o references.bib: sample BibTeX file
+
+Edit and add to these as you see fit, don't forget to include extra files in
+thesis.tex.
+
+mqthesis.cls is the main class file that defines the look, and mqthesis.bst
+defines the style of the bibliography (generated using the makebst), edit these
+to tweak the look. 
+
+mqthesis depends on a number of standard packages: {ccaption, quotchap, makeidx, 
+natbib, tocbibind, amsmath,amsfonts,amssymb, graphicx, showkeys, ifpdf}, you may 
+need to either install these packages or comment out the corresponding  \usepackage 
+command.
+
+Good luck. Don't Panic. 
+
+Alexei Gilchrist
+
+
+VERSION 2.3
+
+The use of the hyperref package is now included in the class file mqthesis.cls. To 
+make a pdf for online distribution use "foronline" in the options a la:
+\documentclass[phd, titlesmallcaps, copyrightpage, foronline]{mqthesis}
+In order to make a pdf version that doesn't have the coloured links leave out 
+"foronline". Hyperref really only works for pdflatex, but will still add the colours 
+for normal LaTeX if "foronline" is used.
+
+Hyperref Options:
+If you would like to change the colours of the links, open mqthesis.cls, and edit 
+these options where ever you find them:
+linkcolor=blueurlcolor=blue  % note that there are several places where urlcolor needs to be changedcitecolor=redanchorcolor=green
+
+The "pagebackref" option for hyperref adds the hyperlinked page numbers at the end of 
+each reference for the pages where that reference is cited. I like this since somebody 
+reading the pdf version of your thesis can then easily see and jump to other places in 
+your thesis that might be relevant. 
+"pagebackref" is removed when "foronline" is not used.
+More info on "hyperref": http://en.wikibooks.org/wiki/LaTeX/Hyperlinks
+
+Additionally PDF info is now requested in thesis.tex. This meta data can be viewed 
+without opening the PDF file, and includes date of creation, author, title etc. and 
+can include other things aswell.
+Available fields are: /Title /Author /Creator /Producer /CreationDate /ModDate
+			/Subject /Keywords 
+
+Each chapter has been placed in it's own folder, this is mainly so that the figures
+for each chapter is kept together, but it also reduces clutter.
+
+Johann-Heinrich Sch\"onfeldt
+
+ 
+

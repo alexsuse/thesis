@@ -1,4 +1,4 @@
-\documentclass[justified]{tufte-book}   	
+\documentclass[justified,a4paper]{tufte-book}   	
 % use "amsart" instead of "article" for AMSLaTeX format
 %\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
 %\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
@@ -11,9 +11,12 @@
 \usepackage{mathtools}	
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{hyperref}
 \usepackage[bitstream-charter]{mathdesign}
-
-
+\usepackage{epigraph}
+\usepackage{xspace}
+\usepackage{pdfpages}
+%\usepackage{marginfix}
 
 %\newcommand*{\fancyrefthmlabelprefix}{eq}
 \newcommand*{\fancyrefthmlabelprefix}{thm}
@@ -25,18 +28,47 @@
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
 \DeclareMathOperator{\argmin}{argmin}
 \DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Diag}{Diag}
+\DeclareMathOperator{\argmax}{\arg\max}
+\DeclareMathOperator{\cotan}{cotan}
+\newcommand{\mycite}{\cite}
+\newcommand{\mycitep}{\citep}
+\newcommand{\mycitet}{\citet}
+
 \newcommand{\covar}{E}
 
-\title{Optimal Population Coding of Dynamic Stimuli}
+
+
 \author{Alex Kunze Susemihl}
-\date{}							% Activate to display a given date or no date
+\date{Summer 2014}		
+
 
 \begin{document}
-\maketitle
-\setcounter{tocdepth}{1}
+\includepdf[pages={1}]{tex/titlepage.pdf}
+\morefloats
+{
+\chapter*{Abstract}
+
+\input{tex/abstract.tex}
+
+\chapter*{Zusammenfassung}
+
+\input{tex/ger_abstract.tex}
+}
+\chapter*{Acknowledgements}
+
+\input{tex/acknowledgements.tex}
+
+\setcounter{tocdepth}{2}
 \setcounter{secnumdepth}{1}
 \tableofcontents
+%\cleardoublepage\phantomsection
+%\listoffigures
+
+
 \chapter{Introduction}
+
+\label{chap:intro}
 
 \input{tex/introduction.tex}
 
@@ -48,7 +80,7 @@
 
 \chapter{Mean-Squared-Error for Point Process Filtering}
 
-\label{chap:MSE}
+\label{chap:mse}
 
 \input{tex/mse.tex}
 
@@ -66,18 +98,29 @@
 
 \chapter{Discussion}
 
-\section{References}
+\input{tex/conclusion.tex}
+
 \bibliography{library}{}
 \bibliographystyle{apalike}
 
 \begin{appendices}
 
-\chapter{Proofs}
+\chapter{Appendix}
 \section{Maximum Entropy Distributions}
 \label{app:entropy}
 \input{tex/entropyappendix.tex}
-\section{LQG Control: The Multidimensional Case}
-\label{app:lqg}
-\input{tex/lqgappendix.tex}
+\section{ADF and Moment Matching}
+\label{app:moment}
+\input{tex/momentappendix.tex}
+\section{Solving the Mean-field Kernel Integral Equation}
+\label{app:kernel_integral}
+\input{tex/app_integral.tex}
+\section{Deriving the PDE for $f(\Sigma,t)$}
+\label{app:f_sigma}
+\input{tex/f_sigma_appendix.tex}
+\section{Solving for the uncertainty cost $f(\Sigma,t)$}
+\label{app:feynman_kac}
+\input{tex/fkappendix.tex}
 \end{appendices}
+
 \end{document}  

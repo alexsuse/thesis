@@ -1,0 +1,118 @@
+\documentclass[nobib,justified]{tufte-latex-3.5.0/tufte-book}% use "amsart" instead of "article" for AMSLaTeX format
+%\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+%\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+
+
+\usepackage{appendix}
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
+\usepackage[plain]{fancyref}								% TeX will automatically convert eps --> pdf in pdflate
+\usepackage{amsmath}
+\usepackage{mathtools}	
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+%\usepackage[bitstream-charter]{mathdesign}
+\usepackage{epigraph}
+\usepackage{xspace}
+%\usepackage{marginfix}
+
+
+%\usepackage[backref=true,natbib=false,backend=bibtex,autocite=footnote]{biblatex}
+\usepackage[backend=bibtex,style=numeric,sorting=none]{biblatex}
+\renewcommand\nameyeardelim{, }
+
+\addbibresource{library.bib}
+
+%\newcommand*{\fancyrefthmlabelprefix}{eq}
+\newcommand*{\fancyrefthmlabelprefix}{thm}
+\frefformat{plain}{\fancyrefthmlabelprefix}{theorem~#1}
+\Frefformat{plain}{\fancyrefthmlabelprefix}{Theorem~#1}
+\newcommand*{\fancyrefapplabelprefix}{app}
+\frefformat{plain}{\fancyrefapplabelprefix}{appendix~#1}
+\Frefformat{plain}{\fancyrefapplabelprefix}{Appendix~#1}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Diag}{Diag}
+\DeclareMathOperator{\argmax}{\arg\max}
+\DeclareMathOperator{\cotan}{cotan}
+\newcommand{\mycite}{\autocite}
+\newcommand{\mycitep}{\parencite}
+\newcommand{\mycitet}{\textcite}
+
+\newcommand{\covar}{E}
+
+\newsavebox{\titleimage}
+\savebox{\titleimage}{\includegraphics[width=20\baselineskip]{figures/wordcloud.png}}
+
+\title[Optimal Population Coding of Dynamic Stimuli]{\setlength{\parindent}{0pt}Optimal Population\\
+Coding of\\
+Dynamic Stimuli\\
+\vspace{2cm}
+\usebox{\titleimage}}
+\author{Alex Kunze Susemihl}
+\date{Summer 2014}							% Activate to display a given date or no date
+
+\begin{document}
+%\morefloats
+\maketitle
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{1}
+\tableofcontents
+\chapter{Introduction}
+
+\label{chap:intro}
+
+\input{tex/introduction.tex}
+
+\chapter{Filtering and Prediction with Point Process Observations}
+
+\label{chap:filtering}
+
+\input{tex/filtering.tex}
+
+\chapter{Mean-Squared-Error for Point Process Filtering}
+
+\label{chap:mse}
+
+\input{tex/mse.tex}
+
+\chapter{Optimal Control with Point Process Observations}
+
+\label{chap:control}
+
+\input{tex/control.tex}
+
+\chapter{Optimal Population Coding Revisited}
+
+\label{chap:optimal}
+
+\input{tex/optimal.tex}
+
+\chapter{Discussion}
+
+\printbibliography
+
+\begin{appendices}
+
+\chapter{Proofs}
+\section{Maximum Entropy Distributions}
+\label{app:entropy}
+\input{tex/entropyappendix.tex}
+\section{ADF and Moment Matching}
+\label{app:moment}
+\input{tex/momentappendix.tex}
+\section{Solving the Mean-field Kernel Integral Equation}
+\label{app:kernel_integral}
+\input{tex/app_integral.tex}
+\section{Deriving the PDE for $f(\Sigma,t)$}
+\label{app:f_sigma}
+\input{tex/f_sigma_appendix.tex}
+\section{Solving for the uncertainty cost $f(\Sigma,t)$}
+\label{app:feynman_kac}
+\input{tex/fkappendix.tex}
+\end{appendices}
+
+\end{document}  

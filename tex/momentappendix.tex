@@ -1,0 +1,41 @@
+Say one wants to approximate some complex probability density $p(x)$ by a simpler parametric density $q(x)$. One
+alternative is to minimise the KL-divergence of the two densities
+\[
+KL[p\|q] = \int dx p(x) \log \frac{p(x)}{q(x)}.
+\]
+If one chooses $q(x)$ to be in the family of exponential distributions, $q(x)$ can be written as
+\[
+q(x) = h(x) \exp\left[\phi^\top u(x)-g(\phi) \right],
+\]
+where $\phi$ is called the vector of natural parameters and $u(x)$ is the vector of natural statistics. To minimise the KL-divergence, one needs to set its derivative with respect to the 
+parameters of $q$ to zero. Therefore
+\begin{equation}
+\label{eq:min_KL}
+\frac{d KL[p\|q]}{d\phi} = \int dx p(x) \left(u(x) - \frac{d g}{d\phi}\right).
+\end{equation}
+The derivative of $g$ can be seen to given the expected value of the natural statistics. Since $q$ is a density, one has
+\[
+\int dx q(x) = 1,\textrm{ and therefore } \frac{d}{d\phi} \int dx q(x) = 0.
+\]
+But
+\[
+\frac{d}{d\phi} \int dx q(x) = \int dx \frac{dq}{d\phi} = \int dx q(x)\left(u(x) - \frac{dg}{d\phi}\right),
+\]
+and therefore
+\[
+\frac{dg}{d\phi} = \int dx u(x) q(x) = \boldsymbol{E}_q\left[u(x)\right].
+\]
+Inserting this into \fref{eq:min_KL}, one gets
+\[
+\frac{d KL[p\|q]}{d\phi} = \int dx p(x)u(x) -\boldsymbol{E}_q\left[u(x)\right]= 0,
+\]
+and finally the minimum condition for $q$
+\[
+\boldsymbol{E}_q\left[u(x)\right] = \int dx p(x) u(x).
+\]
+This states that the distribution $q(x)$ that minimises the KL-divergence is the exponential distribution whose natural statistics match the ones of the distribution $p(x)$. This is
+often called a moment matching approach, as all the moments defined by the natural statistics of $q(x)$ will match the ones of $p(x)$.\par
+This appendix follows lecture notes by Ananth Ranganathan.\mycite{ananth2004} If one took, for example, a Gaussian distribution, one would have $u(x) = (x,x^2)^\top$. The moment
+matching would lead one to match the mean and covariance of $p(x)$ to the mean and covariance of our approximating distribution $q(x)$. This is very practical as it allows
+one to bypass any optimisation procedure to determine the parameters of $q(x)$. However, one still needs to evaluate the moments of the possibly intractable density $p(x)$, which
+might not be feasible. One alternative to this is to estimate the moments by a sampling procedure.

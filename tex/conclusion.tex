@@ -1,0 +1,52 @@
+
+
+I will shortly summarise the main findings discussed in each chapter, and will then discuss the impact and relevance of the work.
+
+\section*{\Fref{chap:filtering}}
+
+In \fref{chap:filtering} I have reviewed the theory of stochastic filtering, with a focus on doubly stochastic point process observations. I have provided an informal derivation for the Snyder equation which is novel to the best of my knowledge. I have also reformulated the fast population coding approach to the language of stochastic calculus, which proved useful to
+derive expressions for the posterior covariance.
+
+\section*{\Fref{chap:mse}}
+
+For the matched case, the MSE of the posterior mean estimator is given by the average covariance matrix of the estimator. Using this, I have formulated the time-dependent MSE
+as an average over a drift-jump stochastic process and used the language of statistical physics to treat it in the stationary regime. For the Ornstein-Uhlenbeck process, which provides
+a stereotypical stationary stochastic process, I have shown a closed-form expression for the stationary distribution of covariances. This distribution shows a particular divergence when
+the interspike interval of the observation process is shorter than the correlation time of the observed process.  A similar solution has also been derived for the limit of small firing rates. I have
+also provided a Van Kampen approximation of the stationary distribution, which allowed me to establish a system size variable for the problem at hand.\par
+
+Though most of my work on the MSE relied on the assumption of a Markovian stimulus, the analysis can also be extended to general Gaussian processes. This is done by defining a
+stochastic process taking values in the space of kernels. In that way, by deriving an approximate solution, one can estimate the MSE of a filtering problem of any type of Gaussian process. This has been illustrated for the RBF kernel, leading to infinitely smooth random processes.
+
+\section*{\Fref{chap:control}}
+
+In \fref{chap:control} I have dealt with control theory. Though the study of control theory has been gaining traction continuously in the computational neuroscience 
+community, the issue of optimal coding for control problems had been barely touched. I have presented the formalism of stochastic optimal control, using the Hamilton-Jacobi-Bellman 
+equation, and have then applied this to a belief state formulation of the filtering problem I dealt with in the previous chapters. In the limit of a dense population of Gauss-Poisson
+neurons, I have been able to derive an exact solution for the optimal cost-to-go making the uncertainty-dependent portion of the costs explicit. This could be solved using
+a Feynman-Kac approach, and can be evaluated as an average over paths of the covariance process. This is to the best of my knowledge a novel result.
+
+\section*{\Fref{chap:optimal}}
+
+I then turned to applications of my results. With the formalism in hand, I have treated a number of filtering problems. For the dense Gauss-Poisson populations, I have shown results
+for the OU process, the stochastic harmonic oscillator and the RBF process. I have also shown an approximate treatment of a bistable stochastic process. The general results seem
+to be very robust to the nature of the process being observed. To illustrate the applicability of the method, I have also treated a number of other cases approximately.\par
+
+The comparison between control-optimal and estimation-optimal codes is a central finding of this work. Though the situations that lead to it might look trivial at first, there has been little
+to no attention devoted to the study of optimal codes in a control-theoretical setting. I have argued that this may be due to the fact that when dealing with Gaussian additive noise, the
+optimal encoder is trivial. This is not the case for Poisson processes, where the rate and precision of observations is coupled.
+
+\section*{Discussion}
+
+I have extensively discussed methods for deriving optimal codes in a population of neurons. This seems a worthwhile research avenue to me, as it has already bore fruits in the 
+understanding of the nervous system, as well as lead to a number of technical advances in statistical methods. The fields of computer vision, machine learning and robotics stand
+to profit a lot of findings on optimal codes for distributed systems such as the ones studied here. The tendency in science, as well as in technology, seems to be towards decentralisation
+and autonomy. So, the study of optimal sensing for distributed systems is of great interest.\par
+
+I believe the contribution of this thesis to be a small step toward an understanding of the brain in terms of the inferences performed by it. Though I have restricted myself to some
+specific cases, this was mainly to explore the analytic results obtained, which allowed for deeper insight. As I have shown in \fref{chap:optimal}, more general setups can easily
+be cast into an optimal coding framework where the MSE is taken as an objective function to be minimised.\par
+
+Another important issue I have touched upon in this thesis is the consideration of control problems when looking at optimal population codes. Though this is still in an incipient stage,
+I think the use of control problems to determine optimal coding strategies could yield important insights with regard to adaptation and efficient coding. I have been able to show a simple
+result for the case of a dense population of neurons, and I believe the development of approximate methods for that would be an interesting research direction to investigate.\par

@@ -1,0 +1,85 @@
+\documentclass[phd, titlesmallcaps, examinerscopy, copyrightpage, foronline]{mqthesis}
+
+% Some typical packages you might use
+\usepackage{rotating}  %used to rotate things like pictures or things you \put down
+\usepackage{theorem}   %for mathematical theorems and lemmas
+\usepackage{bm}  %bold fond inside equations, eg. $\bm{\alpha}$
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}  %Makes nice tables in books (sorta like RevTeX can)
+\usepackage{pdfsync}   %used to sync pdf output inorder to flip from tex file to pdf and back
+ %graphicx is already included in the class file
+
+\ifpdf
+    \pdfinfo { /Title  (Title of Thesis)
+               /Creator (pdflatex) % probably this
+               /Producer (LaTeX with hyperref) % something like this
+               /Author (Jeffrey `The Dude' Lebowski the_dude@lebowski.com)
+               %/CreationDate (D:20100204000000)  %format D:YYYYMMDDhhmmss
+		% if /CreationDate is left out it will default to the file creation date
+               /Keywords (Obscure; Fields; Science; White Russians)}
+    \pdfcatalog { /PageMode (/UseOutlines) /OpenAction (fitbh)  }
+\fi
+
+\begin{document}
+
+\frontmatter
+
+%%%%% Acknowledgements, titlepage, abstract, list of publications
+\title{Insert thesis title here}
+
+\ifthenelse{\boolean{foronline}}{
+  \author{\href{mailto:the_dude@lebowski.com}{Jeffrey `The Dude' Lebowski}}
+  \department{Physics}
+}{
+  \author{Jeffrey `The Dude' Lebowski}
+  \department{Physics}
+}
+
+
+%%%%% Submition date if different from creation date
+% \submitdate{March 2010}
+
+% honours students will want to use the keyword honours instead of phd :)
+% or override the \degreetext variable with
+% something appropriate like:
+% \renewcommand{\degreetext}%
+% {in partial fulfilment of the Degree of Bachelor of Science with Honours}
+% also easy to changes this to be for Masters degrees.
+
+\titlepage
+
+\input{acknowledge}
+\input{listofpublications}
+\input{abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+
+%%%%% Introduction
+\input{ch_intro/chap_intro}
+
+%%%%% Other chapters in here
+\input{ch1/chap_1}
+%\input{ch2/chap_2}
+
+%%%%% Conclusion
+\input{ch_conclusion/chap_conclusion}
+
+\appendix
+
+%%%%% Appendix
+\input{ch_appendix/chap_appendix}
+ 
+\backmatter
+
+%%%%% List of symbols
+% your thesis may not need this, so comment out or delete the following line
+\input{listofsymbols}
+
+%%%%% Bibliography, in BibTeX format (the references.bib file)
+\bibliography{references}
+
+\end{document}

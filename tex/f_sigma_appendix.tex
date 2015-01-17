@@ -1,0 +1,28 @@
+To obtain an equation for $f(\Sigma,t)$ I need to evaluate the averages $\boldsymbol{E}_{X(t)}\left[\lambda^m(X(t))\right]$. This is simply the average of a squared exponential under
+a Gaussian measure. Here I will assume $\covar$ is invertible, leading to
+\[
+\boldsymbol{E}_{X(t)}\left[\lambda^m(X(t))\right] = \frac{\phi}{\sqrt{|I+\Sigma \covar^{-1}}} \exp\left[-\frac{1}{2} \left(\mu - \theta_m\right)^\top\left(\Sigma+\covar\right)^{-1} \left( \mu - \theta_m\right)\right].
+\]
+It is now straightforward to evaluate the sum over all neurons in the HJB equation. This yields
+\[
+ \sum_m \boldsymbol{E}_{X(t)}\left[\lambda^m(X(t))\right] \left[(\mu+\Delta^m\mu)^\top S(t) (\mu+\Delta^m\mu)+ f(\Sigma + \Delta\Sigma,t) -\mu^\top S(t) \mu -f(\Sigma(t),t)\right].
+\]
+By considering the sum over neurons as a Gaussian integral over $\theta$, I can rewrite the $\mu$-dependent terms approximately as
+\[
+\frac{1}{|\Delta \theta|^N \sqrt{| I + \Sigma \covar^{-1}|}} \int d\theta e^{-(\mu-\theta)^\top(\Sigma+\covar)^{-1}(\mu-\theta)/2} \left(\Delta \mu^\top S(t) \mu + \Delta \mu^\top S(t) \Delta \mu\right),
+\]
+where $\Delta\theta$ is the distance between neighbouring neurons, and $N$ is the dimension of the stimulus space were $\mu$ resides in.
+Since $\Delta \mu$ is a linear function of $\mu-\theta$, the first term will be zero. The second term will give
+\[
+ \int d\theta e^{-(\mu-\theta)^\top(\Sigma+\covar)^{-1}(\mu-\theta)/2} (\mu-\theta)^\top (\Sigma + \covar)^{-1} \Sigma S(t) \Sigma (\Sigma+\covar)^{-1} (\mu-\theta) =(2\pi)^{N/2} \sqrt{|\Sigma+\covar|}\Tr[\Sigma S(t) \Sigma (\Sigma+\covar)^{-1}].
+\]
+The full expectation of the jump term will therefore give
+\begin{align}
+ \sum_m \boldsymbol{E}_{X(t)}\left[\lambda^m(X(t))\right] \left[(\mu+\Delta^m\mu)^\top S(t) (\mu+\Delta^m\mu)+ f(\Sigma + \Delta\Sigma,t) -\mu^\top S(t) \mu -f(\Sigma(t),t)\right]\nonumber\\
+= \frac{(2\pi)^{N/2}\phi\sqrt{|\covar|}}{|\Delta \theta|^N} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) + \Tr[\Sigma S(t) \Sigma (\Sigma+\covar)^{-1}]\right].
+\end{align}
+Note that the pre factor of the final term is exactly the population firing rate $\hat{\lambda} = \sum_m \lambda^m(x)$.
+Inserting this back into the HJB equation and collecting the terms for $f$ one obtains
+\begin{equation}
+-\frac{\partial f}{\partial t} = \Tr\left(Q(t) \Sigma\right) +\Tr\left[ \frac{\partial f}{\partial \Sigma} \left(A\Sigma + \Sigma A^\top + H\right) \right]+ \hat{\lambda} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) + \Tr\left(\Sigma S(t) \Sigma \left(\Sigma+\covar\right)^{-1}\right)\right].
+\end{equation}

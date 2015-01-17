@@ -1,0 +1,21 @@
+In \fref{chap:mse} I have derived an integral equation for the mean-field approximation of the posterior kernel. The mean-field posterior kernel  
+$g(u) = \boldsymbol{E}_{mf}\left[X(t+u)X(t)\right]$ of 
+a process $X(t)$ with prior distribution given by a GP with kernel $k$ observed by Poisson spikes with frequency $\hat{\lambda}$ and tuning width $\alpha$,
+obeys the integral equation
+\begin{equation*}
+g(u) = k(u,0)  - \frac{\hat{\lambda}}{\alpha^2+ g(0)} \int_0^\infty g(s+u)g(s) ds.
+\end{equation*}
+To obtain a numerical approximation for $g$ I can simply guess an initial value of $g$ and insert that in the right-hand side to obtain an improved guess. This can then be repeated until
+it converges, for example by a squared-distance criterion. This is the fix-point method,
+though one needs to be careful to choose the starting condition and iteration rules to be sure to converge. The simplest approach to iterating \fref{eq:integral_kernel} is to choose a 
+cutoff $D$, after which the value of the integrand can be ignored. After that, one needs to choose a numerical integration method to evaluate the remaining integral. This leads to the
+iteration
+\[
+g^{i+1}(u) = k(u,0)- \frac{\hat{\lambda}}{\alpha^2+ g^i(0)} \int_0^D g^i(s+u)g^i(s) ds.
+\]
+Taking $g^0(u) = k(u,0)$, the prior kernel, and using the parallelogram integration method, will lead to the results shown in \fref{fig:integral_kernel}.
+One can then establish a stopping time by a tolerance in the mean-squared distance between two consecutive iterations
+\[
+d(g^{i+1},g^i) = \int_0^D (g^{i+1}(u)-g^i(u))^2\, du.
+\]
+For \fref{fig:integral_kernel} I have used a tolerance of $10^{-10}$ and have taken a cutoff $D=12$.

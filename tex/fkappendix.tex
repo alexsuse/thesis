@@ -1,0 +1,99 @@
+The uncertainty costs of a LQG control system observed through spike trains from a dense Gauss-Poisson neural population obeys the PDE
+\begin{equation}
+-\frac{\partial f}{\partial t} = \Tr\left(Q(t) \Sigma\right) + \Tr\left[\frac{\partial f}{\partial \Sigma} \left(A\Sigma + \Sigma A^\top + H\right)\right] + \hat{\lambda} \left[f(\Sigma+\Delta\Sigma,t) - f(\Sigma,t) + \Tr\left(\Sigma S(t) \Sigma \left(\Sigma+\covar\right)^{-1}\right)\right]\nonumber,
+\end{equation}
+with boundary condition $f(\Sigma,T) = \Tr\left(\Sigma Q_T\right)$.
+This is a very cumbersome equation, and most approaches would be inapplicable due to the jump terms present. The application of numerical solutions through a discretisation of time and
+$\Sigma$-space is also not straightforward, as the nonlinear nature of the jumps, would force one to estimate the value of the function $f$ at a large number of points outside of the 
+discretisation grid. A simple solution can, however, be derived via the Feynman-Kac formula. The Feynman-Kac formula allows one to write the solution of a PDE as an expectation
+over paths of a stochastic process. Given a parabolic PDE
+\[
+\pd{u}{t} + \mu(x,t) \pd{u}{x} + \frac{1}{2} \sigma(x,t)^2 \pd{^2u}{t^2} - V(x,t) u(x,t) + f(x,t) =0,
+\]
+the Feynman-Kac formula says that the solution $u(x,t)$ with boundary condition $u(x,T) = \phi(x)$ can be written as a conditional expectation over paths of a stochastic process, given by
+\[
+u(x,t) = \boldsymbol{E}_X\left[\int_t^T e^{-\int_t^r V(X(s),s) ds} f(X(r),r) dr + e^{-\int_t^T V(X(s),s) ds} \phi(X(T))\mathrel{\bigg|} X(t) = x\right],
+\]
+where the expectation is over paths of the process given by
+\[
+dX(t) = \mu(X(t),t) dt + \sigma(x,t) dW(t).
+\]
+This can be extended to general processes with jumps as well, and I will give a short derivation of this result below.
+\par
+In the present case, I will take the process
+\begin{equation}
+\label{eq:fk_sigma}
+d\Sigma(t) = (A\Sigma(t) + \Sigma(t) A^\top  + H) dt + \Delta \Sigma(t) dN(t).
+\end{equation}
+This is exactly the dynamics of the covariance from the Point process filter used to estimate the system's state.
+Define, then
+\[
+Y(t) = f(\Sigma(t),t) -  \int_t^T \left[\Tr\left(Q(t)\Sigma(u)\right)+ \bar{\lambda} \Tr \left(\Sigma(u) S(u)\Sigma(u)(\Sigma(u)+\covar)^{-1}\right)\right]du,
+\]
+where $f(\Sigma,t)$ is a solution to \fref{eq:f_variance}. I will below show that $Y(t)$ is a martingale, allowing me to write the value of $f(\Sigma,t)$ as an average over paths
+of the stochastic process \fref{eq:fk_sigma}.
+The variation of the process $Y$ will be given by
+\[
+dY(t) = df + \left[\Tr\left(Q(t)\rho(t)\right)+ \hat{\lambda} \Tr \left(\Sigma(t) S(t)\Sigma(t)(\Sigma(t)+\covar)^{-1}\right)\right]dt.
+\]
+Via the It\=o Lemma, we have
+\[
+df =\left(\frac{\partial f}{\partial t} + \Tr\left[\frac{\partial f}{\partial \Sigma} \left(A\Sigma + \Sigma A^\top + H\right)\right]+ \hat{\lambda} \Delta f(t) \right) dt+ d J_f(s),
+\]
+where 
+\[
+\Delta f(t) = f(\Sigma(t) + \Delta \Sigma(t),t) - f(\Sigma(t),t),
+\]
+is the jump incurred in $f$ when there is a jump in $\Sigma(t)$ and $dJ_f(s)$ is the process
+\[
+dJ_f(s) = dN(t) \Delta f_s - \hat{\lambda} \Delta f_s dt,
+\]
+where $\boldsymbol{E}[dJ_f(s)] = 0$. This leads to
+\[
+dY(t) = \left(\frac{\partial f}{\partial t} + \Tr\left[\frac{\partial f}{\partial \Sigma} \left(A\Sigma + \Sigma A^\top + H\right)\right] + \hat{\lambda} \Delta f + \Tr\left(Q(t)\rho(t)\right)+ 
+\bar{\lambda} \Tr \left(\Sigma(t) S(t)\Sigma(t)(\Sigma(t)+\covar)^{-1}\right)\right)dt + dJ_f(t).
+\]
+The term in parentheses is zero, as $f$ is a solution to \fref{eq:f_variance}. Therefore, integrating $dY(t)$ from $t$ to $T$, I obtain
+\[
+Y(T) = Y(t) + \int_t^T dJ_f(u).
+\]
+Taking the average with respect to the paths of process $\Sigma(t)$ then leads to
+\[
+\boldsymbol{E}\left[Y_T|\Sigma(t)=\Sigma\right]=\boldsymbol{E}\left[Y(t)|\Sigma(t)=\Sigma\right] + \boldsymbol{E}\left[\int_t^T dJ_f(u)\mathrel{\bigg|}\rho(t)=\Sigma\right] =\boldsymbol{E}\left[Y(t)|\Sigma(t)=\Sigma\right] ,
+\]
+where in the last step I have used that $\boldsymbol{E}[dJ_f(s)] = 0$. This shows that $Y(t)$ is a Martingale. This leads to the Feynman-Kac formula for $f$
+\begin{equation}
+f(\Sigma,t) =\boldsymbol{E}[f(\Sigma(T),T)|\Sigma(t)=\Sigma] + \boldsymbol{E}\left[\int_t^T\left[\Tr\left(Q(t)\Sigma(u)\right)+ \bar{\lambda} \Tr \left(\Sigma(u)(\Sigma(u)+\covar)^{-1}\Sigma(u) S(u)\right)\right]du \mathrel{\bigg|} \rho(t)=\Sigma\right].
+\end{equation}
+The evolution of $\boldsymbol{E}\left[\Sigma(t)\right]$ is given by
+\[
+\pd{\boldsymbol{E}\left[\Sigma(t)\right]}{t} = A\boldsymbol{E}\left[\Sigma(t)\right] + \boldsymbol{E}\left[\Sigma(t)\right]A^\top +H- \bar{\lambda}\boldsymbol{E}\left[ \Sigma(t)(\Sigma(t) + A)^{-1} \Sigma(t)\right],
+\]
+therefore, one can use this expression to directly estimate the trace average in the equation for $f$. This yields
+\[
+\hat{\lambda} \Tr\left(\boldsymbol{E}\left[\Sigma(t)(\Sigma(t) + A)^{-1} \Sigma(t)\right] S(t)\right) = \Tr\left[\left(\pd{\boldsymbol{E}\left[\Sigma(t)\right]}{t} + A\boldsymbol{E}\left[\Sigma(t)\right] + \boldsymbol{E}\left[\Sigma(t)\right]A^\top +H\right)S(t)\right]. 
+\]
+This prevents one from having to calculate expensive matrix inversions and allows one to write
+\[
+f(\Sigma,t) =\Tr\left(\boldsymbol{E}^t_\Sigma[\Sigma(T)]Q_T\right) + \int_t^T\left[ \Tr\left((Q(u)+S(u)A + A^\top S(u))\boldsymbol{E}^t_{\Sigma}(\Sigma(u))\right) +\Tr\left(H S(u)\right)-\Tr\left( \pd{\boldsymbol{E}^t_\Sigma(\Sigma(u))}{u} S(u)\right)\right]du,
+\]
+where I have written
+\[
+\boldsymbol{E}^t_\Sigma(X) = \boldsymbol{E}[X|\Sigma(t)=\Sigma],
+\]
+and used the boundary condition for $f$.
+By linearity of the trace operator and integration by parts one has
+\[
+\Tr\left(\int_t^T  \pd{\boldsymbol{E}^t_\Sigma(\Sigma(u))}{u} S(u)du\right) = \Tr(\boldsymbol{E}^t_\Sigma(\Sigma(u)) S(u)\big|_t^T) - \Tr\left(\int_t^T \boldsymbol{E}^t_\Sigma(\Sigma(u)) \dot{S}(u)du\right).
+\]
+$\dot{S}$ in turn is given by the Riccatti equation, leading to
+\[
+\Tr\left(\int_t^T  \pd{\boldsymbol{E}^t_\Sigma(\Sigma(u))}{u} S(u)du\right) = \Tr(\boldsymbol{E}^t_\Sigma(\Sigma(u)) S(u)\big|_t^T) + \Tr\left(\int_t^T \boldsymbol{E}^t_\Sigma(\Sigma(u))  (Q(u) + S(u) A + A^\top S(u) -S(u) B^\top R(u)^{-1} B S(u)du\right).
+\]
+This leads finally to the expression of the uncertainty related costs for the control problem at hand:
+\begin{equation}
+f(\Sigma,t)  = \Tr\left(\Sigma(t) S(t)\right) + \int_t^T \Tr\left(H S(u)\right)du+ \int_t^T \Tr \left(S(u) B^\top R(u)^{-1}B S(u) \boldsymbol{E}^t_\Sigma(\Sigma(u))\right) du.
+\end{equation}
+To solve numerically for $f(\Sigma,t)$ one can now simply take a large number of paths from the $\Sigma(t)$ process and average the integral over many realisations. Alternatively,
+one could approximate the dynamics of $\boldsymbol{E}^t_\Sigma\left(\Sigma(u)\right)$, for example with a mean-field approximation, and use that approximate dynamics to evaluate
+$f$.

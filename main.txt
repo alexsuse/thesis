@@ -1,0 +1,2577 @@
+   	
+
+
+
+
+
+
+				
+								
+
+	
+
+
+
+
+
+
+
+
+
+
+
+Optimal Population
+Coding of
+Dynamic Stimuli
+Alex Kunze Susemihl
+							
+
+
+Introduction
+
+
+
+A wing would be a most mystifying structure if one did not know that birds flew.Horace Barlow
+
+Neuroscience as a whole is concerned with the function of the nervous system. More precisely, it asks a very simple question: What is the brain 
+doing?  The simplicity with which humans and animals perform in their environment makes it 
+almost unnatural to ask how their brains enable these behaviors. It is often hard to explain to laymen the complexity involved in preparing even the simplest actions, 
+such as saccades or walking, such is the ease with which these are normally performed. Although one can not realistically expect to answer that question in any 
+general fashion, I will try to touch upon a number of points which shed light on some aspects of the nervous system and provide us with a guiding principle to 
+understand what the brain is doing, why and possibly how.
+
+Neuroscience was born as a branch of biology, and although it is now often thought of as  an interdisciplinary science in itself, its objects of study are still to the 
+largest extent biological systems. Theodosius Dobzhansky published an influential essay in 1973, entitled Nothing in biology makes sense except in the light of 
+evolution, which defends exactly that point. Though it has been reviewed and revisited constantly since its proposal, the theory of evolution 
+through natural selection remains the central pillar of biological sciences. As such, neuroscience must also view its objects of study through the lenses of evolution. 
+More specifically, we can then ask ourselves What evolutionary advantage would this brain bring to an individual? instead of Why is the brain this way? 
+That being said,  there are caveats in the case of neuroscience. For one, the brain is capable of plasticity and adaptation unthinkable for other organs, and so we can 
+not expect to understand the functionality of the brain in the same way in which the shape of bird beaks can be understood as a function of their preferred fruits and 
+seeds. Furthermore, the brain controls all of the motor and perceptual apparatus, having a multitude of uses and purposes, unlike simpler organs.
+
+One particular aspect of the brain which has received increasing attention recently is its ability to deal with uncertainty. In a very fruitful line of research, a number 
+of experiments have demonstrated that humans and animals integrate uncertain information in a near-optimal way. The so-called Bayesian Brain, 
+would explicitly represent the distribution over world states and perform inference in a manner consistent with Bayesian inference, obtaining optimal integration of 
+sensory cues from different modalities, for example. It is still a matter of debate how these Bayesian computations would be implemented in the brain. One possibility 
+is that the activity of neurons is sampling from a representation of the distribution of world states, which is frequently called the sampling 
+hypothesis. Another is that the activity of the neurons itself represents the likelihood over world states, and the population as a whole codes for the 
+distribution, hence the term population coding.
+
+Structure
+
+The main goal of this thesis is to develop a conceptual framework for studying optimal population coding in a dynamic setting. 
+
+I believe that the 
+inclusion of time into the coding framework raises a number of questions, which have not been addressed in the scientific literature properly. In the remainder of this 
+chapter, I will discuss the neural coding paradigm used throughout this thesis, and I will discuss different approaches to quantify the quality of a neural population code.
+I will finish by discussing the issue of dynamic population coding, highlighting the issues which I believe are of importance in considering the 
+temporal aspect of coding. I will make the case for a study of optimal filtering of partially observed stimuli as a model of stimulus inference based on spike trains. 
+Following, in chap:filtering  I will introduce the general theory of filtering of stochastic stimuli, giving special attention to the filtering of stochastic processes 
+observed through double stochastic Poisson processes. After that, in chap:mse I will discuss results regarding the 
+Mean-Squared-Error (MSE) of optimal filters of point process observations, presenting a number of new analytic results. In chap:control, I will generalise the 
+filtering 
+framework to control problems, showing results for optimal control theory of point process-observed processes. In chap:optimal I will then provide the connection 
+to neuroscience, by considering the optimal encoding strategy for a population of neurons coding for a stochastic stimulus. I will then finalize by discussing the impact 
+of the work presented and suggesting future research directions.
+
+Contribution
+
+The main contribution of this thesis is in providing a conceptual toolbox to study optimal coding problems in a dynamic environment. I propose that the 
+study of the average performance of an optimal Bayesian filter reconstructing the relevant stimulus provides a good measure of the quality of a dynamic code. Using 
+this framework, I derive analytic results for the fast population code for dense populations of Poisson neurons with Gaussian tuning functions first proposed by Quentin 
+Huys. These are to my best knowledge the first results of this kind obtained for temporal coding of dynamic stimuli.
+
+The results presented in this thesis have been published and presented throughout the duration of my doctoral studies. The findings in chap:mse were first
+published at the Neural Information Processing Systems conference, where it was presented as a poster in addition to the publication in the conference 
+proceedings Susemihl2011a. These results were then further developed and put in the greater context of computational neuroscience and published in a special
+edition of the Journal of Statistical Mechanics: Theory and Experiment title Statistical Physics and Neuroscience, which focused on the challenges 
+neuroscience presented to statistical physics Susemihl2013. The results presented chap:control have been submitted to the NIPS conference
+proceedings as well, and are currently under review.
+
+Parallelly to the topics presented here I have also contributed to other ongoing research projects during my doctoral studies. In a research project headed by 
+fellow doctoral student Chris Hausler and myself, we have proposed a novel way of training temporal Boltzmann machines, which improves their performance as
+generative models of temporal data greatly. This was presented in a workshop on Deep Learning at the NIPS conference as well hausler2012b. This was
+then used as a model for temporal sparsity in visual cortex and results on sequences of natural images were published in the journal Brain Research in a
+special issue on neural coding Hausler2013a. The advantages of the training procedure for generative models of temporal data as well as for forecasting were
+further extended on and submitted for publication in the journal Neurocomputing Hausler2013b.
+
+In addition to these projects, I have also worked on the publication of a manuscript originating from my Masters thesis, which was since published in the journal 
+Physica A. There we investigated the effect of different learning strategies on the emergence of moral opinions in a model of social learning  
+Vicente2014.
+
+
+
+Hierarchical Organisation of the Brain and the Feedforward Paradigm
+
+One of the most distinguishing properties of the mammalian brain, and of most neural systems in nature, is its hierarchical organisation. 
+The human cortex has a very marked functional organisation, with very distinct connectivity patterns within functional units and between
+them. A rough view of the flow of information in the sensory areas of the human brain can be seen in 
+fig:feedforward_brain. According to this paradigm, information about the environment enters the
+nervous system through the primary sensory areas, which code for simple aspects of the environment such as edges of visual shapes or particular sound frequencies.
+These areas then transmit that information to higher brain areas, often called secondary and tertiary areas.
+The secondary and tertiary areas then process the input further, integrating information within and between sensory modalities. The motor cortex proceeds in a similar
+fashion but in the opposite direction. The tertiary motor areas receives information from higher sensory areas and codes for high-level aspects of motor control, such as 
+complex movements, goals and integrated plans.
+Downstream are the secondary and primary areas, which code for simpler aspects of motor control, with activity in the primary motor cortex often having a simple 
+relation to the movement of joints or limbs. 
+
+
+
+
+
+More interestingly, these areas are anatomically organised in a very distinctive way. The sensory areas are found in the posterior part of the brain, with the primary areas
+being found further towards the back and the tertiary areas being found near the central sulcus of the brain. The motor areas, in contrast, are found in the frontal part of
+the brain, the tertiary areas towards the front and the primary motor cortex being located on the frontal side of the central sulcus of the brain.
+
+
+
+
+
+
+
+
+The finding that neurons in the primary visual cortex fire specifically in response to certain visual patterns presented in certain areas of the visual field by Thorsten Wiesel
+and David H. Hubel was instrumental to this understanding of the brain, as it was the first to clearly identify neurons that code selectively for simple features of visual 
+stimuli.
+This view of information processing in the mammalian brain can be summarised in the so-called feedforward paradigm: The brain is divided in functional units,
+which receive input from downstream units, integrate and process that input and then relay the results to upstream units. This has been a very influential idea in systems
+neuroscience, and though it has come under a lot of criticism recently, a lot of work still bases its assumptions on this paradigm. A fresher view of the functional
+connections in the visual pathways of the human brain can be seen in fig:feedback_brain, from which it is immediately clear that the simple feedforward view of the 
+brain is somewhat outdated. Even the earliest sensory areas have been shown to be modulated by a number of higher order factors, such as attention and task-related 
+biases.
+
+
+The impact of the feedforward paradigm can still be seen in other fields as well. In Machine Learning, for example, feedforward neural networks modelled after the 
+feedforward view of the brain's organisation are still a very active area of research and  rank among the most powerful algorithms in the field.
+
+
+
+
+
+
+
+
+
+I have briefly illustrated the feedforward paradigm, which gives us a handle on the brain's organisation. It is by no means a general explanation of the brain's workings,
+but it gives one a structured framework to think about its form and function. It does not, however, specify the workings of every cortical area. Let us consider for example
+the primary visual cortex (V1). It receives inputs from the retina through the Lateral Geniculate Nucleus and its neurons respond according to spatiotemporal filters of
+the visual stimulus. From a purely conceptual point of view, V1 transform the representation of the visual stimulus from a simple ON- and OFF-cell representation found
+in the retina to a more complex representation in terms of spatiotemporal Gabor filters and similar response functions. The responses of retinal photoreceptors are thus
+pooled and processed together to give rise to more complex features. One can then ask how these computations are performed and what the ideal way of
+performing this would be.
+
+
+Neurons are inherently noisy cells, and their responses to the same stimulus presentation are often very variable. 
+
+One can then ask how the subsequent stages of information processing in the brain
+deal with the noise present in its input. From a theoretical viewpoint, one can further ask how a particular cortical area should be organised to optimally process the
+information relayed to it by its upstream areas. 
+
+This is hard to do without a clear view of the exact computational process being performed by a neural system, but we
+can resort to a number of theoretical frameworks to bypass this problem. If one can agree on a general computational task a population of neurons is performing (i.e.:
+estimating the direction of motion of the visual field or detecting the presence of an auditory stimulus masked in noise), we can use statistical tools to provide bounds on 
+the performance of a given population code. For example, given the general structure of input to a population of neurons in V1, we can ask what the best arrangement
+of receptive fields for those neurons is if we want the population to detect the direction of moving gratings.
+I have repeatedly used the phrase process information but the meaning of this is far from obvious. Let me specify what is usually meant by information
+in the field of computational neuroscience.
+
+
+
+
+
+
+
+
+
+
+Quantifying Information
+
+Information is a widely used term, but one usually has a very vague conception of what it means. What one usually means with having information about an event is
+to have the means to describe, reconstruct or distinguish that particular event. There are many ways of defining information, and I will shortly consider three different
+approaches.
+
+Information Theory and Mutual Information
+
+The most common definition of information is probably the one from Shannon's information theory.
+Information theory defines the information associated with a random event as the logarithm of its inverse
+probability. So, for a random variable  taking values  with probability , the information of a particular outcome  would be
+
+
+
+This is often called the surprise associated with an event as well, as very probable outcomes are not very informative. The limit of zero information is an event one is
+absolutely certain about, therefore observing it conveys no information at all. The flip side are very rare events, which carry a lot of information. 
+
+
+
+This might seem a rather unusual concept of information at first glance,
+but it is a very useful one, and has a very wide applicability. One can then also define the entropy of a distribution over  as the average information gained from
+observing the outcome of . This would give
+
+
+
+which is a measure of the disorder or uncertainty of the distribution .
+This gives us a very interesting connection to the field of statistical mechanics, where entropy plays a central role. It does not fit into the colloquial meaning of 
+information  however, as our concept of information is mostly referential, in the sense that information is about something, and the information we gain about  from 
+observing  does not
+provide a very practical starting point.
+The mutual information between two random variables  and  provides a more interesting perspective. The Mutual 
+information between  and  is defined as
+
+
+
+where  is the joint distribution of  and . The mutual information between two random variables will be zero if and only if the two random variables are
+statistically independent. In that sense, the mutual information quantifies how dependent the two variables are and therefore how much one can know about one from
+observing the other. This is further clarified by rewriting the mutual information as
+
+
+
+where  is the conditional distribution of  conditioned on the outcome of  being equal to  and  is the entropy
+of that distribution. So the mutual information is
+equal to the average reduction in entropy of  caused by an observation of . As mentioned before, the entropy is a measure of the uncertainty or disorder
+of a random variable, so the mutual information quantifies how much the uncertainty in  is reduced by observing . This is already much nearer our colloquial
+notion of information. Note that the mutual information is symmetric in its arguments and can also be thought of as the reduction in uncertainty in the neuron's responses
+upon the observation of the environment's state
+
+
+
+The mutual information and entropy of neural responses is a widely employed measure of a neural code's quality and has been often used
+to establish the optimality of experimentally measured coding strategies, as well as to explain general features of neural systems.
+In a neuroscientific context, one can think of one of the random variables () as representing the environment or the input to a neural population and the other
+as representing the population's response (). The mutual information then quantifies how much the population's response reduces the uncertainty about the 
+system's state. The distribution  represents the natural distribution of stimuli in the environment and  gives the distribution of population 
+responses  given the environment's state . One can then seek the response distribution  that maximises the mutual information between the
+environment and the response. Let us consider a simple example from the literature.
+
+The large monopolar cells (LMC's) of the visual system of the blowfly respond to light contrast on a particular area of the visual field with a graded potential response.
+Simon Laughlin asked what the best way of organising these responses would be according to information theory. Given an environmental distribution of contrasts
+ we must choose a distribution  that maximises the mutual information between the stimulus and the response. Furthermore, assuming the
+response  is a deterministic function of the stimulus , the conditional entropy  will be zero and we are left with maximising the entropy of .
+The distribution which maximises the entropy over a finite domain without any further constraints is the uniform distribution (see app:entropy) and we are led to
+conclude that , where  is a normalisation constant. But , so
+
+
+
+and finally
+
+
+
+So the contrast response function of the LMC's will be proportional to the cumulative distribution function of the environment's contrasts. This is indeed found to be the
+case as can be seen in fig:laughlin and showcases the application of information-theoretical methods in neuroscience.
+
+
+<Picture figures/laughlin_81.eps>
+
+The response function of the blowfly LMC closely resembles the cumulative distribution of visual contrasts in its natural environment. Figure taken from Laughlin, S. (1981)
+
+
+It is often useful to rephrase this approach in terms of the redundancy of a code. Namely, let us call the maximum mutual information of some response model  the 
+capacity  of that code. Clearly the maximum of the mutual information is just the entropy of the stimulus , which is achieved by a deterministic mapping
+one-to-one mapping from  to . One can then define the redundancy of some
+response distribution  as
+
+
+
+The redundancy then gives us a measure of how far from the optimal usage of the stimulus information the present code is. If we have multiple neurons, the response
+can be written as , and one can write the redundancy as
+
+
+
+The first term accounts for redundancy arising from unequal frequency of use of different responses from individual neurons and the second accounts for redundancy 
+arising from 
+correlations between the activities . In the example above we have only had to deal with the left term, since we had only one activity and therefore no 
+correlations between them. A lot of the efficient coding literature, however, has dealt with the second term, and a number of different approaches have looked 
+towards independent components of natural stimuli, assuming that whitening or gain control could account for the maximisation of the first term.
+
+
+
+Fisher Information
+
+Another very popular way to quantify the information content of a neural code is the Fisher information. The Fisher information is a concept from frequentist
+statistics and is formulated in a slightly different framework than the mutual information. In this case, we will not consider the state of the environment to be a random 
+variable
+but to be a fixed unknown value . Suppose further we are given a set of observations  distributed according to , where  is now regarded as a
+parameter of the distribution rather than a conditioning variable. The Fisher information of  is then a function of  given by
+
+
+
+The Fisher information is the coefficient of the first non-zero term of a Taylor expansion of  around the maximum likelihood estimate  of . So, if
+ is high, the probability decays very quickly around the estimate, yielding a sharp estimate of . On the other hand, if the Fisher information is low,
+the minimum will have a shallow curvature around it, meaning the ML estimate will be imprecise. This is a notion of discriminability, telling us how precisely a given 
+neural code allows us to specify the value of .
+The Fisher information is also related to the optimal Bayes estimator by the Cramer-Rao bound, which states that the MMSE of an unbiased estimator 
+is less than or equal to the inverse of the Fisher information. This is an important result in statistics, and it has gained popularity in the neuroscience literature due to
+the simple form the Fisher information takes in the case of Poisson rate models.
+
+Estimation and Mean-Squared-Error
+
+The Fisher information provides a lower bound for the mean squared error of any unbiased estimator of the environment's state . From a Bayesian perspective,
+however, the optimal Bayesian estimator which minimises the MSE is easily computable, and is equal to the posterior mean of the random variable  conditioned
+on the observed neural responses 
+
+
+
+In the feedforward paradigm described above, populations of neurons are concerned with computing some interesting aspect of the environment from its noisy inputs.
+This is very similar to the estimation problem described here. It makes sense then, that the population would minimise the mean squared error of estimating that
+particular feature from the neural response, say the presence of a predator call or the direction of motion of an object in the visual field. In principle one could argue that
+other loss measures would make more sense from a physiological point of view, but that does not change the conclusions of this line of reasoning drastically.
+
+The MMSE-based approach is not quite as popular as the two previous frameworks, but it provides a number of advantages. Sadly, there are no simple relations
+as can be found for Poisson models and the Fisher information or for the mutual information and Ising models, but the MMSE approach is much more flexible. For one
+it is relatively straightforward to include the temporal dimension in this framework, without any fundamental changes to the theory. Furthermore, temporal estimation
+has had a lot of interest in the signal processing community, and a number of different techniques have emerged which can be leveraged to obtain quality measures
+of a code through the optimal Bayesian estimator and its MMSE.
+
+
+
+
+
+
+Neural Decoding Population Codes
+
+I have so far refrained from discussing the exact method by which the population of neurons responds to the stimulus present in the environment. There are many ways
+to describe a neuron's activity, ranging from complex biophysical compartmental models focusing on the physiological properties of the neuron to simplified probabilistic 
+models, which focus on the computational properties of neurons and populations thereof. The most notable neuron model is probably the Hodgkin-Huxley model of the
+squid giant axon, which first shed light on the biophysical mechanisms leading to the generation of action potentials. This model, however, describes
+the temporal dynamics of the membrane potential of the neuron, as a function of the injected currents into the synapses of the neurons. This is a great description of the
+biophysical properties of a neuron, but to place it in a coding framework would force us to simulate the spiking activity of the population of neurons sending inputs to
+that particular cell. One would need to go further along this path until we reach the primary sensory organs, or one would need to assume a simplified model of the 
+neuron's activity at some point. These types of study have been carried out, and a number of insights can be gained, but analytic results for optimal population codes
+are very hard to obtain in these cases, so we will focus on a simpler kind of neuron model.
+
+
+The usual framework to study neural coding experimentally involves surgically inserting electrodes into the cortex and recording the activity of neuron's during some kind
+of experiment. We are mostly interested in the coding of sensory information, in which case the experiment is usually the presentation of some sensory stimulus, often
+coupled with a subsequent behavioural task for the experimental subject. For example, in Benucci2009, the experiment consisted of measuring responses from
+the primary visual cortex of anaesthetised cats upon the presentation of moving gratings in a given direction. It is generally known that cells in V1 respond to this kind
+of stimulus, but how can one determine how well the stimulus is encoded in a neural response. One simple way is to try to decode the stimulus explicitly from the neural
+response and see how well one performs. This is the so-called neural decoding problem, where one plays the part of an upstream cortical area and tries to decode the
+information encoded by a given cortical area. To do so one must characterise the statistics of the cortical area's responses and can then use estimation theory to obtain
+an estimate of the stimulus presented. Alternatively, one can try to learn a supervised classifier to predict the stimulus from the spiking activity
+directly. The first approach has the advantages of dealing with a well formulated theoretical estimator, but it requires the definition of an ad hoc
+probabilistic model for the spiking activity of the neurons. The second approach is much more practical and can be applied directly to the data, yielding an estimate of
+the relative importance of each neuron's activity to predict the stimulus, but it has all the problems of machine learning methods, one can be left with convergence 
+problems, overfitting and other optimisation issues. I will focus here on the former case, as it allows us to draw from a number of results from Bayesian estimation theory
+and statistical physics.
+
+
+Rate Codes and Temporal Coding
+
+How exactly can we model the dependence of the activity of a neuron on the stimulus then?
+We can treat as a simple random variable and look for a mapping from the relevant stimulus directly to the activity of the 
+neuron. This forces us to think about which aspect of the neuron's activity is relevant to the brain's functioning. Often one characterises the neuron's response solely by 
+the number of spikes it emits. This leads to a rate code, where a neuron's response is given simply by the rate of responses the stimulus elicits. One can then think of a rate
+function which specifies the rate of a particular neuron as a function of the stimulus presented to the organism. For example, consider a neuron in V1 which responds
+to moving gratings with a given direction . We could then say that the expected number of spikes fired by that particular neuron is given by some function
+
+
+
+where the expectation is over multiple presentations of the gratings moving in a direction .  This is often called the tuning function of the neuron. The tuning
+function does not fully characterise the neuron's activity though, as to
+perform the decoding of the stimulus from the neural response, we would need the full probability distribution . 
+ Let us denote by  the number of spikes fired by neuron  up to time . When the time of pooling is 
+always the same, i.e. when the
+response of the neuron is recorded for a specified time after the stimulus presentation, we can drop the time dependence and just write . Therefore, if we record
+a set of responses  from the subject's cells and assume the stimulus is drawn from some distribution ,
+the posterior distribution over the presented stimulus would be given by
+
+
+
+It is then simple to obtain the Bayesian estimator from the posterior distribution.
+
+By far the most common choice for the distribution  is the Poisson distribution
+
+
+
+The Poisson distribution describes random events which occur independently with a certain rate at every instant. If the duration of our experiment is , we can write
+, and the probability of observing a spike of neuron  in a infinitesimal interval  would be given by . We can rewrite then
+
+
+
+One additional assumption which is often take in the neural coding literature is the conditional independence of the neuron's firing given the stimulus presented. This
+means that
+
+
+
+With those hypotheses it is easy to now formulate a full decoding framework for a given experiment. One still needs to experimentally estimate the tuning functions ,
+and there are a number of different tools for that. The most obvious choice would be to present each stimulus repeatedly and take the average number of spikes as the
+rate, but there are many ways to improve on that. 
+
+This provides one with a framework to assess how well the population encodes a given stimulus. We are in principle only limited by the descriptive power of the
+probabilistic model we choose to describe the population response. If the model appropriately describes the firing properties of the neurons, the reconstructed stimulus 
+should provide the best possible reconstruction available from the responses alone.
+
+
+Dynamic Population Coding
+
+The rate coding framework is very convenient, as it allows us to simply estimate the tuning functions and makes decoding very simple, but it places a very restrictive
+assumption on the nature of the stimulus. More precisely, if we only measure the response as the rate of the neuron's spiking, we need to pool the responses for a 
+certain time, and any changes the stimulus undergoes in a timescale smaller than the pooling time will be completely lost. An alternative is to model the full dependence
+of the spike times  of the -th spike of every neuron . Furthermore, the finding that high-level decisions are often made in less than 150 ms shows that
+the processing is at least possible with timescales that would render pooling of many spikes at least problematic.
+
+
+One can then consider how to model the full spike train probability as a function of the stimulus. Furthermore, we do not need to assume the stimulus to be static
+throughout the experiment anymore. Let us denote by  the spike count of neuron  at every time . This formalises the notion of the spike train
+of a neuron. An alternative description would be the spike times  for each neuron . Let us say that the direction of the moving grating is now dynamic, given
+by . Then, assuming again Poisson statistics, the probability of observing a given spike train from neuron  given the history of 
+
+
+
+The process  is usually called a inhomogeneous Poisson process, as the rate depends on the time. Furthermore, if  is itself a random variable, the
+resulting point process is called a doubly stochastic Poisson process, since the rate itself is a random variable.
+
+Another popular probabilistic model for point processes is the class of so-called generalised linear models. Here we allow the rate of the point process to depend not
+only on the instantaneous value of  but also on its history and the history of the process itself. We can write the rate as
+
+
+
+where  describes the dependence of the rate in the stimulus history and  describes the dependence of the rate in the own process' history. One can 
+then use this rate to drive a Poisson process, resulting in a generalised linear model for the spike train. These GLM's are
+very popular in the computational neuroscience literature. 
+
+
+
+The decoding problem is now substantially more complicated, as it involves estimating the direction of the moving grating at every instant  instead of a single value
+of .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Filtering and Prediction with Point Process Observations
+
+
+
+Estimation is the field of statistics that deals with the inference of some unknown variable from uncertain observations of that variable. It can be best described by an example. Given a pair of variables  and , and a model for their relationship, say , where  is a normally distributed random variable, we could infer the value of  from observations of . Using Bayes' rule we can write
+
+
+
+where one can naturally deduce that . Assuming some prior knowledge about  and that subsequent observations of  are independent and identically distributed we obtain an estimate for the value of  given the experimental setup. If we are concerned with temporal processes, say a random process  which needs to be inferred from observations of a dependent process  a different terminology is used. When we are interested in inferring  from data , the problem gets named according to the value of . If , we call this a smoothing problem. If , this is called a filtering problem. If , it is called a prediction or forecasting problem.Smoothing, filtering and predicting. Since these problems occur very frequently in a number of fields and special structure in temporal data allows for more specific solutions they are generally treated as a separate field from general estimation theory. We will look into the theory of filtering of diffusion processes and then turn to the theory of filtering of diffusion processes observed through doubly stochastic point processes.
+
+Kalman Filtering
+
+Let us consider a more concrete setting. Suppose we are dealing with a system that evolves according to a stochastic discrete dynamics given by
+
+
+
+ indicates the Cholesky decomposition of the positive-definite matrix . The exponent  is used because , leading many to refer to the Cholesky decomposition as the matrix square-root
+We take ,  and  positive-definite.  is a normal n-dimensional random variable with zero mean and unit standard deviation. Suppose now we observe a process  given by
+
+
+
+where ,  and  positive-definite.  is as before a normal -dimensional random variable with zero mean and unit standard deviation. The filtering problem is to determine an estimate of  given observations of . This can done by a recursive estimation procedure first proposed by Rudolf E. Kalman. Namely, for each time step, we first predict the expected distribution of  given our estimate of  and then correct that according to the observation . We can easily obtain recurrence relations for this filtering problem by noting how the mean and variance of  evolve. We have
+
+
+
+and
+
+
+
+which leads clearly to
+
+
+
+So, if we were given no observations, and our knowledge of  was given by , the distribution over  before the observations . Through Bayes' rule we can then write
+
+
+
+Note that both terms in the numerator are Gaussian distributions and the denominator does not depend on , so we can simply find the mean and covariance by looking at the exponents in the numerator. We have
+
+
+
+and
+
+
+
+Collecting terms we obtain
+
+
+
+where
+
+
+
+
+
+
+ denotes the Moore-Penrose pseudoinverse of .
+This formulation leads to somewhat cluttered recurrence relations. In the theory of Kalman filtering these are usually broken down into subsequent prediction and correction steps. The notation usually employed in filtering theory is to write  and  for the mean and covariance of the distribution ,  and  and  for the mean and covariance of the updated distribution .  One can then write simply
+
+
+
+*
+Then we define the innovation term , and its covariance by
+
+
+
+*
+The optimal Kalman gainThe term optimal Kalman gain is usually employed in filtering theory, as it is the matrix  that gives the minimum variance unbiased estimator of  given . will then be given by
+
+
+*
+The posterior mean and covariance are then given by
+
+
+
+*
+It is relatively simple to show that these relations are equivalent to the ones derived above.
+The Kalman filter is probably one of the most important mathematical tools in engineering and has been used in anything from radar signal analysis to computer vision tracking and space expeditions. It has a number of limitations, though. First we must note that it is only exact whenever the quantities being estimated evolve according to a linear Gaussian dynamics. For any other type of model, the Kalman filter is an approximate method, and is therefore not guaranteed to provide reliable inference. Furthermore, it is only exact if we are given the values of all the matrices according to which the system evolves. These can of course be inferred from observations through an EM-like algorithm, for example, but then again, the mismatch case is not guaranteed to perform optimally. A number of extensions to the Kalman filter exist, such as the extended Kalman filter, the unscented Kalman filter and others. More recently sequential Monte Carlo Markov Chain methods known as particle filters have been a subject of great interest as they overcome a number of limitations of Kalman filters, mainly through sampling from many hypothetical system paths for  and
+reweighing them to account for the observations.
+Continuous Time: The Kalman-Bucy Filter
+
+The Kalman filter deals with discrete time systems and can be easily extended to continuous time systems. Though it can be rigorously proved that the derived filter equations are exact in the sense of stochastic calculus, I will only provide an informal derivation of this. Let us consider a linear, Gaussian stochastic differential equation, say
+
+
+
+
+where  is a Wiener process. Note that the correspondence with the discrete time case can be simply made by taking  and . The correspondence with the continuous time observation process is somewhat more complicated though. We can take the observed process to be given by the SDESDE: Stochastic Differential Equation
+
+
+
+where  is a second Wiener process independent of . Note that, unlike its discrete time counterpart, here  does not only depend on  but also on . That does not make our analysis much more complicated though, as we can write the inference in terms of  just as well.
+We can proceed as in the case of discrete time with a small time increment  and then pass to the limit of . We will then have
+
+
+
+and
+
+
+
+The distribution of  in turn is given by
+
+
+
+or more simply we can directly write down the distribution of ,
+
+
+
+Writing down Bayes' rule and collecting the terms we will obtain for the variance
+
+
+
+which can be Taylor expanded to
+
+
+
+Inserting the expression for  and taking the limit for  we obtain the filter equations for  and . The posterior variance will obey the ordinary differential equation
+
+
+
+
+
+The posterior mean, however, is still a stochastic variable, as it is dependent on the diffusion process . We have
+
+
+
+
+Note that the structure of the equations is very similar, as the dynamics of the mean only incorporates the observations through an innovation process.
+
+Kushner-Stratonovich Equation
+
+In the case above we could restrict ourselves to study the mean and covariance because of the linear structure of both the system dynamics and the observation dynamics. In the general case, however, we can not restrict ourselves to these moments. In the worst-case scenario we can not escape from estimating the full posterior distribution   at every time step. If we have a Markov system whose probability density when not observed evolves according to
+
+
+
+
+and the observation process  evolves according to
+
+
+
+then, by writing , the posterior distribution will evolve according to the stochastic partial differential equation
+
+
+
+
+eq:kushner is usually called the Kushner equation or the Kushner-Stratonovich equation in honor of Harold J. Kushner and Ruslan Stratonovich, the statisticians 
+who first derived it. It is not hard to demonstrate, that by taking  we can recover eq:kalman_bucy above for the evolution of the moments 
+according to eq:kushner. These equations, as one can 
+imagine, are very hard to solve exactly, and approximate solutions are usually employed. The techniques collectively called particle filters seek to generate
+sample paths  where the distribution of  is given by the solution of the Kushner equation. Through a sequential sampling and reweighing procedure
+this can be done without solving eq:kushner explicitly.
+ 
+Filtering of Poisson Process Observations
+ 
+The theory of filtering of diffusion processes can be extended to the case of Poisson processes as well. Donald Snyder has derived an equation for the filtering of stochastic processes observed through doubly stochastic Poisson processes which holds a remarkable resemblance to eq:kushner. A Poisson process can be defined as a counting process  such that the transition probabilities for infinitesimal times  are given by
+
+
+
+
+
+
+
+
+
+
+
+In the limit of , the transition probabilities for  are completely determined by , the rate of the process. fig:poisson_example shows examples of samples from a counting Poisson process  with different rates.
+
+<Picture figures/figure_2_1.png>
+Samples of Poisson processes with rates equal to  and .
+
+
+
+A doubly stochastic Poisson process, is a process where the rate  is itself a stochastic random variable, namely a function of another stochastic process
+. In the case first considered by Snyder, the observations were particle counts of radioactive decay for medical diagnostics. The rate was a function of the 
+concentration of the radioactive substance administered to the patient, and by observing particle counts through time we would like to infer the concentration of 
+radioactive substance in the patient's organs. The temporal aspect was relevant because of the fast decay of the radioactive particles. In that case we will have
+
+
+
+
+
+
+
+
+The likelihood of a path  is then given by
+
+
+
+
+By defining the jump points  as the points where , we can write the usual formula for Poisson likelihoods
+
+
+
+We can then, armed with a rate model for our DSPPDSPP: Doubly Stochastic Poisson Process infer the stimulus history from the count history. We will have the posterior distribution for ,
+
+
+
+
+We could now discretize  and use any tool from statistical inference to infer an estimate for the values of . The simplest way is straight maximum likelihoodML = maximum likelihood whereby we maximize the likelihood given in eq:dspp_likelihood. Further, we can incorporate our prior beliefs over the structure of  by using the full posterior given in eq:dspp_post. Taking the value of  that maximizes the posterior probability yields the so-called Maximum a Posteriori estimator.MAP = maximum a posteriori The full Bayesian approach would be to take the posterior mean as an estimate for , that is we take the mean of the distribution given in eq:dspp_post as our estimator. This is usually very hard to compute and has to be done through sampling methods. 
+
+What if we want to estimate the value of  given  in an online fashion? We can derive the results of Snyder informally as follows. Let us use the same notation as in the Kalman case. We can write
+
+
+
+We know that when unobserved the distribution of  evolves according to eq:kolmogorov_fw. So for infinitesimal  we can write 
+
+
+
+Furthermore, we can write the quotient of terms dependent on  out as a function of , we have
+
+
+
+where . Expanding and discarding terms of order , we obtain
+
+
+
+which rearranging terms, can be written as
+
+
+
+Inserting this into the relation above we obtain
+
+
+
+or, writing it as a stochastic PDE:
+
+
+
+
+Note the striking similarity with eq:kushner, namely the observations only influence the posterior through an innovation process, here given by . Furthermore, the inverse rate is equivalent to the inverse variance, if we note that the variance of a Poisson process is precisely its rate . This equation was first derived by Donald Snyder in 1972.
+
+Clearly the derivation above is not mathematically sound. More care is needed when taking limits with , namely we have used that  when  which is not technically true and must be treated with some extra care. The full derivation by Snyder works by first finding an expression for the characteristic function of the posterior distribution and deriving a stochastic PDE for the characteristic function. This is then Fourier-transformed to yield eq:snyder_uni.
+
+Multiple Spike Trains
+
+eq:snyder_uni is readily extended to multiple point processes, as long as they are independent. Given a population of point processes , , we will simply have, following the same derivation
+
+
+
+
+Again, this can be readily be associated with a multidimensional observation process in the Kalman case by noting that we can rewrite it as
+
+
+
+
+I have used the notation  and so forth. Note that if we take the vector counting process , its expected covariance is indeed given by , and the equation corresponds precisely to eq:kushner.
+
+Fast Population Coding and Dense Tuning Functions
+
+A similar filtering framework was proposed in the computational neuroscience community as well. The main question being asked was how we can extend the framework of population coding, which usually relied on cumulative rates, to coding in a short-time regime. Filtering from spike trains has also been of central importance to the Brain-Computer-Interface, where one tries to decode intended movements or actions from the activity of neurons in the brain. One issue that was central in the approach of Huys2007 was the assumption that the population firing rate is independent of the stimulus. Let us first extend eq:dspp_likelihood to multiple independent Poisson processes. We will have
+
+
+
+
+If the tuning functions are distributed such that , irregardless of , we can simplify that substantially. This is the same as saying that the process  is a homogeneous Poisson process with rate .
+We will then have
+
+
+
+The integral with respect to  will only yield non-zero terms where  is discontinuous, therefore the resulting term will be simply a product of the rates of the neurons at the times they spiked. Let us denote the set of spikes emitted by the population by , where  denotes the identitiy of the -th neuron to spike and  denotes its spike time. We can then write
+
+
+
+Furthermore let us assume that the the tuning functions  are unnormalized Gaussians of the form
+
+
+
+
+where I have used the pseudoinverse  to allow for the tuning functions to be degenerate Gaussian distributions. This poses no problem, as the prior 
+over  is always Gaussian, leading to a Gaussian posterior when multiplied by .
+Furthermore the marginal probability of a spike being fired  is also 
+defined. One must note that  does not define a distribution over the stimulus space but a rate of arrival of observations. The Gaussian updates are, however 
+the same.
+We can now treat the problem similarly to the Kalman filter problem, but we need to take into account the fact that instead of arriving continuously, observations are coming in at random times. Let us then consider the same process as before given by the SDE
+
+
+
+In the absence of observations the Gaussian distribution will evolve as
+
+
+
+
+
+and
+
+
+
+
+The updates are simply given by Gaussian updates with the mean  and covariance  of the tuning function of the spiking neuron .We have then
+for the posterior mean
+
+
+
+
+
+
+*
+and finally
+
+
+
+For the covariance we have
+
+
+
+*
+yielding
+
+
+These updates can be simplified if the tuning matrix  is invertible.
+
+Here we have used the notation
+
+
+
+for the limit of a function  at  from the left. These can then be condensed into SDE's for the posterior mean and covariance very simply. We will have
+
+
+
+
+
+and
+
+
+
+
+
+These SDE's define processes that are continuous from the right and have a limit from the left. They are often called Cadlag processes in the stochastic literature, 
+from the french phrase continue a droite, limite a gauche. Note that the evolution of the posterior variance only depends on the total spike count process 
+, which will be fundamental for our future analysis. 
+As I observed before, the covariance of the tuning functions does not need to be invertible. Note that as long as  is invertible, the filtering 
+equations are always well-defined. This can be ensured by requiring that  be symmetric positive semidefinite. Since  is symmetric positive definite, as it 
+is a covariance matrix,  will also be symmetric positive definite. Note that we can still express the tuning functions as Gaussians spanning 
+the row space of .
+Most of the analytic work in this thesis is done on the filtering problem given by eq:filtering_sdes. The fact that the frequency of observations is independent of 
+the system's state along with the homogeneous nature of the population of processes leads to a number of simplifications when evaluating the Mean-Squared-Error
+Mean-Squared-Error  MSE of the estimator . More specifically, since  is the Bayesian a posteriori estimator, it is unbiased and 
+its MSE is simply given by the variance of the estimator. This must then be averaged over the observation process. We will discuss these issues further in 
+chap:mse. The filtering scheme described in this section and some of the results of chap:mse are illustrated in fig:matern_coding.
+
+
+
+
+
+
+
+
+
+
+We will now turn to filtering from Point processes when the dense coding assumption does not hold.
+
+Methods for General Filtering of Point Processes
+
+If nothing else is known about the process at hand, we are forced to work directly with eq:snyder_multi. In principle one could discretize the state space and try to solve the Partial Differential EquationPartial Differential Equation  PDE recursively as the observations come in. Note, however, that in truth the right hand side eq:snyder_multi also contains averages over , leading to additional complications on every integration step. One way to circumvent this particular problem is to work with unnormalized probabilities. The Zakai equation is a modified version of the Kushner equation which propagates unnormalized probabilities. Let us define , such that . Taking the same diffusion process notation as used in sec:kalman, the evolution of  will be given by
+
+
+
+
+Note that while the Kushner equation was a stochastic partial integro-differential equation, since the left hand side involved averages over , the Zakai equation is a simpler stochastic partial differential equation and given a realization of the observation process can be solved by standard methods.
+
+
+We can derive a similar framework for the Snyder equation (eq:snyder_uni). Again taking the notation  we find that the 
+unnormalised posterior distribution  stochastic process with generator  observed through a doubly stochastic Poisson process with rate 
+ will obey the stochastic PDE
+
+
+
+
+Note that any term independent of  can be trivially discarded as it only constitutes a temporal renormalisation of . For example, if  is a solution to
+eq:zakai_snyder with initial condition , then  is a solution to the stochastic PDE
+
+
+
+with the same initial condition.
+This allows us to set a baseline to the expected firing rate in the unnormalised equation. This framework has been used by Bobrowski in
+the study of finite state systems observed through doubly stochastic Poisson processes. This work was also extended to static continuous processes by 
+Yaeli and Meir.. I will now discuss the application of these equations to the development of a particle filter for the filtering problems discussed above.
+
+
+Particle Filtering
+
+The central idea of particle filtering is relatively simple. If we are not given access to the system's state directly, we can just simulate a big number of hypotheses of 
+the  system's state and weight each copy according to its agreement with our observations. One can then compute averages over the posterior distribution from the 
+weighted samples. I will elaborate further. Say we have a system with state  initially distributed according to , some known transition probability 
+
+
+ and are given observations of a second process , with likelihood 
+
+
+
+If all the probabilities are known we can implement the filtering  steps numerically,
+by taking a sample of  particles  from , and associating a weight to each of those 
+particles . Then for each 
+particle  we sample the value of that particle at the following instant through the transition probability 
+
+
+
+and reweigh it through the likelihood
+of , yielding 
+
+
+
+The approximate density , then gives us an 
+approximation of the
+posterior density  and averages can be computed by simply aggregating over the particles. We have
+
+
+
+These methods are often called Sequential Monte CarloSMC: Sequential Monte Carlo methods as well, since they consist of sequentially sampling the 
+state of the system in a way similar to a Monte Carlo Markov Chain.
+The description above barely scratched the surface of what is achievable and what are the problems of particle filters, and we will not dive too deep into the theory of
+them, but one point is important to be made. Though the sampling procedure described above in principle yields an estimate of the true posterior distribution, a lot can
+go wrong when implementing it with a finite number of particles. One issue that plagues many such filters is the issue of weight depletion. Weight depletion refers
+to the situation where all but a few particles have very low weights, representing state paths which are incompatible with the observations. This can lead the particle
+filter to waste resources estimating the density of regions which don't contribute to the posterior averages, and therefore yielding very poor estimates of the distribution
+in the interesting regions. This led researchers to propose resampling steps in the particle filter. Whenever a certain criterion is met (or after every step in the filter) one 
+can resample the particles from the set of existing particles according to their weights, i.e., we sample  particles from the set  with probabilities given by
+. After that, all weights are reset to 1 and the procedure continues. This forces
+the filter to allocate its particles according to its current estimate of the posterior distribution. This helps prevent weight depletion, but it is not a panacea for these 
+issues, and even properly resampled filters can often end up with very poor estimates of the posterior distribution.
+Another important thing to note, is that it is often not possible to efficiently sample from the transition probabilities of the system. In those cases one can still combine
+the particle filter with an importance sampling approach. In that sense, at every step one samples from a simpler distribution  and reweighs the 
+particles according to 
+
+
+
+This allows for efficient sampling, but it adds another source of
+weight depletion. Again, if the sampling transition probabilities do not match the system's transition probabilities, the weights will quickly fall to low values, leading to
+poor estimates of the posterior distribution.
+Let us consider again the general case of doubly stochastic Point process filtering. Note that in the absence of spikes the posterior evolves according to
+*
+P(x,t)t =& A P(x,t) + ((t) - (x,t) ) P(x,t) 
+
+=& -(Ax P(x,t)) + 12[ H ^2 P(x,t)x_ix_j]+ ((t) - (x,t) ) P(x,t).
+
+We can again formulate an unnormalised density , which will evolve according to
+
+
+
+It can be shown that the equation above describes the evolution of a drift diffusion process with a death rate of . This means that our system evolves
+according to the eq:OU_sde but there is a transition to a death state with a rate . This allows us to formulate a simple particle 
+filter, by propagating the particles with the transition probability of the linear stochastic system and then killing it at a rate , resampling the particles every
+time a particle dies. Alternatively we can reweigh the weights according to  after every time step, obtaining the same effect.
+
+The particle filtering scheme presented here is very flexible, and is in principle applicable to any kind of stochastic process observed through Poisson spikes. This
+approach has also gained traction in the neuroscience community, where particle filters are often used to decode cortical signals from electrophysiological recordings.
+ Most BCI application require very low latency though, and often specialised types of Kalman filter are more practical to employ in such settings.
+
+Assumed Density Filtering
+
+
+
+An alternative to seeking to solve for the unnormalised density  is to find an approximation of the full posterior density . This can be done by
+projecting the true posterior back to a family of tractable distributions at every time step.
+In Assumed Density FilteringADF: Assumed Density Filtering, the distribution of a set of random variables  is approximated
+sequentially by finding the best distribution from a parametric family of distributions. For example, if we have a true, intractable distribution  we
+could choose to approximate the distribution by a Gaussian distribution. In ADF one then starts out with a prior distribution  and sequentially looks
+for the best Gaussian approximation to the posterior . This is usually termed filtering even when there is no temporal estimation
+involved because of the sequential updates to the posterior.  The best
+approximation to the posterior is usually defined as the one minimising the Kullback-Leibler divergence between the true and approximate posterior. In that sense,
+given a current approximation  and a new observation , we would have the update to our approximate posterior
+*
+Q_i+1 (x) =& _q KL[Q_i(x) P(xX_i+1)q] 
+=& _q dx Q_i(x) P(xX_i+1) Q_i(x) P(xX_i+1)q(x).
+
+Note that the KL divergence taken here is the reverse of the usual KL divergence used in variational inference. 
+ It can be shown that if we apply this 
+process using a family of exponential distributions as approximating distributions, it will lead
+to a moment matching procedure where the moments of the approximating distribution match the ones of the true posterior. If we took  to be a Gaussian
+every step in the procedure would involve evaluating the mean and covariance of the posterior, then.
+
+
+Though our framework of DSPP's in dense Gauss-Poisson populations of neurons turns out to be exactly Gaussian, this does not hold in the general case.
+A simple example would be a population of neurons which do not cover the stimulus space densely, leading to a stimulus-dependent population firing rate. We would
+then have to deal with the full extent of eq:snyder_multi. One way to deal with this is to project our posterior distribution to a Gaussian at every time step. To do
+so we need to determine the mean and covariance of the true posterior and can then match a Gaussian distribution to those moments. We will illustrate here a simple
+case of Gaussian ADF for a non-Gaussian system.
+
+Poisson processes are the simplest type of point process one can study and although they have been widely adopted as a model of neuronal firing, there is little doubt
+that they do not fully encompass the complexity of neural behaviour. To consider only the simplest of criticisms we can consider the refractory period of action potentials. It
+is a general property of neurons that after firing an action potential they can not fire another one for a short period of time, regardless of the stimulation applied. This
+refractory period varies from cell type to cell type and between organisms, but is generally around 5 ms. A simple Poisson process can not account for this
+essential trait of neural firing. It is easy to modify the Poisson model to account for a refractory period or else to include a spike-frequency adaptation component
+as well.
+We can consider a simple history-dependent Poisson process given by a rate , where  itself depends on the
+spiking history of the process. Let me take  evolving according to the SDE
+
+
+
+This will lead to a rate modulation which stabilises at  when there are no spikes, and is shifted downwards by  whenever there is a spike, without
+venturing below 0. Note that, although the process is now history-dependent, the joint process  is still Markov, since the dynamics of  itself
+is Markovian. The Bayesian updates leading to eq:snyder_uni are not altered by the presence of the  term, and the derivation still holds, with the 
+caveat that to determine the rate  we now have to follow the dynamics of the modulation  as well.
+To obtain the ADF equations for this simple model we need to evaluate the evolution of the mean and covariance of the filtering distribution. We will derive the
+necessary equations similarly to the derivation of the differential Chapman-Kolmogorov equation in Gardiner2004. In the absence of spikes, the average of
+a function of  over the posterior distribution evolves as
+*
+dx f(x) P(x,t)t =& dx f(x) (A P(x,t) + ((t) - (x,t) ) P(x,t)) 
+
+=&dx A^f(x) P(x,t) + <f(x) ((t) - (x,t) ) >,
+
+where  is the adjoint operator of , that is,
+
+
+
+This can be readily cast into a form to allow for moment matching of Gaussian distributions. Taking the stochastic process  defined in eq:OU_sde, the
+generator and its adjoint will be given by
+
+
+
+The evolution of the mean and covariance will then be simply given by
+
+
+
+
+
+
+
+
+Note that these equations are exact, even if the posterior distribution is not Gaussian. The crucial step to perform ADF is to assume that the distribution at every
+instant is characterised by only its mean and covariance, and is therefore Gaussian. In that case, the averages in the equations can often be performed exactly and 
+we can provide an approximate filter to the problem. Note that the derivation is valid for the case of multiple spike trains as well, and we would simply have to replace 
+the averages with sums over all neurons of the same averages.
+
+In chap:optimal we will apply the ADF approach to the general linear stochastic systems considered here as well as a nonlinear stochastic system and compare 
+them to the particle filter approach. 
+Though the ADF has had considerable success and has spawned a number of new approaches, most notably the expectation propagation (EP) algorithm,
+ the theoretical guarantees of particle filters have led me to prefer it when estimating the MSE of an approximate filter.
+
+
+
+Mean-Squared-Error for Point Process Filtering
+
+
+
+
+When estimating an uncertain quantity it is natural to seek to minimise the error we commit. One natural way to quantify the error incurred by an estimator is to evaluate the squared deviation of the estimate from the true value. We can then take the average of this error over multiple realisations of the signal process or over a long time realisation of it to obtain an estimate of the average error incurred by our estimator. This is the mean squared errorMean Squared Error  MSE of the estimator and we can write generally
+
+
+
+In the multidimensional case, the MSE will be a matrix, where the diagonal elements give the scalar deviation of the estimate on that particular coordinate of the signal.
+To obtain a scalar measure of the estimation error, we can just take the trace of the MSE matrix.
+This scalar error will be written as 
+
+
+
+The average can be considered to be over the data distribution, over different repetitions of the experiment, over a long time realisation of the signal process or further to 
+be an ensemble average over all possible realisations of a process according to some model of its distribution. If we further know that our estimator depends on some 
+parameters , we could seek out the optimal estimator  by taking the parameters  which minimise the MSE
+
+
+
+Note that assuming we are estimating  from an observation process  dependent on , we can write
+
+
+
+
+Note that, since  for every , we know that minimising the inner integrand  for every  will lead to a minimum of the full integral. We can then proceed to minimising the inner integrand by simply taking a derivative of it with respect to the estimator. This will lead to
+
+
+
+Equating the derivative to zero we will obtain the Bayes estimator for , given by
+
+
+
+Thus, the Bayes estimator minimises the expected MSE as defined in eq:bayes_mse. Note, however, that the optimal estimator can only be exactly computed if we 
+know the true data generating distribution , along with the true signal distribution . Furthermore, the Bayes estimator involves averaging over the signal 
+space, which can be often impractical. This is, nevertheless, a central result in information theory, and the Bayes estimator is usually taken as the golden standard to 
+estimation. 
+
+
+
+However, finding the optimal Bayes estimator is not the end of the story. Often the design of sensors and of the experimental process allows us to change the data 
+generating distribution . For a simple example, let us consider a radar gun. Assume it gives us a measure of the speed of the considered vehicle corrupted  with 
+Gaussian noise with zero mean and standard deviation of . Indeed, if we are given a number of measurements of the speed of a 
+vehicle,  the Bayes estimator will be the estimator which minimises the 
+expected 
+MSE. Regardless of that, however, we can always reduce our MSE by using a radar gun with a smaller noise rate. If we find a superior radar gun which outputs 
+measurements with standard deviation of , this will certainly reduce our MSE further. In most simple cases, however, this reduction is trivial, as one 
+simply strives to reduce the noise as much as possible.
+The neural case poses an interesting exception though. If we consider the Poisson model from the previous chapter, the probability of a spike being fired in a small time 
+interval  conditioned on the stimulus  is given simply by . The probability of a spike being fired would then be given by
+. Note now, that if we try to increase the precision of the likelihood defined by , for example by reducing the 
+width of the tuning function, we will automatically reduce the probability of that neuron firing. Therefore, there is a trade-off between frequency of firing and precision of 
+firing, which is not present in the case of additive Gaussian noise.
+
+The MSE for Dense Gaussian DSPP Observations
+
+The case discussed in sec:fast_coding allows for a number of simplifications. Since the posterior Bayesian estimator is optimal in the MSE sense, its MSE will be 
+the minimal Mean-Squared-Error attainable by an estimator.Minimal Mean-Squared-Error  MMSE. Jeez! This is the minimal average error
+obtainable by an unbiased estimator of  from observations of . We will then have, using the same notation as in sec:fast_coding
+
+
+
+Note that we are here interested in the ensemble average over all possible realisations of both the signal as the observation processes. It is already established that the estimator  is the optimal estimator, but we can still improve that estimator by adapting the parameters of our encoding processes , more specifically the tuning covariance . Assuming that our knowledge of the system's parameters is correct, we can evaluate part of the average exactly. Let us break up the expectation over  and  as
+
+
+
+Note that the average over  will just yield the posterior variance . We will then have simply
+
+
+
+where in the last step we have used that the posterior variance is only a function of the spike count  and not of the full spike train . This makes it much simpler to treat the averages, but they still remain intractable. To get a sense of the problem, for every possible spike count, we would have to average over all possible spike times for those spikes, considering the evolution of  from its initial value according to the dynamics given in eq:filtering_sde_sigma, and then average over all possible spike counts. This has been done for the case of static stimuli in Yaeli2010. When the stimulus is static, the averages are simplified by the fact that the variance does not change between spikes. The posterior variance is then simply given by
+
+
+
+Averaging over the spike trains then amounts to averaging over all possible spike counts for the given time period. This will lead to
+
+
+
+Note that this simplifies further when , that is, when the tuning is matched to the prior variance of the static process. We will then have
+
+
+
+In the general case, the infinite sum has to be evaluated numerically. This case has been discussed extensively by Yaeli2010, and a similar treatment of finite state continuous time systems has been considered in Bobrowski2009.
+When considering the general case, though, the average can not be evaluated explicitly. One way to overcome this is to look at the evolution of  over time. Note that  is the average of all possible observation paths of eq:filtering_sde_sigma. Therefore, we can look at the distribution 
+.  , the posterior variance process, is a simple drift-jump process with a constant jump rate. The evolution of the probability  is then given by the differential Chapman-Kolmogorov equation
+
+
+
+
+where , and  , where  is the Jacobian matrix
+
+
+
+I have not taken care to specify in which order the components of  are ordered in the indexes of the Jacobian matrix. This is not important, however, as a change
+in the ordering of the components would only account for a change of sign in the determinant, which in turn only influences eq:sigma_DCKE through its absolute 
+value. The differential Chapman-Kolmogorov equation is a generalization of the Focker-Planck and Kolmogorov forward equation to systems with drift, diffusion and jumps. We can use it to easily to evaluate the evolution of averages over  by noting that
+
+
+
+and assuming that  for any , we have that
+
+
+
+We can then obtain the evolution of our MMSE by taking , yielding
+
+
+
+
+Note that we are still left with the far right hand term, which involves a nonlinear average over the distribution of variances. There are many ways to deal with that. One is to approximate the distribution  by some parametric distribution and obtain an approximation for the evolution of . Another possibility is to evaluate the average numerically by sampling from the paths of eq:filtering_sde_sigma. Another popular alternative is to approximate the distribution  by a point mass at its mean. This is the so-called Mean-Field approach, where we simply disregard all fluctuations in  and approximate all averages  by . This would lead to the mean-field evolution of 
+
+
+
+
+The mean-field and sampling approaches are compared in fig:matern_coding. As we can see, the mean-field approximation yields extremely good results, for the equilibrium and relaxation behavior of .
+Although we can in principle evaluate the temporal evolution of the MSE, one must note that if we are seeking to optimize our encoder with respect to it, that will be of little use, as we seek a scalar measure of the quality of our encoder. We can however, still decide as to how we will measure the quality of our temporal estimator. The simplest idea is to simply take the long-time equilibrium value of the MSE as our measure. This would mean we are looking at the equilibrium MSE, give by
+
+
+
+Another option would be to consider the time average of the MSE over a period specified by some experimental requirement. This would give us
+
+
+
+Note that this is not as simple a measure, as it still depends on the prior variance . One way to do away with that is to take the limit of the average when . This would lead another equilibrium measure, which for ergodic systems should not depend on the initial variance anymore, yielding our long time limit
+
+
+
+This should be essentially equal to the equilibrium MSE defined above, however, and we will concentrate on that from now on.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Solving for the Equilibrium Distribution
+Although we are interested in finding the optimal encoder, which in turn is a function of the expected variance, we can gain a lot of insight into the nature of the encoder by studying the full distribution of variances. Solving for the full time-dependent distribution would be of little use, as this would again be dependent on the specific distribution of variances we choose to consider at the starting time. As above, I will therefore consider the distribution of variances after a long time, such that it is not changing anymore. Considering eq:sigma_DCKE, we can write the equilibrium condition as
+
+
+
+
+
+Exact Solution for the One-Dimensional Case
+
+We can provide an exact solution for the one-dimensional OU case. This was proposed in Susemihl2011a, and an approximate extension to the multidimensional case was presented in Susemihl2013. The solution relies on one simple observation, which can be glanced from fig:matern_coding. Note that the posterior variance never exceeds its equilibrium value. This can be easily formalized for the one-dimensional OU case. Taking the simple OU process
+given by the SDE 
+
+
+
+and considering one-dimensional tuning functions  given by
+
+
+
+eq:sigma_DCKE will simplify to
+
+
+
+In the equilibrium this will further simplify to
+
+
+
+
+It is easiest to show that  by considering two different cases. First let us consider . This will mean that when , , and the first term in the right-hand side of eq:eq_dist_sigma_1d will vanish. We will therefore be left with
+
+
+
+for .
+Note that if we find a solution  to the homogenous equation
+
+
+
+with some boundary condition , the solution of the non-homogenous equation with the same boundary condition will simply be given by . The homogeneous equation is the Liouville equation for the deterministic evolution of the variance for the unobserved process, given by
+
+
+
+Clearly  as  regardless of the initial value. The distribution  will therefore converge to . Therefore  and we can say that  in the equilibrium.
+When  we first consider , but consider a deterministic system with an absorbing boundary condition at  This shows that  and subsequently that . We can then consider the function , and define the intervals , with . Considering subsequently the intervals , such that  we will show that . Eventually, we will be left with an interval  that contains . We can then apply the same argument as above to the interval , and conclude that .
+Thus it is established that in the equilibrium the probability of finding a variance higher than the equilibrium variance of the process  will be zero. Let us then define the intervals  as before. Clearly, the jump term will be absent in , as any jumps ending there would have to originate from . The equation for the distribution in  will be simply
+
+
+
+One can readily see that we will have
+
+
+
+
+Given the result for  we can subsequently treat the eq:eq_dist_sigma_1d in  as simple ordinary differential equation with a non-homogeneity given by the delayed term. And so recursively we can solve for all subsequent intervals. fig:comparison_histograms shows the numerical solution for the subsequent intervals along with an histogram of the variances and the van Kampen approximation to the distribution derived below.
+
+
+
+
+
+One particularly interesting characteristic of this solution is the exponent. Note that the sign of the exponent in eq:dist_1d_exact depends on the specific value of  and . If , the exponent will be larger than 0, leading the distribution to tend to  as  tends to . If, however, , the exponent will be negative, leading the distribution to diverge around . Notice that  is the worst possible performance our encoder can achieve, as it is the variance of the unobserved process. This tells us that whenever the firing rate of the population is below a certain value, the probability distribution of our MSE will be concentrated around its worst possible value. These results are nicely illustrated in fig:comparison_histograms. This is very interesting, as it relates two different time scales, one () defines how long information about the observed process stays relevant, while the other () gives the average time between observations. It is intuitive to say that if the interval between spikes is much larger than the correlation time of
+the process, one would expect our estimation of the state to be bad. But here we have provided a simple analytic argument showing that, indeed, for a simple system
+whenever the average inter spike interval is longer than the correlation time of the observed process, the mode of the distribution of errors will be the worst possible 
+error for the estimator.
+
+Note that, although this result is always valid in the interval , we can derive it in the limit of low firing rates as well. If we assume the population firing rate , then we will find that the expected interspike interval is much longer than the characteristic time of the variance's dynamics. It is then safe to assume, that whenever a spike is fired, the variance is very close to its equilibrium value . The evolution of it after the spike time  will then be given by
+
+
+
+where ,
+We can promptly isolate the time in this equation to obtain
+
+
+
+Clearly, if the spikes are sampled from a Poisson process, then the interspike intervals have a exponential distribution and we will have . Through a change of variables we then obtain
+
+
+
+Inserting the definition for  we will recover eq:dist_1d_exact. Note that this is an approximation for  throughout the range of  for a particular parameter limit, whereas before we had derived an exact result for any parameters, but limited to a small range of values of .
+
+An Extension to the Multidimensional Case
+
+We can derive a similar limit for the multidimensional case. Let us first assume  is small enough for the covariance  to have relaxed to its equilibrium value . After a spike the covariance is then given by . The evolution of  after a spike at  is then given by
+
+
+
+We could in principle proceed as before, but the mapping from the matrix space to the one-dimensional time space can not be explicitly written as above. One alternative is to evaluate the marginals of the diagonal entries of the covariance matrix numerically. We will have, as before,
+
+
+
+We can then evaluate the derivative numerically and obtain an estimate of the distribution of . If  introduces interactions between the entries of the covariance matrix, however, this result will not prove as powerful, though. As an example, we can consider the Matern processes considered in Susemihl2013, where we have . But immediately after the jump, , leading the distribution to diverge at  as well as in . So, although the divergence around the equilibrium covariance remains, further divergences introduced by the matrix  will reduce the impact of  on the shape of the distribution. An example is shown in fig:matern_histograms.
+
+
+
+
+
+
+Van Kampen Approximation
+
+It is interesting to consider a different approach to gain insight into the behaviour of the distribution of . The Van Kampen approximation consists in linearising
+a nonlinear drift function around the equilibrium value of the system and solving the dynamics of the resulting Focker-Planck equation. This is
+equivalent to a Gaussian approximation, since a Focker-Planck equation with linear drift always has a Gaussian distribution for a solution. It is simple to apply this
+to the OU problem by taking the inverse variance  instead of the variance.
+Note that although the change in the variance when a spike 
+is observed is nonlinear, the change in the inverse variance is linear. We have the ODE and jump condition
+
+
+
+for all times  when there is a spike observed. The differential Chapman-Kolmogorov equation for  is given by
+
+
+
+
+
+The evolution of the average of  is given by
+
+
+
+which gives us the mean-field equilibrium solution of . This 
+mean-field
+approach can be refined by expanding the nonlinear terms in eq:DCKE_Z around  up to second order, which will yield a Focker-Planck equation, which can
+be readily solved. The solution to the Focker-Planck equation in the equilibrium will be given by a Gaussian distribution
+
+
+
+
+This approach is also shown in fig:comparison_histograms along with the numerical solution of the delayed-differential equation and the numerical simulations. 
+Note that, again, eq:DCKE_Z is still exact, and we can look at it to determine when the approximation is appropriate. I have Taylor expanded 
+ keeping terms up to first order, and this will yield good approximations whenever  is very large. This is seen to be the case in 
+fig:comparison_histograms, where the Gaussian approximation gives a great account for large values of .
+
+
+Prediction Error
+
+What can we say about the prediction error in the setting we are considering here? It is relatively simple to show that the prediction error is a simple function
+of the filtering error in this case.
+We have the predictive probability
+, with . The average prediction error is then simply
+the deviation of  from the estimator .
+The prediction error is thus defined as
+
+
+
+
+This gives us the matrix  when . For  we have the prediction error matrix.
+Note that given a value of  and a realisation of the Wiener process  for , we have 
+
+
+
+Clearly, conditioning on  the above average is only over the Wiener process between  and . The estimator  is also given by  in the absence of spikes. The prediction error matrix will then be given by
+
+
+
+
+
+
+
+Since  is non-anticipating and does not depend on  or , we have that (see Gardiner2004)
+
+
+
+and therefore, changing variables,
+
+
+
+
+This is the usual relation for the evolution of the variance of linear stochastic processes, and it shows us that the prediction error is a simple function of the filtering error. This is also a consequence of the Markov nature of the posterior probability. Taking a non-Markov prior process would result in a posterior probability whose parameters could not be described by a set of ordinary differential equations.
+In fig:prediction we show the comparison between the theoretical result in eq:pred_error and simulation results for the prediction error. We can see that the prediction error is very well described by the derived equation.
+
+
+
+
+
+
+A Functional Approach to the MMSE
+
+
+
+Gaussian processes are usually defined in terms of their kernel functions, which give the covariance structure of the process. More precisely for a Gaussian process 
+, the kernel gives the covariance between two times . I have been able to sidestep the discussion of kernels by considering only
+Markov GP's, but one can also develop a theory for the filtering error based on the kernel of the GP directly.
+In GP regression one is given a set of noisy observations  of  at times , with some likelihood function
+. This must then be used to infer the distribution over . Generally, one also assumes that the likelihood functions are Gaussian, turning the
+inference of  into a simple Gaussian marginalisation procedure. This will give us the distribution , where
+
+
+
+
+
+
+
+
+
+where ,  and  is the observation noise. Furthermore, note that the covariance of the posterior distribution at two
+points is given by
+
+
+
+I will denote the quantity  as the posterior kernel, as it again defines a GP. Note that according to the formalism derived so far the MMSE for a filtering 
+problem is simply the expected value of the posterior kernel  averaged over the distribution of all possible past observations. Like we have done for the 
+MMSE we can look into the dynamics of the posterior kernel . Let us write simply , then we have
+
+
+
+It is a simple exercise in matrix inversion lemmas to show that, if a observation is obtained at time  the posterior kernel will change as
+
+
+
+Taking the average over all possible observation paths we obtain the evolution of the average posterior kernel
+
+
+
+Again, we are most interested in the equilibrium case, so setting the derivative to zero we obtain
+
+
+
+
+We can now take the mean-field approximation and obtain an integral equation for the average, given by
+
+
+
+
+which is easily seen to be a solution to
+
+
+
+as long as the kernel  is stationary, which implies .  
+
+eq:integral_kernel allows us to approximate the shape of the posterior kernel directly from the prior kernel, without having to resort to the Markovian structure of
+the process as had been done before. This is very practical as it allows us to treat non-Markovian GP's such as the one defined by the squared exponential or Radial
+Basis Function kernel.  This can still be done only for the Mean-field approximation, but it is
+still a very pleasing result, as it additionally allows us to estimate the shape of the entire posterior kernel, not only of the one-time variance. If we are only interested
+in the filtering error however, it suffices to take the function . For that the equation simplifies to
+
+
+
+
+One way to solve eq:integral_kernel is to simply discretise the real line over some interval  and iterate eq:integral_one_point numerically. A reasonable
+initial condition would be to take  and then simply take
+
+
+
+This is shown in fig:integral_kernel for the OU kernel , for the Matern kernel  and the 
+RBF kernel . Note that once we have have an approximation for  we can in principle approximate the posterior average of the kernel
+at all points by repeating the procedure. From eq:integral_kernel we can see that  is only a function of  and 
+, both of which we can approximate with .
+
+
+
+
+
+
+This can be used to study the MMSE of more complex Gaussian processes. The RBF kernel and the associated Gaussian process have been the subject of great
+interest, specially in the Machine Learning community, as the squared exponential form of it often allows one to simplify a number of expressions in Gaussian
+averages. Marc Deisenroth, for example, proposed to use the Gaussian form of the RBF kernel to average over uncertainty in the input  of the process 
+as
+well as in the observation . However, though it has proven very useful in ML, the RBF kernel is often criticised for being too smooth. A function
+ drawn from a GP with an RBF kernel is , leaving little room for randomness in its proper sense.
+
+
+Alternative Performance Measures for Estimation
+
+I have chosen to focus on the mean-squared error of an estimation problem as a measure of efficiency of a neural population code. This is by no means the
+only alternative there is. In general, the MSE is very hard to calculate exactly, and estimating it from experimental data is hard and somewhat unreliable, as
+it forces one to postulate a probabilistic model for the cell's firing and then use it to reconstruct the stimulus and from that infer the MSE. This is general neither
+practical nor very reliable so a lot of studies of optimal coding have focused on the Fisher information or the mutual information, both of which I will discuss shortly.
+
+
+Fisher Information
+
+
+The Fisher information gives an alternative measure to the amount of information carried by an observation  about an unobserved parameter or variable .
+I will keep with the notation used so far, although the Fisher information is usually formulated in frequentist terms, where the parameter is not
+a random variable. The Fisher information  of  about  is given by
+
+
+
+Intuitively, the Fisher information tells us how sensitive the likelihood of an observation is to a change in the unobserved variable  at that particular value. So,
+a code that gives a high Fisher information on average will be very sensitive to changes in , allowing for good estimation of  from . Under appropriate
+regularity conditions it can be shown that the Fisher information is equal to
+
+
+
+The relationship between estimation and the Fisher information can be made rigorous through the Cramer-Rao bound. If we have an unbiased estimator
+ of  based on observations of , the Cramer-Rao bound states that the variance of that estimator is larger than the inverse Fisher information
+
+
+
+This can be extended to biased estimators as well. If the bias of an estimator of  is , then the Cramer-Rao bound 
+becomes
+
+
+
+In the multivariate case this becomes a restriction on the positive-definiteness of the MSE matrix, more precisely, for the unbiased case, we have that for any
+ it holds that 
+
+
+
+which means that the matrix  is positive semidefinite.
+
+The Cramer-Rao bound can also be extended to a Bayesian setting, where  is no longer a parameter but a random variable itself. If instead of considering 
+a fixed unknown parameter we consider it a random variable with distribution , we obtain the so-called Bayesian Cramer-Rao Bound,
+
+
+
+where
+
+
+
+Note that unlike the regular Cramer-Rao Bound, the BCRB gives us a bound on the performance of a given code is in an environment regardless of the 
+system's state. The downside is that one must specify a prior belief about the system's distribution of states .
+
+The Fisher information is particularly popular in the neuroscience community for its convenient form for rate-based models. Let us say we have a Poisson neuron
+with some tuning function . The likelihood of a spike count  in a time interval of duration  is given by
+
+
+
+The first and second derivatives with respect to  are then given by
+
+
+
+and
+
+
+
+Averaging we get the Fisher information
+
+
+
+where in the last step I have written it as a function of , the expected number of spikes for the experiment. In fig:fisher_info I have shown the Fisher
+information for a Gaussian tuning function as a function of .
+
+
+
+
+
+
+
+
+
+One can see why this is of interest for
+computational neuroscientists, as rate-based models are the bread and butter of spike train analysis. A number of experiments sought to use the Fisher information
+as a measure of performance for coding strategies, such as Zhang1999a,Brunel1998 for example. More recently, this line of reasoning has been criticised
+by a number of finding. Matthias Bethge, for example, argued that the Cramer-Rao bound is loose in general and only provides a tight bound on the MMSE of a
+neural population code in the limit of very long times and many spikes, rendering it of limited usability. For the cases we would like to consider,
+then, where the dynamic nature of the stimulus is central, Fisher information seems to be of little use. This was extended by , where the authors
+have shown that the optimal codes regarding to the Cramer-Rao Bound are very different from the ones obtained from the MMSE directly.
+
+
+
+Mutual Information
+
+
+The canonical tool in information theory to quantify the level of dependence between two variables is the mutual information. Though the correlation is often 
+preferred there are numerous examples of situations where the correlation is zero despite a strong dependence between the two variables. The mutual information
+in turn provides a non-parametric way of quantifying the level of dependence between two variables. The mutual information was defined in chap:intro as
+
+
+
+which can be readily cast into
+
+
+
+which gives us the average reduction and entropy in  upon observing a random value of . One advantage of the mutual information is that it does not make
+any reference to an estimator or a reconstruction procedure, giving us a principled quantification of the information obtained about one variable from an observation
+of the other. The main disadvantage of the mutual information is that it is much harder to compute than other quantities, as one is required to estimate the whole
+probability distribution of  and  to do so.
+
+More recently, there have also been a number of results relating the mutual information to the MMSE of estimators. The most surprising result is probably due
+to Dongning Guo, Shlomo Shamai and Sergio Verdú, who have proved that for an additive Gaussian channel, where , the following relationship holds
+
+
+
+This is one of the so-called I-MMSE relations, which have been a very popular area of study in the field of information theory recently.
+
+For the Gauss-Poisson populations under consideration we can evaluate the mutual information readily. Let us assume that at time 0, our knowledge of the
+system's state  is given by some distribution . We can then easily evaluate the mutual information of the system's
+state at time   and the spike train up to time , . To that end, we need only to note that the marginal  is given by a Gaussian with
+moments evolving according to eq:free_ou_moments, which I will denote as  and . The posterior distribution is given simply
+by the solution of the filtering equations for the problem. We will have
+
+
+
+and therefore
+
+
+
+We will show in chap:optimal that the mutual information leads to the same optimal codes as the MMSE in this particular case.
+
+
+
+
+Optimal Control with Point Process Observations
+
+
+
+Clearly the nervous system is not solely interested in estimating the state of the world. Furthermore, if that estimate is not useful for making decisions and taking actions in a dynamic environment, there is little use for it. In the previous chapter I have discussed findings for spiking codes in an estimation context. In this chapter I will extend this approach to the framework of stochastic optimal control, and discuss how to reframe the findings in this context.
+
+Estimation and the Separation Principle
+
+In the previous two chapters, I have considered the filtering problem based on spike trains. More specifically, given a signal, we were looking for the optimal set of parameters for a population of neurons  that minimize the MSE of the filtering problem. If we are interested in controlling a system, say a limb performing a movement, the picture changes somewhat. It is very usual for control problem to use the separation principle to develop approximate solutions to control problem. The separation principle considers a control problem with incomplete information as a sequence of two independent problems. The first one is to estimate the state from the observed processes. The second one is to solve some complete information control problem associated to the incomplete information problem we are considering. Then the separation approach to control would be to apply the complete information optimal control on the mean estimate of our state. This approach, and a stronger version of it, the Certainty Equivalence Principle, hold in a number of situations, making the separation principle one of the most important tools in control theory. However, even if one can separate both steps in the control setting, one can not expect optimal encoders for the filtering problem to yield optimal encoders for the control problem.
+I will in this chapter consider control problems where the system is observed through noisy spike trains. The optimal encoding strategies will in this case be the ones that minimize the control cost, not the MSE. Though these quantities turn out to be related when the state cost is quadratic, I will show a couple of simple examples where the MSE-optimal encoder is drastically different from the control-optimal encoder. Although these results are quite intuitive, as one expects sensory systems to devote more energy to coding for aspects of the environment which are important for their well-being or survival, this approach has been mostly overlooked in the optimal population coding literature.
+
+Optimal Control
+The field of control theory is concerned with the steering and controlling of systems, always with the minimization of a cost (or maximization of a reward) in mind. Speaking mathematically, given a system , with dynamics given by
+
+
+
+we would like to select the control variables  in such a way as to minimize an integrated cost function over time 
+
+
+
+
+
+
+In a purely deterministic setting, the solution to the control problem would be a policy  which for each system 
+state and time gives us a control to be applied to the system when it is in that state at that time. One would haveThe minimum of the future cost over the space of controls is called the value function .
+
+
+
+This is still a very broad formulation, but one general remark can be made, though, and it was first put forward by Richard Bellman. Bellman 
+proposed an optimality principleBellman's principle of optimality, which stated that if a given policy is an optimal solution to a control problem, than the 
+policy resulting after a number of steps of that policy must still be optimal for the remaining control problem as well. This can be formulated as a mathematical equation, 
+the so-called Bellman equation or dynamic programming equation, which states that the minimal future cost in state  at time  is given by the minimum over 
+ of the instantaneous cost plus the minimal future cost at the resulting future state . Mathematically, we have
+
+
+
+
+Note that in general,  will depend on , making the solution of the Bellman equation difficult.
+In continuous time, one can assume differentiability of the value function  in both its arguments to obtain the Hamilton-Jacobi-Bellman equationWe will abbreviate the Hamilton-Jacobi-Bellman equation as HJB equation.. We have
+
+
+
+which gives us then
+
+
+
+This is often more convenient to solve, as it sometimes allows for explicit minimization over the control.
+
+Stochastic Optimal Control
+
+The world is a noisy place, and if we want to control real-world systems, we must be able to account for noise in the systems as well. One simple way to include noise is to generalize the system dynamics to a stochastic differential equation. We would then have
+
+
+
+where  is a standard Wiener process. Note that we can not predict the evolution of  anymore, and we must redefine the cost function. The natural way
+to do so is to define it as the average over future states conditioned on the current state  and the controls to be applied . This will lead to
+
+
+
+The Bellman equation can then be extended to the stochastic case as
+
+
+
+
+We can derive the stochastic HJB equation by noting that the variation in the value function is given by Ito's lemma as
+
+
+
+
+We can then expand eq:stochastic_bellman obtaining
+
+
+
+which after averaging gives us
+
+
+
+This leads to the stochastic HJB equation
+
+
+
+
+
+Note that we could also have a Poisson process as a noise source. If we take, for example, a Poisson counting process , with time- and/or
+ state-dependent rate , and take the system dynamics to be given by a drift-diffusion process with state-dependent jumps , occurring with
+ rate  then the SDE for the state would be,
+
+
+
+Using Ito's lemma for Martingale processes we would have the variation in  given by
+
+
+
+
+
+Note that the usual notation uses the Doob-Meyer decomposition to write  as a sum of a Martingale and a  predictable process. 
+
+ For the case of the doubly
+stochastic Poisson process the decomposition would be
+
+
+
+where it is easy to see that  is a Martingale and  is a predictable process given .
+This is necessary to show the validity of eq:bellman_ito_poisson, but the expression obtained can then be simplified to the expression shown above.
+This leads to the full HJB equation for a drift-jump-diffusion process control by some control process 
+
+
+
+
+now including the terms regarding the jump process. Note that the statistics of our posterior distribution  and 
+fit this description, namely they are a jump-drift process with no diffusion. I will use this formalism to derive a belief state formulation of a control problem with dense
+Gauss-Poisson observations.
+
+Linear-Quadratic-Gaussian Control
+
+The Linear-Quadratic-Gaussian  control problem is one where the dynamics are linear in both the state and the control variable, the cost rate
+ is a quadratic function of both the state and control and the noise is Gaussian. I will treat this problem here to illustrate the optimal control formalism.
+This would mean that the evolution of the state is given by the SDE
+
+
+
+
+where  is a Wiener process. Taking a cost rate given by , and a final cost given by , we can solve the problem explicitly, using the HJB equation. The HJB equation will be given by
+
+
+
+We can minimize the right hand side explicitly and eliminate  from the equation. We obtain that the optimal value of the control is given by
+
+
+
+Inserting into the HJB equation once more, we obtain
+
+
+
+We note that  can only have a quadratic dependence in , and we therefore assume it is of the form . We then 
+obtain
+
+
+
+
+
+
+
+
+
+with the terminal conditions ,  and . Note that the  independent term  accounts for the future uncertainty of , decreasing to  over time as we approach the final time . Furthermore, the differential equation for  is a special case of the Riccati equation. These results can also be extended to the case of control- and state-dependent diffusion noise, affine dynamics and some other issues. For a more complete review, we refer to the work of Kappen.
+
+Partially Observable Processes
+
+In general, one does not have access to the exact state of the system, and it is useful to consider cases where we are only given noisy observations of the state, as we have considered in the previous chapters. The most commonly considered case of partially observable control problem is a LQG problem observed through a second diffusion process. Suppose we have as above a system  evolving according to equation eq:ctl_diff_dyn, but instead of observing  directly, we observe the process , which I shall call the observation process, which evolves according to
+
+
+
+
+Given a control trajectory , the problem of estimating  given observations , is a simple filtering problem, and is solved exactly by the Kalman-Bucy filter. We will have a Gaussian estimate of  with mean  and variance , where  and  evolve according to
+
+
+
+
+
+and
+
+
+
+
+
+Since in this case we do not have perfect information on the process to be controlled, we have to settle for the goal of minimizing the expected cost given our observation. Therefore, we have the cost to be minimized
+
+
+
+There is no analogous to the HJB equation for the incomplete information case, but we can reformulate the problem as a control problem over the belief states, that is the state of the world as we are led to believe it is distributed given the previous observationsThe belief state is a description of an system with incomplete information which eschews describing the actual state of the system, instead describing the distribution over states. A general formulation is described in bertsekas2012.. In the case I am discussing, the belief state is the distribution over the state variable, given by the Gaussian distribution . The dynamics of the belief state is then given by equations eq:ctl_kalman_bucy_mean and eq:ctl_kalman_bucy_var. Note that when we choose to describe the system in terms of the mean and variance of the posterior distribution, the noise process  does not enter into the analysis anymore, and the observation process  takes the role of the noise process. We need, however, to redefine the cost function  to fully specify the problem. We have that
+
+
+
+We can now write the HJB equation for this system. We have
+
+
+
+where the expectation is now with respect to the observation process .
+Taking now the variation of  with infinitesimal time increments via Ito's lemma and minimizing over , we have
+
+
+
+
+Which leads to the HJB equation
+
+
+
+Minimization with respect to  leads to . We will then have
+
+
+
+Partially Observable Processes with Poisson Observations
+
+Similarly to the case just discussed, we can consider the case of a stochastic system observed through a population of densely tuned Poisson processes with Gaussian tuning functions. The dynamics of the system would be the same as eq:ctl_diff_dyn, but the observation processes would be given by a set of  Poisson processes  with rates given by
+
+
+
+
+As we have shown in chap:filtering, the estimation problem is solved by the point-process analog of the Kalman-Bucy filter, first derived by Donald Snyder and used extensively since. In our case, with Gaussian tuning functions, we would have the filtering equations given by
+
+
+
+
+
+and
+
+
+
+
+
+
+where . We will define 
+ as the continuous part of  and 
+ as the jump part of . Likewise we define
+ and 
+These give us the evolution of the optimal Bayesian filter, provided the total rate of all the processes , is independent of . The posterior distribution over  given , is then the normal distribution . Assuming we are trying to minimize a cost given by the same cost rate  as before, we can write out the infinitesimal Bellman equation for this case as well. Since the dynamics of system and observations is Markov, we can use the posterior distribution as a sufficient statistic for our knowledge of the system. We will therefore take our belief state to be the mean and variance of our posterior distribution as before. 
+Similarly to the previous sections, we will consider the processes  as noise to be averaged over in the future. We will then have
+
+
+
+We can write out, according to Ito's lemma
+
+
+*
+The expectation over the noise process  in the Bellman equation can then be written as
+
+
+
+*
+leading to the HJB equation
+
+
+
+
+where
+
+
+
+This then leads to
+
+
+
+
+Note that it can be shown by induction that the cost function is of form , given that it is of this form at the final time . We can then obtain equations for  and . We will have
+
+
+
+
+and
+
+
+
+
+Note that eq:riccatti is a matrix Riccatti equation, as is found in the usual LQG problem. eq:f_variance gives the contribution of the uncertainty of the estimate to the future costs.
+A Feynman-Kac formulation for the Uncertainty cost
+
+Note that the PDE for  can be solved via the Feynman-Kac formula. We define the jump process
+
+
+
+Defining then
+
+
+
+we have
+
+
+
+Via the Ito Lemma, we have
+
+
+
+where 
+
+
+
+is the jump incurred in  when there is a jump in  and  is the compensated process
+
+
+
+We will then have
+
+
+
+Note that the term in parentheses is zero, as  is a solution to eq:f_variance. Therefore, we can integrate  from  to , obtaining
+
+
+
+Taking the average with respect to the paths of process  we obtain
+
+
+
+where the second term on the rhs vanishes, since  is a compensated process. We then obtain the Feynman-Kac formula for 
+
+
+
+Note now, that the evolution of  is given by
+
+
+
+therefore, we can use this expression to directly estimate the trace average in the equation for . We have therefore
+
+
+
+This prevents us from having to calculate expensive matrix inversions and allows us to write
+
+
+
+where we have written
+
+
+
+Note that we can apply integration by parts to the last term to obtain
+
+
+
+ in turn is given by the Riccatti equation, and results in
+
+
+
+We then obtain
+
+
+
+
+
+For the one-dimensional problem this becomes
+
+
+
+
+
+
+
+Optimal Population Coding Revisited
+
+
+
+
+In chap:intro I have argued that the use of the MMSE in a filtering problem is an appropriate measure for the quality of a neural encoder. In this chapter I
+will consider a number of examples, focusing especially on the case of dense populations of Gauss-Poisson neurons. In this case I will look at a general class of
+linear stochastic processes described in chap:filtering and chap:mse and will consider the dependence of the MMSE for those processes in the encoder's 
+parameters. In the case of dense populations of Gauss-Poisson neurons it makes the most sense to consider the width of the tuning functions as the central parameter 
+of the encoder, which will be explained below. It is found that in general for this type of population of neurons there is a finite optimal tuning width which minimises the
+MMSE of the filtering problem.
+
+Following the investigation, I also present an analysis of dense populations of Gauss-Poisson neurons coding for more complex stochastic processes, such as bistable
+processes. In this case, the filtering equations cease to be Gaussian, and we are forced to use approximate filtering approaches to obtain estimates of the MMSE.
+I have used both the ADF approach with a Gaussian density and a simple particle filter and show results for these cases, which still show a finite width which minimises
+the MMSE.
+
+Filtering through Point Processes and Optimal Codes
+
+Though we have introduced the general picture in chap:filtering, I will shortly contextualise the framework again. As has been introduced, we are observing spike
+trains from a population of neurons , whose rates depends on a stochastic process . Our objective is to estimate the state  from the observations
+ as precisely as possible. Let us denote the parameters of the encoder by . 
+
+ Our optimal encoder would then be the encoder that minimises the MMSE, or more precisely
+*
+^* =& _E[[(X(t) - X(N_[t_0:t]))(X(t) - X(N_[t_0:t]))^] X, N,]
+
+=& _[()].
+
+Note that differently from chap:mse we are considering the trace of the MMSE matrix here. This is frequently done to obtain a scalar measure of the quality of a
+multidimensional estimation problem. The trace gives us the sum of the eigenvalues of the MMSE matrix, providing a practical measure of how far from the true value
+the estimator is on average. Note also that in the second line I have dropped the time dependence as we will be mostly considering equilibrium results for the MMSE.
+
+
+
+
+
+
+
+
+
+
+Optimal Codes for Control
+
+In chap:control I have introduced the formalism of stochastic optimal control and shown how to extend it to deal with point process observations. In the same way
+as one can define an optimal encoder for a filtering problem, one can define an optimal encoder for a control problem. Given a control problem with a cost function given
+by
+
+
+
+we can like above define the optimal encoder to be the one with parameter  given by
+
+
+
+These can lead to different results than the filtering framework as has been shown in Susemihl2014.
+
+Filtering Linear Stochastic Processes through dense Gauss-Poisson Spike Trains
+
+Let us then consider a linear stochastic process of the type
+
+
+
+Though this may seem as a somewhat restrictive choice, note that a number of processes can be cast into this format. The simple OU process, which I considered in
+chap:mse is one example, but generalisations to higher dimensions are relatively simple and include, for example, the stochastic damped oscillator. Taking
+the matrices
+
+
+
+will lead to a stochastic process with a periodic component. In fig:stoch_example a few examples of linear stochastic systems are shown, with a couple of 
+samples of each per plot. Note that, although the focus here is on stationary stochastic processes, for which the distribution converges in the limit of long times,
+this is by no means a necessity for the analysis at hand. Even for non-stationary processes such as the Wiener process,The Wiener process  has
+a covariance that increases linearly with time. the posterior density can be stationary, allowing us to evaluate the equilibrium MMSE.
+
+
+
+
+
+
+
+
+
+The MMSE  can then be obtained from the formalism derived in chap:mse. Throughout this section I will refer to both the numerical solution of the
+evolution equations for  as well as the mean-field approximation to it. Let me start with the simplest stochastic process, the Ornstein-Uhlenbeck process
+given by
+
+
+
+where the evolution of the MMSE is given by
+
+
+
+We can now consider the temporal evolution of the MMSE, as it has been shown in fig:matern_coding for a Matern process. 
+We will focus on the equilibrium value of the MMSE, that is, we will focus on the long-term performance of the encoder in the filtering problem, rather than focusing
+on the transient, short-time behaviour. Below in fig:mmse_ou we can see the equilibrium MMSE of a dense Gauss-Poisson population of neurons encoding
+an OU process. The dependence on both the maximal firing rate  and the tuning width  is shown.
+
+
+
+
+
+
+
+
+
+
+More interestingly, we can now ask ourselves how the optimal encoder depends on any of the parameters of the problem. Let us say the parameter 
+which defines the time-scale of correlations in the OU process.  In fig:ecological_ou I have plotted the optimal encoding width  as a function of ,  and
+. Though the results are not entirely unexpected, it is interesting to be able to provide an accurate account of the ecological dependence of the optimal 
+encoder. Shorter time-scales (larger values of ) require a higher frequency of spikes, as the information conveyed by those spikes becomes irrelevant
+more quickly. Thus, holding the maximal firing rate  fixed, the way to increase the frequency of spikes is to have broader tuning functions. So, as 
+increases, so does . Likewise, a higher noise rate  leads to the need of more spikes to characterise the system's state, leading to higher values
+of . Unsurprisingly, increasing the maximal firing rate of each neuron  leads to smaller optimal tuning widths .
+
+
+
+
+
+
+
+Stochastic Harmonic Oscillator
+It is now a natural extension to consider the same setup for the stochastic harmonic oscillator presented above. The results are very similar to the OU case, 
+regardless of the smoother nature of the process considered. In fig:mmse_osc we show the MMSE for a dense Gauss-Poisson population coding for
+a stochastic oscillator. Likewise, fig:ecological_osc presents the dependence of the optimal tuning width on the parameters of the encoder and the environment.
+Note that here we have three parameters determining the dynamics of the environment, the frequency , the damping  and the noise rate
+.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Smooth Processes
+
+Through the kernel process developed in sec:kernels we can also treat general Gaussian processes, even non-Markov ones such as the RBF process. We can do 
+so simply by approximating the two-point kernel function at , which in turn gives the average covariance of the posterior kernel. This is exactly the filtering error,
+so  gives us a mean-field approximation of the filtering error directly from the kernel, with no need to resort to the temporal evolution of the error. In 
+fig:mmse_rbf I have evaluated the kernel mean-field approximation for the RBF kernel , with . Note that the general
+conclusions drawn in the two previous cases hold here as well, regardless of the more complex temporal structure of the process.
+
+In the case of linear stochastic processes, we had found that the temporal mean-field approximation of eq:eps_mf was surprisingly good at describing the average
+behaviour of the posterior variance. Therefore it is interesting to study how the mean-field approach performs in the RBF case, where the filtering error is derived from
+an approximation to the posterior kernel. To do so, we need to generate a large number of observation stories, and perform the full GP regression as described in 
+eq:gp_regression. The MMSE of the Bayesian filter would then be given by
+
+
+
+where the observation times  are distributed as Poisson events with rate . These results are also shown in fig:mmse_rbf and show that
+the mean-field approach is very good at approximating the MMSE in this case as well.
+
+
+
+
+
+
+
+Moving Away From Dense Codes
+
+In chap:filtering I have presented filtering tools for general stochastic processes and observation processes, namely the ADF and particle filter techniques.
+So far, the analysis of optimal codes I have stuck to the dense population limit, which significantly simplifies the analysis, rendering the Gaussian ADF approach
+exact. What happens when we move away from that, though? I will consider a couple of interesting cases shortly. There are two ways we can leave the dense
+coding limit. The first one is to have a population which does not densely cover the stimulus space. The simples case would be a single neuron, for example,
+which barely covers the stimulus space. Another possibility is a population which is not uniformly distributed in the stimulus space, leading to a stimulus-dependent
+population firing rate. The second possibility refers to the nature of the neurons. If their spiking is time-dependent or adaptive, the homogeneity of the firing
+rate will break and we will have a stimulus-dependent population firing rate as well.
+
+Once again my main interest is in the optimality of said codes. It is straightforward to estimate the MMSE of the mentioned cases from simulations directly. 
+Though much less practical than the dense coding case, where we could refrain from simulating the stimulus trajectories and spike trains, the principles remain the
+same. It is not true, however, that the average posterior covariance gives the MSE of the estimator in this case. Remember that I have used the unbiased property
+of the estimator to show this, and we have not shown that either the ADF or the particle filter estimator are unbiased. For the particle filter, it can be shown that
+in the limit of many particles the empirical distribution converges to the posterior distribution, yielding an unbiased estimator in the limit. 
+The ADF estimator, however, has no guarantees of being unbiased, and further has no guarantee of converging to the true posterior. So in both cases we are forced 
+to work directly with the estimation error to obtain a measure of the MSE.
+
+
+Sparse Populations
+
+The simplest form of breaking the dense coding assumption is, well, not having dense populations. The most extreme case would be if we had only one or
+a few neurons coding for the stimulus. In that case, the population firing rate could be very strongly dependent on the state of the system. I will consider two
+cases here. First I will look at the case of a uniform population of neurons coding for a one-dimensional stimulus, letting the spacing of the neurons grow, looking
+at what happens to the MMSE. This is a nice example of the breakdown of the dense coding assumption, as it allows us to compare an exact filter, given by
+the particle filter in the limit of many particles, with an approximate filter, which assumes the dense coding assumption holds.
+
+Let us take a population of neurons with tuning centers spaced by , so we can write , for  a positive or negative 
+integer (or 0). The dense coding assumption tells us that the overall firing rate
+
+
+
+where in the last step we have regarded the sum as a Riemann sum and approximated it by the exact value of the corresponding integral. 
+
+
+Adaptive Neurons
+
+A different situation which could lead to non-uniform firing rates is adaptation in the neurons, even in a dense population of neurons. The spike-frequency adaptation
+process described in sec:ADF is a simple model where the essence of neural adaptation is already present. I will consider the impact of adaptation
+in the MMSE of a simple linear stochastic process as we have considered above. Though an ADF approach is possible as well as the particle filter I will use here,
+I have found that the 
+
+Nonlinear Stochastic Processes
+
+A different source of non-Gaussian distributions can be found directly in the stochastic process we are modelling. A simple model that leads to non-Gaussian
+distribution is a stochastic process in a double well potential. Let us consider a process given by
+
+
+
+where there are two stable points at . fig:bistable_samples shows some sample paths from this process.
+
+
+
+<Picture figures/figure_5_8.eps>
+Samples of the Bistable process mentioned in the text.
+
+
+As I have described in chap:filtering, it is simple to devise a particle filtering algorithm for this system. Assuming we are still given a dense code, we can simply 
+take the particles  evolving by the same SDE as the system. So after discretising we will have
+
+
+
+where each of the  is a standard normal random variable independent of all other . The weights  associated with each particle will then be 
+updated as 
+
+
+
+in case neuron  spikes simply left unchanged in the absence of spikes.
+Alternatively we can develop an ADF algorithm for the proposed system. Using the relationships derived in chap:mse we have
+
+
+
+Rearranging the terms we obtain the equations for  and ,
+
+
+
+
+and
+
+
+
+
+These equation are highly nonlinear, hinting at the fact that a simple Gaussian ADF approach will not be very effective in this setting.
+In fig:bistable_filt I show both approaches applied to the bistable problem. We can then leverage the particle filtering approach, which shows better results
+for this filtering problem and look at the optimal tuning width for an estimation task. Alternatively, we can also evaluate the performance of the population in a
+discrimination task, where the observer wants to determine on which basin of attraction the system is currently located. In principle, one can estimate any function
+of the system's state  with a particle filter, since we have an estimate of the whole density . The estimate is simply given by
+
+
+
+To emulate a discrimination task I have taken the sigmoid function  as target function, which will give positive values when  is positive and negative otherwise
+Both approaches are compared in 
+fig:bistable_optimal. Note that the general conclusions arrived at previously hold in this setting as well. For both the estimation and the discrimination approach,
+the MSE is minimal for a finite tuning width, underlining the trade-off between precision and frequency discussed above.
+
+
+
+
+
+
+*
+
+
+
+
+
+
+*
+
+Optimal Codes for Control
+
+I have extensively argued for the usefulness of accurate estimation of a system's state when interacting with it. Though this is by no mean false, real world
+systems are often very high-dimensional, or at least represented in a very high-dimensional code, leading to trade-offs when deciding where to allocate sensory
+resources. One simple example is the density of photoreceptors in the retina. If we assume the retina evolved to allow for optimal estimation of the visual scene
+facing an animal, we would expect it to cover the entire visual field evenly. That is of course not the case, and there are a number of anomalies in the distribution
+of receptive fields which can be attributed to the importance of different visual queues for decision making and risk assessing. 
+
+
+What could be the reasons for an optimal code for an estimation problem to be sub-optimal for a control problem? I will present examples that show two possible
+reasons for different optimal coding strategies in estimation and control. First, one should note that control problems are often defined over a finite time horizon. One
+set of classical experiments involves reaching for a target under time constraints. If we take the maximal firing
+rate of the neurons () to be constant while varying the width of the tuning functions, this will lead the number of observed spikes to be inversely proportional to
+the precision of those spikes, forcing a trade-off between the number of observations and their quality. This trade-off can be tilted to either side in
+the case of control depending on the information available at the start of the problem. If we are given complete information on the system state at the initial time ,
+the encoder needs fewer spikes to reliably estimate the system's state throughout the duration of the control experiment,
+and the optimal encoder will be tilted towards a lower number of spikes with higher precision.
+Conversely, if at the beginning of the experiment we have very little information about the system's state, reflected in a very broad distribution, the encoder will be
+forced towards lower precision spikes with higher frequency. These results are discussed in sec:information.
+
+Secondly, one should note that the optimal encoder for estimation does not take into account the differential weighting of different dimensions of the system's state.
+When considering a multidimensional estimation problem, the optimal encoder will generally allocate all its resources equally between the dimensions of the system's
+state. In the framework presented we can think of the dimensions as the singular vectors of the tuning matrix  and the resources allocated to it are the
+singular values. In this sense, we will consider a set of coding strategies defined by matrices  of constant determinant in sec:determinant.
+This constrains the overall firing rate of the
+population of neurons to be constant, and we can then consider how the population will best allocate its observations between these dimensions. Clearly, if we have an
+anisotropic control problem, which places a higher importance in controlling one dimension, the optimal encoder for the control problem will be expected to allocate
+more resources to that dimension. This is indeed shown to be the case for the Poisson codes considered, as well as for a simple LQG problem when we constrain the
+noise covariance to have the same structure.
+
+The Trade-off Between Precision and Frequency of Observations
+
+
+In this section we consider populations of neurons with tuning functions as given by eq:dense_poiss_gauss_tf with tuning centers  distributed along a 
+one-dimensional line.
+In the case of the Ornstein-Uhlenbeck process these will be simply one-dimensional values  whereas in the case of the stochastic oscillator, we will
+consider tuning centres of the form , filling only the first dimension of the stimulus space. Note that  in both cases the (dense) population
+firing
+rate  will be given by , where  is the separation between neighbouring tuning
+centres .
+
+The Ornstein-Uhlenbeck (OU) process controlled by a process  is given by the SDE
+
+
+
+eq:poiss_cost can then be solved by simulating the dynamics of
+. This has been considered extensively in Susemihl2013 and we refer to the results therein. Specifically, it has been found that the dynamics of
+the average can be approximated in a mean-field approach yielding surprisingly good results. The evolution of the average posterior variance is given by the average
+of eq:filtering_sde_sigma, which involves nonlinear averages over the covariances. These are intractable, but a simple mean-field approach yields the approximate
+equation for the evolution of the average 
+
+
+
+The alternative is to simulate the stochastic dynamics of  for a large number of samples and compute numerical averages. These results can be directly
+employed to evaluate the optimal cost-to-go in the control problem .
+Alternatively, we can look at a system with more complex dynamics, and we take as an example the stochastic damped harmonic oscillator given by the system of equations
+
+
+
+
+Furthermore, we assume that
+the tuning functions only depend on the position of the oscillator, therefore not giving us any information about the velocity. The controller in turn seeks to keep the
+oscillator close to the origin while steering only the velocity. This can be achieved by the choice of matrices
+
+
+
+
+
+
+
+In fig:comparison_uni we provide the uncertainty-dependent costs for LQG control, for the Poisson observed control, as well as the MMSE for the Poisson
+filtering problem and for a Kalman-Bucy filter with the same noise covariance matrix . This
+illustrates nicely the difference between Kalman filtering and the Gauss-Poisson filtering considered here. The Kalman filter MSE has a simple, monotonically
+increasing dependence on the noise
+covariance, and one should simply strive to design sensors with the highest possible precision () to minimise the MMSE and control costs. The Poisson case
+leads to optimal performance at a non-zero value of . Importantly the optimal values of  for estimation and control differ. Furthermore, in view of
+sec:mutual_info, we also
+plotted the mutual information between the process  and the observation process , to illustrate that information-based arguments would lead to the same
+optimal encoder as MMSE-based arguments.
+
+
+
+
+
+
+
+
+
+
+Allocating Observation Resources in Anisotropic Control Problems
+
+
+A second factor that could lead to different optimal encoders in estimation and control is the structure of the cost function . Specifically, if the cost functions
+depends more strongly on a certain coordinate of the system's state, uncertainty in that particular coordinate will have a higher impact on expected future costs than
+uncertainty in other coordinates. We will here consider two simple linear control systems observed by a population of neurons restricted to a certain firing rate. This
+can be thought of as a metabolic constraint, since the regeneration of membrane potential necessary for action potential generation is one of the most significant
+metabolic expenditures for neurons. This will lead to a trade-off, where an increase in precision in one coordinate will result in a decrease in
+precision in the other coordinate.
+
+We consider a
+population of neurons whose tuning functions cover a two-dimensional space. Taking a two-dimensional isotropic OU system with state  
+where both dimensions are uncoupled,
+we can consider a population with tuning centres 
+densely covering the stimulus space. To consider a smoother class of stochastic systems we will also consider a two-dimensional stochastic oscillator with state
+, where again, both dimensions are uncoupled, and the tuning centres of the form 
+, covering densely the position space, but not the velocity space.
+Since we are interested in the case of limited resources, we will restrict ourselves to populations with a tuning matrix  yielding a constant population firing rate. We
+can parametrise these simply as
+
+
+
+for the OU case and
+
+
+
+for the stochastic oscillator, where .
+Note that this will yield the firing rate , independent of the specifics of the matrix .
+
+We can then compare the performance of all observers with the same firing rate in both control and estimation tasks.
+As mentioned, we are interested in control problems where the cost functions are anisotropic, that is, one dimension of the system's state vector contributes more
+heavily to the cost function. To study this case we consider cost functions of the type
+
+
+
+This again, can be readily cast into the formalism introduced above, with a suitable choice of matrices  and  for both the OU process as for the stochastic
+oscillator. We will also consider the case where the first dimension of  contributes more strongly to the state costs (i.e., ).
+
+The filtering error can be obtained from the formalism developed in Susemihl2013 in the case of Poisson observations and directly from the Kalman-Bucy
+equations in the case of Kalman filtering. For LQG control, one can simply solve the control problem for the system mentioned using the
+standard methods (see e.g. astrom2006). The Poisson-coded version of the control problem can be solved using either direct simulation of the
+dynamics of  or by a mean-field approach which has been shown to yield excellent results for the system at hand. These results are summarised in
+fig:comparison_radial, with similar notation to that in fig:comparison_uni. Note the extreme example of the stochastic oscillator, where the optimal encoder
+is concentrating all the resources in one dimension, essentially ignoring the second dimension.
+
+
+
+
+
+
+
+
+
+Discussion
+
+References
+
+apalike
+
+
+
+Proofs
+Maximum Entropy Distributions
+
+Let us assume we have a a finite set of outcomes , and we wish to find the distribution over  which maximizes the entropy 
+
+
+
+We can use a Lagrange multiplier to enforce the normalization of  and then take a derivative with respect to . We will have
+
+
+
+The derivative of  with respect to  will then give
+
+
+
+Setting that to zero we will obtain
+
+
+
+This is a uniform distribution, as  is a normalization constant and does not depend on . Likewise, if we have any other information about the distribution, such as the expected value of some function of , we can include this as a Lagrange multiplier as well. Generally, if we have a number of functions  whose expected value is known to be , we can obtain a maximum entropy distribution similarly by writing
+
+
+
+The derivative will then be given by
+
+
+
+Which will lead to
+
+
+
+Note that the values of every constant  has to be determined so that the expected values of  match the known values. The Boltzmann distribution is given by this derivation if we require the expected value of the energy of the system to be equal to some expected value, and its associated multiplier will be the inverse temperature .
+LQG Control: The Multidimensional Case
+
+If we extend the LQG problem to the multidimensional case we will have the system dynamics
+
+
+
+where , , , ,  and  and positive-definite. We can then write the path cost function as
+
+
+
+and final cost
+
+
+
+where  and  are positive-definite for all .
+The HJB equation then becomes
+
+
+
+Minimization then yields
+
+
+
+Inserting it back we obtain
+
+
+
+Then, again assuming that , we obtain
+
+
+
+
+
+
+
+
+
+where the equation for  is the differential matrix Riccati equation. These must be solved backwards under the boundary conditions , , .
+
+  
