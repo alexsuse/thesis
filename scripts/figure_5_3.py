@@ -1,8 +1,10 @@
 
 import prettyplotlib as ppl
 from prettyplotlib import plt
+from prettyplotlib import brewer2mpl
 import scipy.optimize as opt
 import os
+import cPickle as pic
 
 import numpy as np
 
@@ -49,33 +51,89 @@ def replica_eps(gamma, eta, alpha, lamb, tol=1e-9):
 
 if __name__=='__main__':
 
-    alphas = np.arange(0.001,2.0,0.01)
-    phis = np.arange(0.001,2.0,0.01)
+    dalpha = 0.04
+    dphi = 0.04
+    alphas = np.arange(0.001,2.0,dalpha)
+    phis = np.arange(0.001,2.0,dphi)
     eps = np.zeros((alphas.size,alphas.size))
     stoc_eps = np.zeros((alphas.size,alphas.size))
 
-    gamma = 1.0
-    eta = 1.0
-    phi = 0.1
-    N = 10000
-    dt = 0.0001
-    discard = 1000
-    for n,alpha in enumerate(alphas):
-        print n, alphas.size
-        for m, phi in enumerate(phis):
-            lamb = phi*np.sqrt(2*np.pi*alpha)
-            eps[n,m] = get_eq_eps( gamma, eta, alpha, lamb )
-            stoc_eps[n,m] =  np.mean(full_stoc_sigma(0.01, dt, N, -gamma,
-                                           eta, alpha, lamb, 1000,
-                                           discard=discard))
-    fig, (ax1,ax2) = ppl.subplots(2)
+    try:
+        dic = pic.load(open("figure_5_3.pik","r"))
+        eps = dic['mean_field']
+        stoc_eps = dic['stochastic']
+        print "Found Pickle, skipping simulation"
 
-    p = ax1.pcolormesh(eps) 
-    fig.colorbar(p) 
+    except:
 
-    ax2.plot( alphas, eps[:,alphas.size/2], 'r', label='mean-field')
-    ax2.plot( alphas, stoc_eps[:,alphas.size/2], 'b.', label='stochastic average')
-    ax2.legend()
-    plt.show()
-    plt.savefig('../figures/figure_5_3.eps')
+        gamma = 1.0
+        eta = 1.0
+        phi = 0.1
+        N = 10000
+        dt = 0.001
+        discard = 1000
+        for n,alpha in enumerate(alphas):
+            print n, alphas.size
+            for m, phi in enumerate(phis):
+                print n,m,alphas.size
+                lamb = phi*np.sqrt(2*np.pi*alpha)
+                eps[n,m] = get_eq_eps( gamma, eta, alpha, lamb )
+                stoc_eps[n,m] =  np.mean(full_stoc_sigma(0.01, dt, N, -gamma,
+                                               eta, alpha, lamb, 200,
+                                               discard=discard))
+
+        with open("figure_5_3.pik","w") as fi:
+            print "Writing pickle to figure_5_3.pik"
+            pic.dump({'alphas':alphas,'phis':phis,'mean_field':eps,'stochastic':stoc_eps},fi)
+
+    print "Plotting..."
+    
+    font = {'size':12}
+    plt.rc('font',**font)
+
+    fig, (ax1,ax2) = ppl.subplots(1,2,figsize = (12,5))
+    
+    alphas2,phis2 = np.meshgrid(np.arange(alphas.min(),alphas.max()+dalpha,dalpha)-dalpha/2,
+                                np.arange(phis.min(),phis.max()+dphi,dphi)-dphi/2)
+
+    yellorred = brewer2mpl.get_map('YlOrRd','Sequential',9).mpl_colormap
+
+    p = ax1.pcolormesh(alphas2,phis2,eps.T,cmap=yellorred, rasterized=True)
+    ax1.axis([alphas2.min(),alphas2.max(),phis2.min(),phis2.max()])
+
+    #xticks = np.arange(alphas.min(),alphas.max(),0.5)
+    #xlabels = np.arange(alphas.min(),alphas.max(),0.5)-alphas.min()
+
+    #yticks = np.arange(phis.min(),phis.max(),0.5)
+    #ylabels = np.arange(phis.min(),phis.max(),0.5)-phis.min()
+
+    #plt.xticks(xticks,xlabels,axes=ax1)
+    #plt.yticks(yticks,ylabels,axes=ax1)
+
+    cb = plt.colorbar(p, ax=ax1) 
+    cb.set_ticks(np.array([0.3,0.4,0.5]))
+    cb.set_ticklabels(np.array([0.3,0.4,0.5]))
+
+    ax1.set_xlabel(r'$\alpha$')
+    ax1.set_ylabel(r'$\phi$')
+    ax1.set_title(r'MMSE ($\epsilon$)')
+
+    l1,= ppl.plot( alphas, eps[:,10], label=r'$\phi = '+ str(phis[10]-0.001) + r'$',ax=ax2)
+    ppl.plot( alphas[np.argmin(eps[:,10])], np.min(eps[:,10]), 'o',color=l1.get_color(),ax=ax2)
+    l2, = ppl.plot( alphas, eps[:,20], label=r'$\phi = '+ str(phis[20]-0.001) + r'$',ax=ax2)
+    ppl.plot( alphas[np.argmin(eps[:,20])] , np.min(eps[:,20]), 'o',color=l2.get_color(),ax=ax2)
+    l3, = ppl.plot( alphas, eps[:,30], label=r'$\phi = '+ str(phis[30]-0.001) + r'$',ax=ax2)
+    ppl.plot( alphas[np.argmin(eps[:,30])] , np.min(eps[:,30]), 'o',color=l3.get_color(),ax=ax2)
+    l4, = ppl.plot( alphas, eps[:,40], label=r'$\phi = '+ str(phis[40]-0.001) + r'$',ax=ax2)
+    ppl.plot( alphas[np.argmin(eps[:,40])] , np.min(eps[:,40]), 'o',color=l4.get_color(),ax=ax2)
+    ppl.plot( alphas , stoc_eps[:,10], '-.',ax=ax2, color = l1.get_color())
+    ppl.plot( alphas , stoc_eps[:,20], '-.',ax=ax2, color = l2.get_color())
+    ppl.plot( alphas , stoc_eps[:,30], '-.',ax=ax2, color = l3.get_color())
+    ppl.plot( alphas , stoc_eps[:,40], '-.',ax=ax2, color = l4.get_color())
+    ax2.set_xlabel(r'$\alpha$')
+    ax2.set_ylabel(r'$\epsilon$')
+    ax2.set_title(r'MMSE as a function of $\alpha$')
+    ppl.legend(ax2).get_frame().set_alpha(0.7)
+    plt.savefig('../figures/figure_5_3.png',dpi=300)
+    plt.savefig('../figures/figure_5_3.pdf')
     os.system("echo \"all done\" | mutt -a \"../figures/figure_5_3.eps\" -s \"Plot\" -- alexsusemihl@gmail.com")

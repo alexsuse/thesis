@@ -37,12 +37,12 @@ def IterateOnce(C, K0, dx, la = 1.0, alpha=1.0):
     return newC
 
 if __name__=="__main__":
-    k = 2.0
-    K_rbf = lambda x : numpy.exp(-k*x**2)
-    K_matern = lambda x : (1.0+k*numpy.abs(x))*numpy.exp(-k*numpy.abs(x))
-    K_ou = lambda x : numpy.exp(-k*numpy.abs(x))
-    dx = 0.0005
-    xs = numpy.arange(0.0,6000*dx,dx)
+    k = 1.0
+    K_rbf = lambda x : numpy.exp(-x**2/(2.0*k**2))
+    K_matern = lambda x : (1.0+numpy.sqrt(3.0)*numpy.abs(x)/k)*numpy.exp(-numpy.sqrt(3.0)*numpy.abs(x)/k)
+    K_ou = lambda x : numpy.exp(-numpy.abs(x)/k)
+    dx = 0.001
+    xs = numpy.arange(0.0,12000*dx,dx)
     rbf0 = K_rbf(xs)
     rbf1 = IterateOnce(rbf0, K_rbf, dx,alpha=0.1)
     dist = SquaredDistance(rbf0,rbf1)
@@ -70,19 +70,25 @@ if __name__=="__main__":
         dist = SquaredDistance(OU0,OU1)
         print dist
 
-    ax1 = plt.subplot(311)
-    ax2 = plt.subplot(312)
-    ax3 = plt.subplot(313)
+    fig, (ax1,ax2,ax3) = ppl.subplots(3,1)
+    #ax1 = plt.subplot(311)
+    #ax2 = plt.subplot(312)
+    #ax3 = plt.subplot(313)
     plt.gcf().suptitle("Posterior kernels")
 
-    ax1.plot(xs,K_ou(xs),label=r'OU prior kernel')
-    ax1.plot(xs,OU1,label = r'OU posterior kernel')
-    ax1.legend()
-    ax2.plot(xs,K_matern(xs),label=r'Matern prior kernel')
-    ax2.plot(xs,matern1, label=r'Matern posterior kernel')
-    ax2.legend()
-    ax3.plot(xs,K_rbf(xs),label=r'RBF prior kernel')
-    ax3.plot(xs,rbf1,label=r'RBF posterior kernel')
-    ax3.legend()
+    xs = xs[:6000]
+    OU1 = OU1[:6000]
+    matern1 = matern1[:6000]
+    rbf1 = rbf1[:6000]
 
-    plt.savefig("../figures/figure_3_3.eps")
+    ppl.plot(xs,K_ou(xs),label=r'OU prior kernel',ax=ax1)
+    ppl.plot(xs,OU1,label = r'OU posterior kernel',ax=ax1)
+    ppl.legend(ax1)
+    ppl.plot(xs,K_matern(xs),label=r'Matern prior kernel',ax=ax2)
+    ppl.plot(xs,matern1, label=r'Matern posterior kernel',ax=ax2)
+    ppl.legend(ax2)
+    ppl.plot(xs,K_rbf(xs),label=r'RBF prior kernel',ax=ax3)
+    ppl.plot(xs,rbf1,label=r'RBF posterior kernel',ax=ax3)
+    ppl.legend(ax3)
+
+    plt.savefig("../figures/figure_3_4.eps")
